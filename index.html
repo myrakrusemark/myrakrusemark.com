@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Myra Krusemark's Cool Projects</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            background-color: #d5fbf4;
+            padding: 20px;
+        }
+        h1 {
+            color: #537670;
+        }
+        p {
+            color: #537670
+        }
+        .link-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+        .link-box {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            background-color: #d5fbf4;
+            color: #537670;
+            padding: 15px 25px;
+            text-align: left;
+            text-decoration: none;
+            font-size: 16px;
+            margin: 10px 0;
+            cursor: pointer;
+            border-radius: 5px;
+            width: 80%;
+            max-width: 600px;
+            height: 40px;
+            background-size: cover;
+            background-position: center;
+            position: relative;
+            overflow: hidden;
+            border: 1px solid #537670;
+            transition: border-color 0.3s;
+        }
+        .link-box::before {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            /*background: linear-gradient(to right, rgba(0, 0, 0, 0.5) 0%, rgba(0, 0, 0, 0) 75%);*/
+        }
+        .link-box:hover {
+            background-color: #537670;
+            border-color: #537670;
+            color:white;
+        }
+        .link-box span {
+            color: #537670;
+            font-weight: bold;
+            position: relative;
+            z-index: 1;
+        }
+        .link-box:hover span {
+            color:white !important;
+        }
+        .link-box small {
+            margin-top: 5px;
+            position: relative;
+            z-index: 1;
+        }
+        .project-box {
+            border: 1px solid #537670;
+            border-radius: 5px;
+            padding: 20px;
+            margin-bottom: 20px;
+            width: 80%;
+            max-width: 600px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+        .project-title {
+            color: #537670;
+            margin-bottom: 10px;
+        }
+        .topoco-link-container {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+        }
+        .topoco-link-box {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background-color: #d5fbf4;
+            color: #537670;
+            padding: 15px 25px;
+            text-align: center;
+            text-decoration: none;
+            font-size: 16px;
+            margin: 10px 0;
+            cursor: pointer;
+            border-radius: 5px;
+            width: 200px;
+            height: 40px;
+            border: 1px solid #537670;
+            transition: background-color 0.3s;
+        }
+        .topoco-link-box:hover {
+            background-color: #d5fbf4;
+        }
+        .topoco-link-box span {
+            color: #537670;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+    <h1>Welcome to Myra Krusemark's Website!</h1>
+    <p>Check out my cool little projects!</p>
+    <div class="link-container">
+        <a href="https://github.com/myrakrusemark" target="_blank" class="link-box" style="background-image: url('/api/placeholder/600/80');">
+            <span>GitHub Projects</span>
+            <small>Explore my coding projects</small>
+        </a>
+        <a href="https://txt2speech.org" target="_blank" class="link-box" style="background-image: url('/api/placeholder/600/80');">
+            <span>txt2speech.org</span>
+            <small>Unlimited text-to-speech convertor</small>
+        </a>
+        <a href="https://windchimesimulator.com" target="_blank" class="link-box" style="background-image: url('/api/placeholder/600/80');">
+            <span>windchimesimulator.com</span>
+            <small>Virtual wind chime physical simulation</small>
+        </a>
+    </div>
+    <div class="project-box">
+        <h2 class="project-title">TopoCo Art</h2>
+        <p>Cool products you never knew you wanted or needed</p>
+        <div class="topoco-link-container">
+            <a href="https://topoco.art" target="_blank" class="topoco-link-box">
+                <span>topoco.art</span>
+            </a>
+            <a href="https://www.ebay.com/str/topocoart" target="_blank" class="topoco-link-box">
+                <span>eBay Store</span>
+            </a>
+            <a href="https://www.etsy.com/shop/TopoCoArt" target="_blank" class="topoco-link-box">
+                <span>Etsy Shop</span>
+            </a>
+        </div>
+    </div>
+</body>
+</html>
