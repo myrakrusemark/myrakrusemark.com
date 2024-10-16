@@ -1,0 +1,362 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Spot the Difference: Shapes and Emojis - Enhanced Hard Mode</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            background-color: #f0f0f0;
+            margin: 0;
+            padding: 20px;
+        }
+        #gameContainer {
+            display: flex;
+            justify-content: space-around;
+            width: 800px;
+            margin-top: 20px;
+        }
+        canvas {
+            border: 1px solid black;
+        }
+        #info {
+            margin-top: 20px;
+            font-size: 18px;
+        }
+        #modal {
+            display: none;
+            position: fixed;
+            z-index: 1;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0,0,0,0.4);
+        }
+        .modal-content {
+            background-color: #fefefe;
+            margin: 15% auto;
+            padding: 20px;
+            border: 1px solid #888;
+            width: 300px;
+            text-align: center;
+        }
+        #startOverBtn {
+            margin-top: 20px;
+            padding: 10px 20px;
+            font-size: 16px;
+            cursor: pointer;
+        }
+        .switch {
+            position: relative;
+            display: inline-block;
+            width: 60px;
+            height: 34px;
+            margin-top: 20px;
+        }
+        .switch input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+        .slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: #ccc;
+            transition: .4s;
+            border-radius: 34px;
+        }
+        .slider:before {
+            position: absolute;
+            content: "";
+            height: 26px;
+            width: 26px;
+            left: 4px;
+            bottom: 4px;
+            background-color: white;
+            transition: .4s;
+            border-radius: 50%;
+        }
+        input:checked + .slider {
+            background-color: #2196F3;
+        }
+        input:checked + .slider:before {
+            transform: translateX(26px);
+        }
+        #modeLabel {
+            margin-left: 10px;
+            font-size: 18px;
+        }
+    </style>
+</head>
+<body>
+    <h1>Spot the Difference: Shapes and Emojis - Enhanced Hard Mode</h1>
+    <div>
+        <label class="switch">
+            <input type="checkbox" id="modeToggle">
+            <span class="slider"></span>
+        </label>
+        <span id="modeLabel">Easy Mode</span>
+    </div>
+    <div id="gameContainer">
+        <canvas id="leftCanvas" width="380" height="380"></canvas>
+        <canvas id="rightCanvas" width="380" height="380"></canvas>
+    </div>
+    <div id="info">
+        Level: <span id="level">1</span> | 
+        Score: <span id="score">0</span> | 
+        Time: <span id="time">0</span>s
+    </div>
+    <div id="modal">
+        <div class="modal-content">
+            <h2>Game Over!</h2>
+            <p>Your final score: <span id="finalScore"></span></p>
+            <button id="startOverBtn">Start Over</button>
+        </div>
+    </div>
+
+    <script>
+        const leftCanvas = document.getElementById('leftCanvas');
+        const rightCanvas = document.getElementById('rightCanvas');
+        const leftCtx = leftCanvas.getContext('2d');
+        const rightCtx = rightCanvas.getContext('2d');
+        const modal = document.getElementById('modal');
+        const finalScoreSpan = document.getElementById('finalScore');
+        const startOverBtn = document.getElementById('startOverBtn');
+        const modeToggle = document.getElementById('modeToggle');
+        const modeLabel = document.getElementById('modeLabel');
+
+        let level = 1;
+        let score = 0;
+        let startTime;
+        let gameActive = true;
+        let isHardMode = false;
+        let elements = [];
+        let differenceElement = null;
+        let animationId;
+        let backgroundColor = 'white';
+
+        const shapes = ['circle', 'square', 'triangle'];
+        const emojis = ['😂', '🤣', '😅', '😆', '😉', '😜', '🤪', '😎', '🥳', '🤩', '😻', '🙀', '👽', '🤖', '👻', '💩', '🤡', '🦄', '🐙', '🦖', '🌮', '🍕', '🍔', '🍦', '🍭', '🎉', '🎊', '🎈', '🚀', '💥', '🌈', '🔥', '💯', '🏆'];
+
+        function getRandomColor() {
+            return `rgb(${Math.random() * 255},${Math.random() * 255},${Math.random() * 255})`;
+        }
+
+        function drawShape(ctx, element) {
+            ctx.fillStyle = element.color;
+            ctx.beginPath();
+            switch (element.shape) {
+                case 'circle':
+                    ctx.arc(element.x, element.y, element.size, 0, Math.PI * 2);
+                    break;
+                case 'square':
+                    ctx.rect(element.x - element.size / 2, element.y - element.size / 2, element.size, element.size);
+                    break;
+                case 'triangle':
+                    ctx.moveTo(element.x, element.y - element.size / 2);
+                    ctx.lineTo(element.x - element.size / 2, element.y + element.size / 2);
+                    ctx.lineTo(element.x + element.size / 2, element.y + element.size / 2);
+                    ctx.closePath();
+                    break;
+            }
+            ctx.fill();
+        }
+
+        function drawEmoji(ctx, element) {
+            ctx.font = `${element.size}px Arial`;
+            ctx.textAlign = 'center';
+            ctx.textBaseline = 'middle';
+            ctx.fillText(element.emoji, element.x, element.y);
+        }
+
+        function generateImage(difficulty) {
+            elements = [];
+            let numElements = isHardMode ? 10 + difficulty * 3 : 20;
+            if (isHardMode && difficulty > 1) {
+                numElements += Math.floor(numElements * 0.5 * (difficulty - 1));
+            }
+
+            for (let i = 0; i < numElements; i++) {
+                const element = createRandomElement();
+                elements.push(element);
+            }
+
+            if (isHardMode && level >= 10) {
+                const numFloatingElements = Math.min(Math.floor(numElements / 2), level - 9);
+                for (let i = 0; i < numFloatingElements; i++) {
+                    elements[i].isMoving = true;
+                }
+            }
+
+            elements.sort((a, b) => a.isMoving ? 1 : -1);
+            drawElements(leftCtx);
+            drawElements(rightCtx);
+        }
+
+        function createRandomElement() {
+            const x = Math.random() * 380;
+            const y = Math.random() * 380;
+            const size = Math.random() * 20 + 10;
+            const isShape = Math.random() < 0.7;
+            const element = {
+                x, y, size,
+                type: isShape ? 'shape' : 'emoji',
+                vx: (Math.random() - 0.5) * 2,
+                vy: (Math.random() - 0.5) * 2,
+                isMoving: false
+            };
+
+            if (isShape) {
+                element.shape = shapes[Math.floor(Math.random() * shapes.length)];
+                element.color = getRandomColor();
+            } else {
+                element.emoji = emojis[Math.floor(Math.random() * emojis.length)];
+            }
+
+            return element;
+        }
+
+        function createDifference() {
+            differenceElement = createRandomElement();
+            differenceElement.x = Math.random() * 380;
+            differenceElement.y = Math.random() * 380;
+            differenceElement.size = Math.random() * (20 - (isHardMode ? level : 0)) + 5;
+            differenceElement.isMoving = Math.random() < 0.5 && isHardMode && level >= 10;
+        }
+
+        function drawElements(ctx) {
+            ctx.fillStyle = backgroundColor;
+            ctx.fillRect(0, 0, 380, 380);
+
+            elements.forEach(element => {
+                if (element.type === 'shape') {
+                    drawShape(ctx, element);
+                } else {
+                    drawEmoji(ctx, element);
+                }
+            });
+
+            if (ctx === rightCtx && differenceElement) {
+                if (differenceElement.type === 'shape') {
+                    drawShape(ctx, differenceElement);
+                } else {
+                    drawEmoji(ctx, differenceElement);
+                }
+            }
+        }
+
+        function startGame() {
+            level = 1;
+            score = 0;
+            gameActive = true;
+            modal.style.display = "none";
+            backgroundColor = isHardMode ? getRandomColor() : 'white';
+            generateImage(level);
+            createDifference();
+            startTime = Date.now();
+            updateInfo();
+            if (isHardMode && level >= 10) {
+                animate();
+            } else {
+                drawElements(leftCtx);
+                drawElements(rightCtx);
+            }
+        }
+
+        function updateInfo() {
+            document.getElementById('level').textContent = level;
+            document.getElementById('score').textContent = score;
+            document.getElementById('time').textContent = Math.floor((Date.now() - startTime) / 1000);
+            if (gameActive) {
+                requestAnimationFrame(updateInfo);
+            }
+        }
+
+        function endGame() {
+            gameActive = false;
+            finalScoreSpan.textContent = score;
+            modal.style.display = "block";
+            cancelAnimationFrame(animationId);
+        }
+
+        function animate() {
+            elements.forEach(element => {
+                if (element.isMoving) {
+                    element.x += element.vx;
+                    element.y += element.vy;
+
+                    if (element.x < 0 || element.x > 380) element.vx *= -1;
+                    if (element.y < 0 || element.y > 380) element.vy *= -1;
+
+                    element.x = Math.max(0, Math.min(380, element.x));
+                    element.y = Math.max(0, Math.min(380, element.y));
+                }
+            });
+
+            if (differenceElement && differenceElement.isMoving) {
+                differenceElement.x += differenceElement.vx;
+                differenceElement.y += differenceElement.vy;
+
+                if (differenceElement.x < 0 || differenceElement.x > 380) differenceElement.vx *= -1;
+                if (differenceElement.y < 0 || differenceElement.y > 380) differenceElement.vy *= -1;
+
+                differenceElement.x = Math.max(0, Math.min(380, differenceElement.x));
+                differenceElement.y = Math.max(0, Math.min(380, differenceElement.y));
+            }
+
+            drawElements(leftCtx);
+            drawElements(rightCtx);
+
+            if (gameActive) {
+                animationId = requestAnimationFrame(animate);
+            }
+        }
+
+        startOverBtn.addEventListener('click', startGame);
+
+        modeToggle.addEventListener('change', function() {
+            isHardMode = this.checked;
+            modeLabel.textContent = isHardMode ? 'Hard Mode' : 'Easy Mode';
+            startGame();
+        });
+
+        rightCanvas.addEventListener('click', (e) => {
+            if (!gameActive) return;
+
+            const rect = rightCanvas.getBoundingClientRect();
+            const x = e.clientX - rect.left;
+            const y = e.clientY - rect.top;
+
+            if (differenceElement) {
+                const distance = Math.sqrt((x - differenceElement.x) ** 2 + (y - differenceElement.y) ** 2);
+                if (distance < differenceElement.size) {
+                    score++;
+                    if (isHardMode) level++;
+                    generateImage(level);
+                    createDifference();
+                    if (isHardMode && level >= 10) {
+                        cancelAnimationFrame(animationId);
+                        animate();
+                    } else {
+                        drawElements(leftCtx);
+                        drawElements(rightCtx);
+                    }
+                } else {
+                    endGame();
+                }
+            }
+        });
+
+        startGame();
+    </script>
+</body>
+</html>
