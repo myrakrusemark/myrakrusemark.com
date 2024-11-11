@@ -34,42 +34,73 @@
         const { useState, useRef, useEffect } = React;
 
         const HeaderSection = () => {
+            const [isExpanded, setIsExpanded] = useState(false);
+            
+            const handleDownload = () => {
+                const element = document.createElement('a');
+                element.setAttribute('href', 'data:text/plain;charset=utf-8,' + encodeURIComponent(document.documentElement.outerHTML));
+                element.setAttribute('download', 'period-tracker.html');
+                element.style.display = 'none';
+                document.body.appendChild(element);
+                element.click();
+                document.body.removeChild(element);
+            };
+
             return (
                 <div className="text-center mb-8">
-                    <h1 className="text-2xl font-bold mb-2">Period Tracker</h1>
-                    <p className="text-gray-600 mb-4">
-                        A private, offline period tracking app that runs entirely in your browser. 
-                        Your data stays on your device and is never uploaded anywhere.
-                    </p>
-                    <div className="bg-blue-50 p-4 rounded-lg text-left">
-                        <h2 className="font-semibold mb-2 text-blue-800">How to Use Your Data:</h2>
-                        <ul className="space-y-2 text-sm text-blue-900">
-                            <li className="flex items-start gap-2">
-                                <span className="font-bold">📥</span>
-                                <span>
-                                    <strong>Upload Previous Data:</strong> Click "Load Previous Entries" to import your existing CSV file. If this is your first entry, then skip this step.
-                                </span>
-                            </li>
-                            <li className="flex items-start gap-2">
-                                <span className="font-bold">📝</span>
-                                <span>
-                                    <strong>Add New Entries:</strong> Use the form to log new period data - it will automatically merge with your existing entries
-                                </span>
-                            </li>
-                            <li className="flex items-start gap-2">
-                                <span className="font-bold">💾</span>
-                                <span>
-                                    <strong>Save Your Data:</strong> Click "Download Entries" regularly to save your updated data as a CSV file on your device
-                                </span>
-                            </li>
-                            <li className="flex items-start gap-2">
-                                <span className="font-bold">🔒</span>
-                                <span>
-                                    <strong>Privacy:</strong> All data is stored locally in CSV format on your device - closing your browser data will reset the app, so remember to download your entries!
-                                </span>
-                            </li>
-                        </ul>
+                    <h1 className="text-2xl font-bold mb-4">Period Tracker</h1>
+                    <div className="mb-4">
+                        <p className="text-gray-600 mb-3">
+                            A completely private period tracking app that runs in your browser. <br />
+                            Your data stays on your device and is never uploaded anywhere.
+                        </p>
+                        <div className="flex justify-center gap-3">
+                            <button 
+                                onClick={handleDownload}
+                                className="text-blue-600 hover:text-blue-800 font-medium"
+                            >
+                                📥 Download for Offline Use
+                            </button>
+                            <button 
+                                onClick={() => setIsExpanded(!isExpanded)}
+                                className="text-blue-600 hover:text-blue-800 font-medium"
+                            >
+                                {isExpanded ? '↑ Show Less' : '↓ Learn More'}
+                            </button>
+                        </div>
                     </div>
+                    
+                    {isExpanded && (
+                        <div className="bg-blue-50 p-4 rounded-lg text-left animate-fade-in">
+                            <h2 className="font-semibold mb-2 text-blue-800">How to Use Your Data:</h2>
+                            <ul className="space-y-2 text-sm text-blue-900">
+                                <li className="flex items-start gap-2">
+                                    <span className="font-bold">📥</span>
+                                    <span>
+                                        <strong>Upload Previous Data:</strong> Click "Load Previous Entries" to import your existing CSV file. If this is your first entry, then skip this step.
+                                    </span>
+                                </li>
+                                <li className="flex items-start gap-2">
+                                    <span className="font-bold">📝</span>
+                                    <span>
+                                        <strong>Add New Entries:</strong> Use the form to log new period data - it will automatically merge with your existing entries
+                                    </span>
+                                </li>
+                                <li className="flex items-start gap-2">
+                                    <span className="font-bold">💾</span>
+                                    <span>
+                                        <strong>Save Your Data:</strong> Click "Download Entries" regularly to save your updated data as a CSV file on your device
+                                    </span>
+                                </li>
+                                <li className="flex items-start gap-2">
+                                    <span className="font-bold">🔒</span>
+                                    <span>
+                                        <strong>Privacy:</strong> All data is stored locally in CSV format on your device - closing your browser data will reset the app, so remember to download your entries!
+                                    </span>
+                                </li>
+                            </ul>
+                        </div>
+                    )}
                 </div>
             );
         };
