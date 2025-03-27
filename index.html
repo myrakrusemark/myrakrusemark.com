@@ -5,117 +5,316 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Myra Krusemark's Cool Little Projects</title>
     <style>
+        :root {
+            --primary-color: #2c3e50;
+            --accent-color: #e74c3c;
+            --background-color: #f8f9fa;
+            --text-color: #2c3e50;
+            --link-color: #3498db;
+            --box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            --transition: all 0.3s ease;
+        }
+
         body {
-            font-family: Arial, sans-serif;
+            font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
             text-align: center;
-            background-color: #d5fbf4;
+            background-color: var(--background-color);
             padding: 20px;
+            line-height: 1.6;
+            color: var(--text-color);
         }
+
         h1 {
-            color: #537670;
+            color: var(--primary-color);
+            font-size: 2.5rem;
+            margin-bottom: 1.5rem;
+            font-weight: 700;
+            letter-spacing: -0.5px;
         }
+
         p, a {
-            color: #537670
+            color: var(--text-color);
+            text-decoration: none;
+            transition: var(--transition);
         }
+
+        a:hover {
+            color: var(--accent-color);
+        }
+
         hr {
-            border: 1px solid #5376703d;
+            border: none;
+            height: 2px;
+            background: linear-gradient(to right, transparent, var(--primary-color), transparent);
             width: 100%;
-            max-width: 250px;
-            margin: 35px auto;
+            max-width: 300px;
+            margin: 40px auto;
         }
+
         .link-container {
             display: flex;
             flex-direction: column;
             align-items: center;
             margin-bottom: 20px;
+            gap: 15px;
         }
+
         .link-box {
             display: flex;
-            flex-direction: column;
-            justify-content: center;
+            flex-direction: row;
+            align-items: center;
             background-color: white;
-            color: #537670;
+            color: var(--text-color);
             padding: 15px 25px;
             text-align: left;
             text-decoration: none;
             font-size: 16px;
-            margin: 10px 0;
-            cursor: pointer;
-            border-radius: 500px;
             width: 80%;
             max-width: 600px;
-            height: 40px;
-            background-size: cover;
-            background-position: center;
+            height: 80px;
+            border-radius: 12px;
             position: relative;
             overflow: hidden;
-            border: 1px solid #537670;
-            transition: border-color 0.3s;
+            border: 1px solid rgba(0, 0, 0, 0.1);
+            box-shadow: var(--box-shadow);
+            transition: var(--transition);
+            transform: translateY(0);
+            gap: 20px;
         }
-        .link-box::before {
-            content: "";
+
+        .link-box:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
+            border-color: var(--accent-color);
+        }
+
+        .link-box .thumbnail {
+            width: 60px;
+            height: 60px;
+            border-radius: 8px;
+            overflow: hidden;
+            flex-shrink: 0;
+        }
+
+        .link-box .thumbnail img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .link-box .content {
+            flex-grow: 1;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+
+        .link-box span {
+            color: var(--primary-color);
+            font-weight: 600;
+            font-size: 1.1rem;
+            position: relative;
+            z-index: 1;
+        }
+
+        .link-box small {
+            color: #666;
+            margin-top: 4px;
+            position: relative;
+            z-index: 1;
+            font-size: 0.9rem;
+        }
+
+        .project-section {
+            text-align: left;
+            max-width: 800px;
+            margin: 40px auto;
+            width: 100%;
+            background: white;
+            padding: 30px;
+            border-radius: 16px;
+            box-shadow: var(--box-shadow);
+            display: flex;
+            flex-direction: column;
+        }
+
+        .project-header {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+            margin-bottom: 20px;
+        }
+
+        .project-thumbnail {
+            width: 100px;
+            height: 100px;
+            border-radius: 12px;
+            overflow: hidden;
+            flex-shrink: 0;
+        }
+
+        .project-thumbnail img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .project-info {
+            flex-grow: 1;
+        }
+
+        .project-title {
+            color: var(--primary-color);
+            margin-bottom: 15px;
+            font-size: 1.8rem;
+            font-weight: 600;
+        }
+
+        .product-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 20px;
+            margin: 30px 0;
+        }
+
+        .product-card {
+            position: relative;
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: var(--box-shadow);
+            transition: var(--transition);
+            aspect-ratio: 1;
+            width: 100%;
+        }
+
+        .product-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.15);
+        }
+
+        .product-card img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: var(--transition);
+        }
+
+        .product-card:hover img {
+            transform: scale(1.05);
+        }
+
+        .product-card a {
             position: absolute;
             top: 0;
             left: 0;
             width: 100%;
             height: 100%;
-            /*background: linear-gradient(to right, rgba(0, 0, 0, 0.5) 0%, rgba(0, 0, 0, 0) 75%);*/
+            display: block;
         }
-        .link-box:hover {
-            background-color: #537670;
-            border-color: #537670;
-            color:white;
-        }
-        .link-box span {
-            color: #537670;
-            font-weight: bold;
-            position: relative;
-            z-index: 1;
-        }
-        .link-box:hover span {
-            color:white !important;
-            text-decoration: underline;
 
-        }
-        .link-box small {
-            margin-top: 5px;
-            position: relative;
-            z-index: 1;
-        }
-        .project-section {
-            text-align: left;
-            max-width: 650px;
-            margin-left: auto;
-            margin-right: auto;
-            margin-top:50px;
-            width: 100%;
-        }
-        .project-title {
-            color: #537670;
-            margin-bottom: 10px;
-        }
         .topoco-link-container {
-            border: 1px solid #537670;
-            border-radius: 500px;
+            display: inline-flex;
+            gap: 15px;
+            border: 1px solid rgba(0, 0, 0, 0.1);
+            border-radius: 12px;
             padding: 15px 25px;
             background-color: white;
-            font-weight: 600;
+            font-weight: 500;
+            box-shadow: var(--box-shadow);
+            transition: var(--transition);
+            margin-top: 20px;
         }
+
         .topoco-link-container:hover {
-            color:white;
-            background-color: #537670;
+            transform: translateY(-2px);
+            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
+            border-color: var(--accent-color);
         }
+
+        .topoco-link-container a {
+            color: var(--primary-color);
+            transition: var(--transition);
+        }
+
         .topoco-link-container:hover a {
-            color: white;
+            color: var(--accent-color);
+        }
+
+        @media (max-width: 800px) {
+            .product-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+
+        @media (max-width: 400px) {
+            .product-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        @media (max-width: 600px) {
+            body {
+                padding: 15px;
+            }
+
+            h1 {
+                font-size: 2rem;
+            }
+
+            .link-box {
+                width: 90%;
+                padding: 12px 20px;
+                height: 70px;
+            }
+
+            .link-box .thumbnail {
+                width: 50px;
+                height: 50px;
+            }
+
+            .project-header {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+
+            .project-thumbnail {
+                width: 80px;
+                height: 80px;
+            }
         }
     </style>
 </head>
 <body>
     <h1>Myra Krusemark's Cool Little Projects</h1>
-    <p><a href="Myra Krusemark - Resume.pdf">Résumé</a> | <a href="https://topoco.art/pages/contact">Contact Me!</a></a></p>
+    <p><a href="Myra Krusemark - Resume.pdf">Résumé</a> | <a href="https://www.linkedin.com/in/myrasmithkrusemark/" target="_blank">LinkedIn</a> | <a href="https://topoco.art/pages/contact">Contact Me!</a></a></p>
     <div class="project-section">
-        <h2 class="project-title">TopoCo Art</h2>
-        <p>Cool products you never knew you wanted or needed</p>
+        <div class="project-header">
+            <a href="https://topoco.art" target="_blank" class="project-thumbnail">
+                <img src="images/thumbs/topoco.webp" alt="TopoCo Art">
+            </a>
+            <div class="project-info">
+                <h2 class="project-title">TopoCo Art</h2>
+                <p>Cool products you never knew you wanted or needed.</p>
+            </div>
+        </div>
+        <div class="product-grid">
+            <div class="product-card">
+                <img src="images/topoco/meds-holder.jpg" alt="Meds Holder">
+                <a href="https://topoco.art" target="_blank"></a>
+            </div>
+            <div class="product-card">
+                <img src="images/topoco/hex-holder.jpg" alt="Hex Holder">
+                <a href="https://topoco.art" target="_blank"></a>
+            </div>
+            <div class="product-card">
+                <img src="images/topoco/sticky-holder.png" alt="Sticky Holder">
+                <a href="https://topoco.art" target="_blank"></a>
+            </div>
+            <div class="product-card">
+                <img src="images/topoco/azul.png" alt="Azul">
+                <a href="https://topoco.art" target="_blank"></a>
+            </div>
+        </div>
         <div class="topoco-link-container">
             <a href="https://topoco.art" target="_blank">topoco.art</a> | 
             <a href="https://www.ebay.com/str/topocoart" target="_blank">eBay</a> |
@@ -124,17 +323,68 @@
     </div>
     <hr>
     <div class="link-container">
-        <a href="https://github.com/myrakrusemark" target="_blank" class="link-box" style="background-image: url('/api/placeholder/600/80');">
-            <span>GitHub Projects</span>
-            <small>Explore my coding projects</small>
+        <a href="https://github.com/myrakrusemark" target="_blank" class="link-box">
+            <div class="thumbnail">
+                <img src="images/thumbs/github.png" alt="GitHub">
+            </div>
+            <div class="content">
+                <span>GitHub Projects</span>
+                <small>Explore my coding projects</small>
+            </div>
         </a>
-        <a href="https://txt2speech.org" target="_blank" class="link-box" style="background-image: url('/api/placeholder/600/80');">
-            <span>txt2speech.org</span>
-            <small>Unlimited text-to-speech convertor</small>
+        <a href="https://txt2speech.org" target="_blank" class="link-box">
+            <div class="thumbnail">
+                <img src="images/thumbs/txt2speech.png" alt="txt2speech">
+            </div>
+            <div class="content">
+                <span>txt2speech.org</span>
+                <small>Unlimited text-to-speech convertor</small>
+            </div>
         </a>
-        <a href="https://windchimesimulator.com" target="_blank" class="link-box" style="background-image: url('/api/placeholder/600/80');">
-            <span>windchimesimulator.com</span>
-            <small>Virtual wind chime physical simulation</small>
+        <a href="https://windchimesimulator.com" target="_blank" class="link-box">
+            <div class="thumbnail">
+                <img src="images/thumbs/windchime.png" alt="Wind Chime">
+            </div>
+            <div class="content">
+                <span>windchimesimulator.com</span>
+                <small>Virtual wind chime physical simulation</small>
+            </div>
+        </a>
+        <a href="period-tracker.html" target="_blank" class="link-box">
+            <div class="thumbnail">
+                <img src="images/thumbs/period.png" alt="Period Tracker">
+            </div>
+            <div class="content">
+                <span>Period Tracker</span>
+                <small>Track your menstrual cycle</small>
+            </div>
+        </a>
+        <a href="https://github.com/myrakrusemark/mama-nova-hangman" target="_blank" class="link-box">
+            <div class="thumbnail">
+                <img src="images/thumbs/hangman.png" alt="Mama Nova Hangman">
+            </div>
+            <div class="content">
+                <span>Mama Nova Hangman</span>
+                <small>A two-player Hangman game created with Python and Tkinter</small>
+            </div>
+        </a>
+        <a href="https://github.com/myrakrusemark/llm-gpt4-browser" target="_blank" class="link-box">
+            <div class="thumbnail">
+                <img src="images/thumbs/llm-browser.png" alt="GPT Powered Web Browser">
+            </div>
+            <div class="content">
+                <span>GPT Powered Web Browser</span>
+                <small>Automated web search and summarization using GPT and Selenium</small>
+            </div>
+        </a>
+        <a href="https://github.com/myrakrusemark/Daisy-openAI-chat" target="_blank" class="link-box">
+            <div class="thumbnail">
+                <img src="images/thumbs/daisy.png" alt="Daisy AI Platform">
+            </div>
+            <div class="content">
+                <span>Daisy AI Platform</span>
+                <small>Extensible Python platform for building LLM-powered applications</small>
+            </div>
         </a>
     </div>
 </body>
