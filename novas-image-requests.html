@@ -1,0 +1,223 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Image Request Form</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            line-height: 1.6;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            color: #333;
+            background: linear-gradient(135deg, #f6d365 0%, #fda085 100%);
+            background-size: cover;
+            min-height: 100vh;
+            position: relative;
+            overflow-x: hidden;
+        }
+        
+        body::before {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="100" height="100" viewBox="0 0 100 100"><circle cx="20" cy="20" r="10" fill="%23ffffff20"/><circle cx="60" cy="50" r="15" fill="%23ffffff15"/><circle cx="30" cy="80" r="12" fill="%23ffffff18"/><circle cx="80" cy="15" r="8" fill="%23ffffff12"/><circle cx="75" cy="75" r="14" fill="%23ffffff20"/></svg>');
+            background-size: 300px 300px;
+            opacity: 0.4;
+            z-index: -1;
+            pointer-events: none;
+        }
+        h1 {
+            text-align: center;
+            margin-bottom: 30px;
+            color: #2c3e50;
+            font-size: 2.5rem;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.1);
+            font-weight: bold;
+            letter-spacing: 1px;
+        }
+        .form-container {
+            background-color: rgba(255, 255, 255, 0.85);
+            border-radius: 15px;
+            padding: 30px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.15);
+            backdrop-filter: blur(8px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+        .form-group {
+            margin-bottom: 20px;
+        }
+        label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+        }
+        input[type="text"],
+        input[type="email"],
+        input[type="tel"],
+        textarea {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            font-size: 16px;
+        }
+        textarea {
+            min-height: 100px;
+        }
+        .image-preview {
+            width: 100%;
+            min-height: 200px;
+            border: 2px dashed #ddd;
+            margin-top: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #999;
+            position: relative;
+        }
+        .image-preview img {
+            max-width: 100%;
+            max-height: 300px;
+            display: none;
+        }
+        .file-input-wrapper {
+            position: relative;
+            margin-top: 10px;
+        }
+        .file-input-button {
+            background-color: #4CAF50;
+            color: white;
+            padding: 10px 15px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+            display: inline-block;
+        }
+        .file-input {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            opacity: 0;
+            cursor: pointer;
+        }
+        .submit-btn {
+            background-color: #3498db;
+            color: white;
+            border: none;
+            padding: 12px 30px;
+            font-size: 18px;
+            border-radius: 5px;
+            cursor: pointer;
+            display: block;
+            width: 100%;
+            transition: background-color 0.3s;
+        }
+        .submit-btn:hover {
+            background-color: #2980b9;
+        }
+        .success-message {
+            display: none;
+            background-color: #d4edda;
+            color: #155724;
+            padding: 15px;
+            border-radius: 5px;
+            margin-top: 20px;
+            text-align: center;
+        }
+    </style>
+</head>
+<body>
+    <h1>Image Request Form</h1>
+    
+    <div class="form-container">
+        <form id="requestForm" action="https://formspree.io/novasimagerequests@myrakrusemark.com" method="POST" enctype="multipart/form-data">
+            <div class="form-group">
+                <label for="name">Your Name:</label>
+                <input type="text" id="name" name="name" required>
+            </div>
+            
+            <div class="form-group">
+                <label for="email">Email Address:</label>
+                <input type="email" id="email" name="email" required>
+            </div>
+            
+            <div class="form-group">
+                <label for="phone">Phone Number:</label>
+                <input type="tel" id="phone" name="phone">
+            </div>
+            
+            <div class="form-group">
+                <label for="request">Your Request:</label>
+                <textarea id="request" name="request" required placeholder="Please describe what you want to order..."></textarea>
+            </div>
+            
+            <div class="form-group">
+                <label>Upload Image:</label>
+                <div class="file-input-wrapper">
+                    <div class="file-input-button">Choose Image</div>
+                    <input type="file" class="file-input" id="imageUpload" name="image" accept="image/*">
+                </div>
+                <div class="image-preview" id="imagePreview">
+                    <span>Image preview will appear here</span>
+                    <img id="previewImg">
+                </div>
+            </div>
+            
+            <button type="submit" class="submit-btn">Submit Request</button>
+        </form>
+        
+        <div class="success-message" id="successMessage">
+            <h3>Thank you for your request!</h3>
+            <p>We have received your information and will contact you soon.</p>
+        </div>
+    </div>
+
+    <script>
+        // Image preview functionality
+        const imageUpload = document.getElementById('imageUpload');
+        const previewImg = document.getElementById('previewImg');
+        const previewText = document.querySelector('#imagePreview span');
+        
+        imageUpload.addEventListener('change', function() {
+            const file = this.files[0];
+            if (file) {
+                const reader = new FileReader();
+                
+                reader.addEventListener('load', function() {
+                    previewImg.src = this.result;
+                    previewImg.style.display = 'block';
+                    previewText.style.display = 'none';
+                });
+                
+                reader.readAsDataURL(file);
+            }
+        });
+        
+        // Form submission
+        const form = document.getElementById('requestForm');
+        const successMessage = document.getElementById('successMessage');
+        
+        form.addEventListener('submit', function(e) {
+            // We're not preventing the default anymore to allow the form to submit to Formspree
+            // Only showing the success message if submission is successful
+            
+            // Hide form and show success message - in a real implementation,
+            // this would be better handled in the promise's .then() after 
+            // confirming the form was successfully submitted
+            setTimeout(function() {
+                form.style.display = 'none';
+                successMessage.style.display = 'block';
+            }, 1000);
+        });
+    </script>
+</body>
+</html>
