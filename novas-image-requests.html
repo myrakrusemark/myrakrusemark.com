@@ -133,13 +133,31 @@
             margin-top: 20px;
             text-align: center;
         }
+        
+        .payment-info {
+            background-color: rgba(236, 240, 241, 0.7);
+            padding: 15px;
+            border-radius: 8px;
+            margin: 25px 0;
+            border-left: 4px solid #3498db;
+        }
+        
+        .payment-info h3 {
+            margin-top: 0;
+            color: #2c3e50;
+            font-size: 1.2rem;
+        }
+        
+        .payment-info p {
+            margin: 8px 0;
+        }
     </style>
 </head>
 <body>
     <h1>Image Request Form</h1>
     
     <div class="form-container">
-        <form id="requestForm" action="https://formspree.io/f/mrbqbpqn" method="POST" enctype="multipart/form-data">
+        <form id="requestForm" action="https://formspree.io/novasimagerequests@myrakrusemark.com" method="POST" enctype="multipart/form-data">
             <div class="form-group">
                 <label for="name">Your Name:</label>
                 <input type="text" id="name" name="name" required>
@@ -170,6 +188,12 @@
                     <span>Image preview will appear here</span>
                     <img id="previewImg">
                 </div>
+            </div>
+            
+            <div class="payment-info">
+                <h3>Payment Information</h3>
+                <p>After reviewing your request, we will discuss pricing via email or text.</p>
+                <p>Payment can be made through Venmo: <strong>@mimalima</strong></p>
             </div>
             
             <button type="submit" class="submit-btn">Submit Request</button>
