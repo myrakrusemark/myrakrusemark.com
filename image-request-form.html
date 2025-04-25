@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Image Request Form</title>
+    <style>
+        /* --- Base Layout & Typography --- */
+        body{
+            font-family:Arial,Helvetica,sans-serif;
+            line-height:1.6;
+            max-width:800px;
+            margin:0 auto;
+            padding:20px;
+            color:#333;
+            background:linear-gradient(135deg,#f6d365 0%,#fda085 100%);
+            background-size:cover;
+            min-height:100vh;
+            position:relative;
+            overflow-x:hidden;
+        }
+        body::before{
+            content:"";
+            position:absolute;
+            inset:0;
+            background:url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="100" height="100" viewBox="0 0 100 100"><circle cx="20" cy="20" r="10" fill="%23ffffff20"/><circle cx="60" cy="50" r="15" fill="%23ffffff15"/><circle cx="30" cy="80" r="12" fill="%23ffffff18"/><circle cx="80" cy="15" r="8" fill="%23ffffff12"/><circle cx="75" cy="75" r="14" fill="%23ffffff20"/></svg>');
+            background-size:300px 300px;
+            opacity:.4;
+            z-index:-1;
+            pointer-events:none;
+        }
+        h1{
+            text-align:center;
+            margin-bottom:30px;
+            color:#2c3e50;
+            font-size:2.5rem;
+            text-shadow:2px 2px 4px rgba(0,0,0,.1);
+            font-weight:700;
+            letter-spacing:1px;
+        }
+
+        /* --- Card Container --- */
+        .section-card{
+            background:rgba(255,255,255,.85);
+            border-radius:15px;
+            padding:30px;
+            box-shadow:0 8px 32px rgba(0,0,0,.15);
+            backdrop-filter:blur(8px);
+            border:1px solid rgba(255,255,255,.2);
+            margin-bottom:40px;
+        }
+
+        /* --- Form Controls --- */
+        .form-group{margin-bottom:20px}
+        label{display:block;margin-bottom:5px;font-weight:700}
+        input,textarea{
+            width:100%;
+            padding:10px;
+            border:1px solid #ddd;
+            border-radius:5px;
+            font-size:16px;
+        }
+        textarea{min-height:100px}
+        .field-help{color:#7f8c8d;font-size:.85rem;margin-top:5px;font-style:italic}
+
+        /* --- Buttons & Alerts --- */
+        .submit-btn{
+            background:#3498db;
+            color:#fff;
+            border:none;
+            padding:12px 30px;
+            font-size:18px;
+            border-radius:5px;
+            cursor:pointer;
+            width:100%;
+            transition:background-color .3s;
+        }
+        .submit-btn:hover{background:#2980b9}
+        .success-message{
+            display:none;
+            background:#d4edda;
+            color:#155724;
+            padding:15px;
+            border-radius:5px;
+            margin-top:20px;
+            text-align:center;
+        }
+
+        /* --- Payment Box --- */
+        .payment-info{
+            background:rgba(236,240,241,.7);
+            padding:15px;
+            border-radius:8px;
+            margin:25px 0;
+            border-left:4px solid #3498db;
+        }
+        .payment-info h3{margin-top:0;color:#2c3e50;font-size:1.2rem}
+
+        /* --- Package Cards --- */
+        .packages{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:20px}
+        .package-card{
+            background:rgba(255,255,255,.85);
+            border-radius:12px;
+            padding:20px;
+            box-shadow:0 4px 20px rgba(0,0,0,.1);
+            backdrop-filter:blur(6px);
+            border:1px solid rgba(255,255,255,.2);
+            text-align:center;
+        }
+        .package-card h3{margin-top:0;color:#2c3e50}
+        .package-card .price{font-size:1.4rem;font-weight:700;color:#e67e22;margin:10px 0}
+
+        /* --- Gallery --- */
+        .gallery{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:15px}
+        .gallery img{width:100%;border-radius:8px;box-shadow:0 4px 12px rgba(0,0,0,.15);object-fit:cover}
+
+        /* --- FAQ --- */
+        .faq-item{margin-bottom:20px}
+        .faq-question{font-weight:700;margin-bottom:5px;color:#2c3e50}
+        .faq-answer{margin-left:10px}
+    </style>
+</head>
+<body>
+    <h1>Image Request Form</h1>
+
+    <!-- About Section -->
+    <section id="about" class="section-card">
+        <h2 style="text-align:center;color:#2c3e50;margin-bottom:10px;">About Me</h2>
+        <p>I’m a 10‑year‑old artist who loves turning imagination into pictures. I started drawing when I could barely hold a pencil, and every day I learn something new. When I’m not sketching, you’ll find me reading graphic novels, building LEGO worlds, or exploring nature for inspiration.</p>
+    </section>
+
+    <!-- Packages Section -->
+    <section class="section-card">
+        <h2 style="text-align:center;color:#2c3e50;margin-bottom:20px;">Drawing Packages</h2>
+        <div class="packages">
+            <div class="package-card"><h3>Quick Sketch</h3><p>Pencil line art, single subject, delivered as a JPG/PNG.</p><p class="price">$5</p></div>
+            <div class="package-card"><h3>Ink & Shading</h3><p>Clean ink lines with grayscale shading, up to two subjects.</p><p class="price">$10</p></div>
+            <div class="package-card"><h3>Full‑Color Illustration</h3><p>Digital color artwork with simple background.</p><p class="price">$20</p></div>
+        </div>
+    </section>
+
+    <!-- Gallery Section -->
+    <section id="gallery" class="section-card">
+        <h2 style="text-align:center;color:#2c3e50;margin-bottom:20px;">Gallery</h2>
+        <div class="gallery">
+            <img src="https://images.unsplash.com/photo-1504203700686-9c47e5f4b97d?auto=format&fit=crop&w=600&q=60" alt="Sample drawing 1">
+            <img src="https://images.unsplash.com/photo-1535909339361-9b69b9a0e470?auto=format&fit=crop&w=600&q=60" alt="Sample drawing 2">
+            <img src="https://images.unsplash.com/photo-1513364776144-60967b0f800f?auto=format&fit=crop&w=600&q=60" alt="Sample drawing 3">
+            <img src="https://images.unsplash.com/photo-1519125323398-675f0ddb6308?auto=format&fit=crop&w=600&q=60" alt="Sample drawing 4">
+        </div>
+    </section>
+
+    <!-- Request Form -->
+    <div class="section-card">
+        <form id="requestForm" action="https://formspree.io/novasimagerequests@myrakrusemark.com" method="POST" enctype="multipart/form-data">
+            <div class="form-group"><label for="name">Your Name:</label><input type="text" id="name" name="name" required></div>
+            <div class="form-group"><label for="email">Email Address:</label><input type="email" id="email" name="email" required></div>
+            <div class="form-group"><label for="phone">Phone Number:</label><input type="tel" id="phone" name="phone"></div>
+            <div class="form-group"><label for="request">Your Request:</label><textarea id="request" name="request" required placeholder="Please describe what you want to order..."></textarea></div>
+            <div class="form-group"><label for="imageUrl">Image URL:</label><input type="url" id="imageUrl" name="imageUrl" placeholder="Paste a link to your image here"><p class="field-help">You can paste a link from Google Photos, Apple iCloud, Instagram, or any other image hosting service.</p></div>
+            <div class="payment-info"><h3>Payment Information</h3><p>After reviewing your request, we will discuss pricing via email or text.</p><p><strong>All payments are processed safely through my parent's Venmo account.</strong></p><p>Venmo handle: <strong>@mimalima</strong></p></div>
+            <button type="submit" class="submit-btn">Submit Request</button>
+        </form>
+        <div class="success-message" id="successMessage"><h3>Thank you for your request!</h3><p>We have received your information and will contact you soon.</p></div>
+    </div>
+
+    <!-- FAQ Section -->
+    <section id="faq" class="section-card">
+        <h2 style="text-align:center;color:#2c3e50;margin-bottom:10px;">Frequently Asked Questions</h2>
+        <div class="faq-item"><p class="faq-question">How long will my drawing take?</p><p class="faq-answer">Most sketches are ready within 3–5 days. Detailed color pieces may take up to two weeks. You’ll get an estimated delivery date when we confirm your order.</p></div>
+        <div class="faq-item"><p class="faq-question">Can I request changes?</p><p class="faq-answer">Absolutely! One round of small revisions is included in every package. Major changes (for example, switching characters) may require an extra fee.</p></div>
+        <div class="faq-item"><p class="faq-question">Do you draw copyrighted characters?</p><p class="faq-answer">Sorry, I can only create original characters or fan art clearly meant for personal use. I can’t sell art of licensed characters for commercial purposes.</p></div>
+        <div class="faq-item"><p class="faq-question">What file formats will I receive?</p><p class="faq-answer">You’ll receive a high‑resolution PNG or JPG. If you need something different (PDF, TIFF, etc.) just let me know in advance.</p></div>
+    </section>
+
+    <script>
+        /* simple success swap without FAQ toggles */
+        const form=document.getElementById('requestForm');
+        const success=document.getElementById('successMessage');
+        form.addEventListener('submit',()=>{
+            setTimeout(()=>{
+                form.style.display='none';
+                success.style.display='block';
+            },1000);
+        });
+    </script>
+</body>
+</html>
+
