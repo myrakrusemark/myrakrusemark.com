@@ -224,6 +224,7 @@ hr {
     box-shadow: var(--box-shadow);
     transition: var(--transition);
     margin-top: 20px;
+    margin-bottom: 10px;
 }
 
 .topoco-link-container:hover {
@@ -481,6 +482,18 @@ hr {
     .project-thumbnail {
         width: 80px;
         height: 80px;
+    }
+
+    .project-section {
+        padding: 20px 15px;
+        margin: 20px auto;
+        width: 100%;
+        box-sizing: border-box;
+    }
+
+    .product-grid {
+        gap: 15px;
+        margin: 20px 0;
     }
 
     .content-with-image {
