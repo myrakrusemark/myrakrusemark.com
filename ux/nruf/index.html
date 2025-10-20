@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<head>
+
+  <meta charset="utf-8" name="viewport" content="width=320, initial-scale=1">
+
+  <script src="js/jquery.min.js"></script>
+  <script src="js/bootstrap.min.js"></script>
+  <script src="js/d3.v3.min.js"></script> 
+ 
+  <link rel="stylesheet" href="styles/bootstrap.min.css">
+  <link href="styles/styles.css" rel="stylesheet" type="text/css">
+
+</head>
+<body>
+
+  <div class="header">
+    <div id="logo" class="inline">&nbsp;</div>
+    <div class="btn-group pull-right" data-toggle="buttons">
+      <label id="intTab" class="active btn btn-default">
+        <a href="#int" data-toggle="tab">Single Graph</a>
+      </label>
+      <label id="galTab" class="btn btn-default">
+        <a href="#gal" data-toggle="tab">All Graphs</a>
+      </label>
+    </div>
+  </div>
+
+  <script>
+    $('#galTab a').click(function (e) {
+        e.preventDefault();
+        $('a[href="' + $(this).attr('href') + '"]').tab('show');
+        $("#intTab").removeClass("active");
+    })
+    $('#intTab a').click(function (e) {
+        e.preventDefault();
+        $('a[href="' + $(this).attr('href') + '"]').tab('show');
+        $("#galTab").removeClass("active");
+    })
+  </script>
+
+  <div class="content">
+    <div class="tab-content">
+      <div class="tab-pane active" id="int">
+        <div id="chooser">
+          Choose a measure from the dropdown menu:
+          <select name="chooser">
+          </select>
+        </div>
+        <div id="chart">
+          <div class="title">
+            <h2 class="titleEl"></h2>
+          </div>
+          <svg id="singleChart"></svg>
+          <div class="alt" style="display:none"></div>
+          <div class="notes">
+          </div>
+        </div>
+      </div>
+      <div class="tab-pane" id="gal"></div>
+    </div>
+    <div id="footer">
+      <p>
+        Questions? Please contact the Office of Institutional Research and Effectiveness at (940) 565-2085. Data collected from either the National Center for Educational Statistics IPEDS system or directly from the aspirant peer institution Institutional Research function. IPEDS data is provided for the most recent year available in the system unless otherwise specified in the notes section. This application is built using the <a href="http://d3js.org/">D3.js</a> data visualization library.
+      </p>
+    </div>
+  </div>
+
+</body>
+
+<div id="alts" style="display:none">
+  <div id="carnegie">
+    <p><span class="strong block">UCSB</span> RU/VH: Research Universities (very high research activity)</p>
+    <p><span class="strong block">UCF</span> RU/VH: Research Universities (very high research activity)</p>
+    <p><span class="strong block">UH</span> RU/VH: Research Universities (very high research activity)</p>
+    <p><span class="strong block">UNT</span> RU/H: Research Universities (high research activity)</p>
+  </div>
+  <div id="phd">
+    <p>PHD Content</p>
+  </div>
+  <div id="sat">
+    <p>SAT Content</p>
+  </div>
+</div>
+
+<script src="js/js.js"></script>

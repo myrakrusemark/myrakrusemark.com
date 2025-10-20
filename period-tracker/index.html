@@ -1,0 +1,799 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Period Tracker</title>
+    
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- React -->
+    <script crossorigin src="https://cdnjs.cloudflare.com/ajax/libs/react/18.2.0/umd/react.production.min.js"></script>
+    <script crossorigin src="https://cdnjs.cloudflare.com/ajax/libs/react-dom/18.2.0/umd/react-dom.production.min.js"></script>
+    <script crossorigin src="https://cdnjs.cloudflare.com/ajax/libs/babel-standalone/7.23.5/babel.min.js"></script>
+
+    <style>
+        .emoji-button {
+            transition: all 0.2s;
+            transform-origin: center;
+        }
+        .emoji-button:hover {
+            transform: scale(1.1);
+        }
+        .emoji-button.selected {
+            transform: scale(1.2);
+            box-shadow: 0 0 0 2px #3b82f6;
+        }
+    </style>
+</head>
+<body class="bg-gray-100 p-4">
+    <div id="root"></div>
+
+    <script type="text/babel">
+        const { useState, useRef, useEffect } = React;
+
+        const HeaderSection = () => {
+            const [isExpanded, setIsExpanded] = useState(false);
+            
+            const handleDownload = () => {
+                const element = document.createElement('a');
+                element.setAttribute('href', 'data:text/plain;charset=utf-8,' + encodeURIComponent(document.documentElement.outerHTML));
+                element.setAttribute('download', 'period-tracker.html');
+                element.style.display = 'none';
+                document.body.appendChild(element);
+                element.click();
+                document.body.removeChild(element);
+            };
+
+            return (
+                <div className="text-center mb-8">
+                    <h1 className="text-2xl font-bold mb-4">Period Tracker</h1>
+                    <div className="mb-4">
+                        <p className="text-gray-600 mb-3">
+                            A completely private period tracking app that runs in your browser. <br />
+                            Your data stays on your device and is never uploaded anywhere.
+                        </p>
+                        <div className="flex justify-center gap-3">
+                            <button 
+                                onClick={handleDownload}
+                                className="text-blue-600 hover:text-blue-800 font-medium"
+                            >
+                                📥 Download for Offline Use
+                            </button>
+                            <button 
+                                onClick={() => setIsExpanded(!isExpanded)}
+                                className="text-blue-600 hover:text-blue-800 font-medium"
+                            >
+                                {isExpanded ? '↑ Show Less' : '↓ Learn More'}
+                            </button>
+                        </div>
+                    </div>
+                    
+                    {isExpanded && (
+                        <div className="bg-blue-50 p-4 rounded-lg text-left animate-fade-in">
+                            <h2 className="font-semibold mb-2 text-blue-800">How to Use Your Data:</h2>
+                            <ul className="space-y-2 text-sm text-blue-900">
+                                <li className="flex items-start gap-2">
+                                    <span className="font-bold">📥</span>
+                                    <span>
+                                        <strong>Upload Previous Data:</strong> Click "Load Previous Entries" to import your existing CSV file. If this is your first entry, then skip this step.
+                                    </span>
+                                </li>
+                                <li className="flex items-start gap-2">
+                                    <span className="font-bold">📝</span>
+                                    <span>
+                                        <strong>Add New Entries:</strong> Use the form to log new period data - it will automatically merge with your existing entries
+                                    </span>
+                                </li>
+                                <li className="flex items-start gap-2">
+                                    <span className="font-bold">💾</span>
+                                    <span>
+                                        <strong>Save Your Data:</strong> Click "Download Entries" regularly to save your updated data as a CSV file on your device
+                                    </span>
+                                </li>
+                                <li className="flex items-start gap-2">
+                                    <span className="font-bold">🔒</span>
+                                    <span>
+                                        <strong>Privacy:</strong> All data is stored locally in CSV format on your device - closing your browser data will reset the app, so remember to download your entries!
+                                    </span>
+                                </li>
+                            </ul>
+                        </div>
+                    )}
+                </div>
+            );
+        };
+
+        const TabButton = ({ active, onClick, children }) => (
+            <button
+                onClick={onClick}
+                className={`px-4 py-2 font-medium rounded-t-lg ${
+                    active 
+                        ? 'bg-white border-t border-x border-gray-200 -mb-px' 
+                        : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
+                }`}
+            >
+                {children}
+            </button>
+        );
+
+        const EmojiSelector = ({ options, value, onChange, label }) => {
+            return (
+                <div className="space-y-2">
+                    <label className="block text-sm font-medium text-gray-700">{label}</label>
+                    <div className="flex gap-2 flex-wrap">
+                        {options.map(option => (
+                            <button
+                                key={option.value}
+                                onClick={() => onChange(option.value)}
+                                className={`emoji-button p-3 rounded-full hover:bg-gray-50 ${
+                                    value === option.value ? 'selected bg-blue-50' : 'bg-white'
+                                }`}
+                                title={option.label}
+                            >
+                                <span className="text-2xl">{option.emoji}</span>
+                            </button>
+                        ))}
+                    </div>
+                </div>
+            );
+        };
+
+        const CalendarView = ({ entries, onDateSelect }) => {
+            const [currentDate, setCurrentDate] = useState(new Date());
+            
+            const getDaysInMonth = (year, month) => {
+                return new Date(year, month + 1, 0).getDate();
+            };
+            
+            const getFirstDayOfMonth = (year, month) => {
+                return new Date(year, month, 1).getDay();
+            };
+            
+            const getFlowColor = (flow) => {
+                switch (flow) {
+                    case 'spotting': return 'bg-pink-100';
+                    case 'light': return 'bg-pink-200';
+                    case 'medium': return 'bg-pink-300';
+                    case 'heavy': return 'bg-pink-400';
+                    default: return '';
+                }
+            };
+
+            const getMoodEmoji = (mood) => {
+                const moodMap = {
+                    'great': '😊',
+                    'good': '🙂',
+                    'okay': '😐',
+                    'meh': '😕',
+                    'bad': '😣',
+                    'bruh': '💀'
+                };
+                return moodMap[mood] || '';
+            };
+
+            const truncateComment = (comment, maxLength = 30) => {
+                if (!comment) return '';
+                return comment.length > maxLength 
+                    ? `${comment.substring(0, maxLength)}...` 
+                    : comment;
+            };
+
+            const renderCalendar = () => {
+                const year = currentDate.getFullYear();
+                const month = currentDate.getMonth();
+                const daysInMonth = getDaysInMonth(year, month);
+                const firstDay = getFirstDayOfMonth(year, month);
+                const days = [];
+
+                // Add empty cells for days before the first day of the month
+                for (let i = 0; i < firstDay; i++) {
+                    days.push(<div key={`empty-${i}`} className="h-28"></div>);
+                }
+
+                // Add cells for each day of the month
+                for (let day = 1; day <= daysInMonth; day++) {
+                    const date = `${year}-${String(month + 1).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
+                    const entry = entries.find(e => e.date === date);
+                    
+                    days.push(
+                        <div 
+                            key={day}
+                            onClick={() => onDateSelect(date)}
+                            className={`h-28 border border-gray-200 p-1 cursor-pointer hover:bg-gray-50 ${
+                                entry ? getFlowColor(entry.flow) : ''
+                            }`}
+                        >
+                            <div className="flex justify-between">
+                                <span className="text-sm font-medium">{day}</span>
+                                {entry && (
+                                    <span className="text-lg" title={`Mood: ${entry.mood}`}>
+                                        {getMoodEmoji(entry.mood)}
+                                    </span>
+                                )}
+                            </div>
+                            {entry && entry.comments && (
+                                <div className="mt-1">
+                                    <p className="text-xs text-gray-600 line-clamp-2 overflow-hidden" title={entry.comments}>
+                                        {truncateComment(entry.comments)}
+                                    </p>
+                                </div>
+                            )}
+                        </div>
+                    );
+                }
+
+                return days;
+            };
+
+            return (
+                <div className="bg-white p-4 rounded-lg shadow">
+                    <div className="flex justify-between items-center mb-4">
+                        <button
+                            onClick={() => setCurrentDate(new Date(currentDate.setMonth(currentDate.getMonth() - 1)))}
+                            className="p-2 hover:bg-gray-100 rounded"
+                        >
+                            ←
+                        </button>
+                        <h2 className="text-lg font-semibold">
+                            {currentDate.toLocaleString('default', { month: 'long', year: 'numeric' })}
+                        </h2>
+                        <button
+                            onClick={() => setCurrentDate(new Date(currentDate.setMonth(currentDate.getMonth() + 1)))}
+                            className="p-2 hover:bg-gray-100 rounded"
+                        >
+                            →
+                        </button>
+                    </div>
+                    <div className="mt-4 flex gap-4 text-sm text-gray-600">
+                        <div className="flex items-center gap-2">
+                            <div className="w-4 h-4 bg-pink-100 rounded"></div>
+                            <span>Spotting</span>
+                        </div>
+                        <div className="flex items-center gap-2">
+                            <div className="w-4 h-4 bg-pink-200 rounded"></div>
+                            <span>Light</span>
+                        </div>
+                        <div className="flex items-center gap-2">
+                            <div className="w-4 h-4 bg-pink-300 rounded"></div>
+                            <span>Medium</span>
+                        </div>
+                        <div className="flex items-center gap-2">
+                            <div className="w-4 h-4 bg-pink-400 rounded"></div>
+                            <span>Heavy</span>
+                        </div>
+                    </div>
+                    <div className="grid grid-cols-7 gap-px">
+                        {['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'].map(day => (
+                            <div key={day} className="text-center p-2 font-medium text-sm text-gray-600">
+                                {day}
+                            </div>
+                        ))}
+                        {renderCalendar()}
+                    </div>
+                </div>
+            );
+        };
+
+        const PeriodPredictor = ({ entries }) => {
+            const [predictions, setPredictions] = useState([]);
+            const [avgCycleLength, setAvgCycleLength] = useState(0);
+            const [avgPeriodLength, setAvgPeriodLength] = useState(0);
+            const [reliability, setReliability] = useState(0);
+
+            useEffect(() => {
+                if (entries.length >= 2) {
+                    analyzeCycles();
+                }
+            }, [entries]);
+
+            const isValidDate = (dateStr) => {
+                const date = new Date(dateStr);
+                return date instanceof Date && !isNaN(date);
+            };
+
+            const analyzeCycles = () => {
+                try {
+                    // Filter out entries without flow and invalid dates
+                    const validEntries = entries
+                        .filter(entry => entry.flow && isValidDate(entry.date))
+                        .sort((a, b) => new Date(a.date) - new Date(b.date));
+
+                    if (validEntries.length < 2) {
+                        setPredictions([]);
+                        setAvgCycleLength(0);
+                        setAvgPeriodLength(0);
+                        setReliability(0);
+                        return;
+                    }
+
+                    // Find period blocks (consecutive days with flow)
+                    let currentPeriod = [];
+                    const periods = [];
+                    
+                    validEntries.forEach((entry, index) => {
+                        const currentDate = new Date(entry.date);
+                        const prevDate = index > 0 ? new Date(validEntries[index - 1].date) : null;
+                        
+                        if (!prevDate || (currentDate - prevDate) / (1000 * 60 * 60 * 24) > 3) {
+                            if (currentPeriod.length > 0) {
+                                periods.push(currentPeriod);
+                            }
+                            currentPeriod = [entry];
+                        } else {
+                            currentPeriod.push(entry);
+                        }
+                    });
+                    
+                    if (currentPeriod.length > 0) {
+                        periods.push(currentPeriod);
+                    }
+
+                    // Calculate average period length
+                    const periodLengths = periods.map(period => period.length);
+                    const avgPeriod = periodLengths.reduce((sum, length) => sum + length, 0) / periodLengths.length;
+                    setAvgPeriodLength(Math.round(avgPeriod));
+
+                    // Find the start of each period for cycle length calculation
+                    const periodStarts = periods.map(period => period[0].date);
+
+                    // Calculate cycle lengths
+                    const cycleLengths = [];
+                    for (let i = 1; i < periodStarts.length; i++) {
+                        const start = new Date(periodStarts[i - 1]);
+                        const end = new Date(periodStarts[i]);
+                        const days = Math.round((end - start) / (1000 * 60 * 60 * 24));
+                        if (days > 0 && days < 100) { // Sanity check for cycle length
+                            cycleLengths.push(days);
+                        }
+                    }
+
+                    if (cycleLengths.length === 0) {
+                        setPredictions([]);
+                        setAvgCycleLength(0);
+                        setReliability(0);
+                        return;
+                    }
+
+                    // Calculate average cycle length
+                    const avg = cycleLengths.reduce((sum, length) => sum + length, 0) / cycleLengths.length;
+                    const roundedAvg = Math.round(avg);
+                    setAvgCycleLength(roundedAvg);
+
+                    // Calculate reliability
+                    const variance = cycleLengths.reduce((sum, length) => sum + Math.pow(length - avg, 2), 0) / cycleLengths.length;
+                    const reliability = Math.max(0, Math.min(100, 100 - (Math.sqrt(variance) * 5)));
+                    setReliability(Math.round(reliability));
+
+                    // Generate predictions
+                    const lastStart = new Date(periodStarts[periodStarts.length - 1]);
+                    const newPredictions = [];
+
+                    for (let i = 1; i <= 3; i++) {
+                        const predictedDate = new Date(lastStart);
+                        predictedDate.setDate(lastStart.getDate() + (roundedAvg * i));
+                        
+                        if (isValidDate(predictedDate)) {
+                            newPredictions.push({
+                                date: predictedDate.toISOString().split('T')[0],
+                                predictedCycle: i,
+                                confidence: Math.round(reliability * (1 - (i * 0.15)))
+                            });
+                        }
+                    }
+
+                    setPredictions(newPredictions);
+                } catch (error) {
+                    console.error('Error in analyzeCycles:', error);
+                    setPredictions([]);
+                    setAvgCycleLength(0);
+                    setAvgPeriodLength(0);
+                    setReliability(0);
+                }
+            };
+
+            return (
+                <div className="bg-white p-6 rounded-lg shadow space-y-6 mb-6">
+                    <h2 className="text-xl font-semibold">Predictions</h2>
+                    
+                    {entries.length < 2 ? (
+                        <div className="p-4 bg-yellow-50 text-yellow-700 rounded">
+                            Please log at least 2 periods to generate predictions
+                        </div>
+                    ) : (
+                        <>
+                            <div className="grid grid-cols-3 gap-4">
+                                <div className="p-4 bg-blue-50 rounded">
+                                    <div className="text-sm text-blue-600">Average Cycle</div>
+                                    <div className="text-2xl font-bold text-blue-700">{avgCycleLength} days</div>
+                                </div>
+                                <div className="p-4 bg-purple-50 rounded">
+                                    <div className="text-sm text-purple-600">Average Period</div>
+                                    <div className="text-2xl font-bold text-purple-700">{avgPeriodLength} days</div>
+                                </div>
+                                <div className="p-4 bg-green-50 rounded">
+                                    <div className="text-sm text-green-600">Reliability</div>
+                                    <div className="text-2xl font-bold text-green-700">{reliability}%</div>
+                                </div>
+                            </div>
+
+                            <div className="space-y-2">
+                                <h3 className="font-medium">Next Predicted Periods</h3>
+                                {predictions.length > 0 ? (
+                                    predictions.map((pred) => (
+                                        <div 
+                                            key={pred.date}
+                                            className="p-3 bg-gray-50 rounded flex justify-between items-center"
+                                        >
+                                            <div>
+                                                <div className="font-medium">
+                                                    {new Date(pred.date).toLocaleDateString()}
+                                                </div>
+                                                <div className="text-sm text-gray-600">
+                                                    Cycle {pred.predictedCycle}
+                                                </div>
+                                            </div>
+                                            <div className="text-sm">
+                                                Confidence: {pred.confidence}%
+                                            </div>
+                                        </div>
+                                    ))
+                                ) : (
+                                    <div className="p-4 bg-yellow-50 text-yellow-700 rounded">
+                                        Not enough consistent data to generate predictions
+                                    </div>
+                                )}
+                            </div>
+                        </>
+                    )}
+                </div>
+            );
+        };
+
+        const PeriodTracker = () => {
+            const [activeTab, setActiveTab] = useState('form');
+            const [selectedDate, setSelectedDate] = useState(new Date().toISOString().split('T')[0]);
+            const [flow, setFlow] = useState('');
+            const [mood, setMood] = useState('');
+            const [painLevel, setPainLevel] = useState(0);
+            const [comments, setComments] = useState('');
+            const [symptoms, setSymptoms] = useState([]);
+            const [submitted, setSubmitted] = useState(false);
+            const [entries, setEntries] = useState([]);
+            const [loadedFile, setLoadedFile] = useState('');
+            const [statusMessages, setStatusMessages] = useState([]);
+            const [showConfirmDialog, setShowConfirmDialog] = useState(false);
+            const fileInputRef = useRef();
+
+            const addStatusMessage = (message) => {
+                setStatusMessages(prev => [...prev, { id: Date.now(), message }]);
+            };
+
+            const flowOptions = [
+                { value: 'none', label: 'No Flow', emoji: '⚪' },
+                { value: 'spotting', label: 'Spotting', emoji: '💧' },
+                { value: 'light', label: 'Light', emoji: '🌱' },
+                { value: 'medium', label: 'Medium', emoji: '🌿' },
+                { value: 'heavy', label: 'Heavy', emoji: '🌳' }
+            ];
+
+            const moodOptions = [
+                { value: 'great', label: 'Great', emoji: '😊' },
+                { value: 'good', label: 'Good', emoji: '🙂' },
+                { value: 'okay', label: 'Okay', emoji: '😐' },
+                { value: 'meh', label: 'Meh', emoji: '😕' },
+                { value: 'bad', label: 'Bad', emoji: '😣' },
+                { value: 'bruh', label: 'bruh', emoji: '💀' }
+            ];
+
+            const symptomOptions = [
+                { id: 'cramps', label: 'Cramps', emoji: '🌀' },
+                { id: 'headache', label: 'Headache', emoji: '🤕' },
+                { id: 'backache', label: 'Backache', emoji: '🔄' },
+                { id: 'fatigue', label: 'Fatigue', emoji: '😴' },
+                { id: 'bloating', label: 'Bloating', emoji: '🎈' },
+                { id: 'nausea', label: 'Nausea', emoji: '🤢' },
+                { id: 'appetite', label: 'Changes in Appetite', emoji: '🍽️' },
+                { id: 'mood_swings', label: 'Mood Swings', emoji: '🎭' }
+            ];
+
+            const handleSymptomChange = (symptomId) => {
+                setSymptoms(prev => 
+                    prev.includes(symptomId)
+                        ? prev.filter(id => id !== symptomId)
+                        : [...prev, symptomId]
+                );
+            };
+
+            const resetForm = () => {
+                setFlow('none');
+                setMood('good');
+                setPainLevel(0);
+                setComments('');
+                setSymptoms([]);
+                setSubmitted(false);
+            };
+
+            const handleSubmit = () => {
+                const existingEntry = entries.find(entry => entry.date === selectedDate);
+                
+                if (existingEntry) {
+                    setShowConfirmDialog(true);
+                    return;
+                }
+
+                saveEntry();
+            };
+
+            const saveEntry = () => {
+                const newEntry = {
+                    date: selectedDate,
+                    flow,
+                    mood,
+                    painLevel,
+                    symptoms: symptoms.join(';'),
+                    comments: comments.replace(/,/g, ';')
+                };
+
+                setEntries(prev => {
+                    const filtered = prev.filter(entry => entry.date !== selectedDate);
+                    return [...filtered, newEntry].sort((a, b) => new Date(a.date) - new Date(b.date));
+                });
+
+                addStatusMessage(`Data added for ${selectedDate}`);
+                setSubmitted(true);
+                setShowConfirmDialog(false);
+                
+                setTimeout(resetForm, 2000);
+            };
+
+            const downloadCSV = () => {
+                const headers = ['Date', 'Flow', 'Mood', 'Pain Level', 'Symptoms', 'Comments'];
+                const csvContent = [
+                    headers.join(','),
+                    ...entries.map(entry => 
+                        Object.values(entry).join(',')
+                    )
+                ].join('\n');
+
+                const blob = new Blob([csvContent], { type: 'text/csv' });
+                const url = window.URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = `period_tracker_${selectedDate}.csv`;
+                a.click();
+                window.URL.revokeObjectURL(url);
+            };
+
+            const loadCSV = (event) => {
+                const file = event.target.files[0];
+                if (!file) return;
+
+                const reader = new FileReader();
+                reader.onload = (e) => {
+                    const text = e.target.result;
+                    const lines = text.split('\n');
+                    const headers = lines[0].split(',');
+                    
+                    const loadedEntries = lines.slice(1)
+                        .filter(line => line.trim())
+                        .map(line => {
+                            const values = line.split(',');
+                            return {
+                                date: values[0],
+                                flow: values[1],
+                                mood: values[2],
+                                painLevel: parseInt(values[3]),
+                                symptoms: values[4],
+                                comments: values[5]
+                            };
+                        });
+
+                    setEntries(loadedEntries);
+                    setLoadedFile(file.name);
+                    addStatusMessage(`Loaded ${loadedEntries.length} entries from ${file.name}`);
+                };
+                reader.readAsText(file);
+            };
+
+            const handleDateSelect = (date) => {
+                setSelectedDate(date);
+                setActiveTab('form');
+            };
+
+            const existingEntry = entries.find(entry => entry.date === selectedDate);
+
+            useEffect(() => {
+                const existingEntry = entries.find(entry => entry.date === selectedDate);
+                if (existingEntry) {
+                    setFlow(existingEntry.flow);
+                    setMood(existingEntry.mood);
+                    setPainLevel(existingEntry.painLevel);
+                    setSymptoms(existingEntry.symptoms.split(';').filter(s => s));
+                    setComments(existingEntry.comments);
+                } else {
+                    resetForm();
+                }
+            }, [selectedDate, entries]);
+
+            return (
+                <div className="max-w-4xl mx-auto bg-white rounded-lg shadow-lg p-6">
+                    <div className="mb-6">
+                        <HeaderSection />
+                        <button 
+                            onClick={() => fileInputRef.current.click()}
+                            className="w-full px-4 py-2 text-gray-700 border border-gray-300 rounded hover:bg-gray-50"
+                        >
+                            📁 Load Previous Entries (CSV)
+                        </button>
+                        <input
+                            type="file"
+                            ref={fileInputRef}
+                            onChange={loadCSV}
+                            accept=".csv"
+                            className="hidden"
+                        />
+                        {statusMessages.length > 0 && (
+                            <div className="mt-4 space-y-2">
+                                {statusMessages.map(status => (
+                                    <div key={status.id} className="p-4 bg-blue-50 text-blue-700 rounded">
+                                        {status.message}
+                                    </div>
+                                ))}
+                            </div>
+                        )}
+                    </div>
+
+                    <div className="flex gap-2 border-b border-gray-200 mb-4">
+                        <TabButton 
+                            active={activeTab === 'form'} 
+                            onClick={() => setActiveTab('form')}
+                        >
+                            Add Entry
+                        </TabButton>
+                        <TabButton 
+                            active={activeTab === 'calendar'} 
+                            onClick={() => setActiveTab('calendar')}
+                        >
+                            Analysis
+                        </TabButton>
+                    </div>
+
+                    {activeTab === 'form' ? (
+                        <div className="space-y-6">
+                            <div className="space-y-2">
+                                <label className="block text-sm font-medium text-gray-700 mb-1">Date</label>
+                                <input
+                                    type="date"
+                                    value={selectedDate}
+                                    onChange={(e) => setSelectedDate(e.target.value)}
+                                    className="w-full p-2 border rounded"
+                                />
+                                {existingEntry && (
+                                    <div className="p-2 bg-yellow-50 border border-yellow-200 rounded text-yellow-800">
+                                        Entry found for {selectedDate}
+                                    </div>
+                                )}
+                            </div>
+
+                            <EmojiSelector 
+                                label="Flow Rate"
+                                options={flowOptions}
+                                value={flow}
+                                onChange={setFlow}
+                            />
+
+                            <EmojiSelector 
+                                label="Mood"
+                                options={moodOptions}
+                                value={mood}
+                                onChange={setMood}
+                            />
+
+                            <div>
+                                <label className="block text-sm font-medium text-gray-700 mb-1">
+                                    Pain Level (0-10): {painLevel}
+                                </label>
+                                <input 
+                                    type="range"
+                                    min="0"
+                                    max="10"
+                                    value={painLevel}
+                                    onChange={(e) => setPainLevel(parseInt(e.target.value))}
+                                    className="w-full"
+                                />
+                            </div>
+
+                            <div>
+                                <label className="block text-sm font-medium text-gray-700 mb-1">Symptoms</label>
+                                <div className="grid grid-cols-2 gap-3">
+                                    {symptomOptions.map(symptom => (
+                                        <button
+                                            key={symptom.id}
+                                            onClick={() => handleSymptomChange(symptom.id)}
+                                            className={`p-2 rounded text-left flex items-center gap-2 ${
+                                                symptoms.includes(symptom.id)
+                                                    ? 'bg-blue-50 border-blue-200'
+                                                    : 'bg-white hover:bg-gray-50'
+                                            } border`}
+                                        >
+                                            <span>{symptom.emoji}</span>
+                                            <span className="text-sm">{symptom.label}</span>
+                                        </button>
+                                    ))}
+                                </div>
+                            </div>
+
+                            <div>
+                                <label className="block text-sm font-medium text-gray-700 mb-1">Comments</label>
+                                <textarea
+                                    value={comments}
+                                    onChange={(e) => setComments(e.target.value)}
+                                    placeholder="Add any notes or symptoms..."
+                                    className="w-full p-2 border rounded h-24"
+                                />
+                            </div>
+
+                            <div className="space-y-2">
+                                <button 
+                                    onClick={handleSubmit}
+                                    disabled={!flow || !mood || submitted}
+                                    className={`w-full px-4 py-2 text-white rounded ${
+                                        submitted || !flow || !mood 
+                                            ? 'bg-gray-400' 
+                                            : 'bg-blue-500 hover:bg-blue-600'
+                                    }`}
+                                >
+                                    {submitted ? '✓ Saved!' : 'Save Entry'}
+                                </button>
+                                <button 
+                                    onClick={downloadCSV}
+                                    disabled={entries.length === 0}
+                                    className={`w-full px-4 py-2 text-gray-700 border border-gray-300 rounded ${
+                                        entries.length === 0 
+                                            ? 'bg-gray-100' 
+                                            : 'hover:bg-gray-50'
+                                    }`}
+                                >
+                                    💾 Download {entries.length} {entries.length === 1 ? 'Entry' : 'Entries'} (CSV)
+                                </button>
+                            </div>
+                        </div>
+                        ) : (
+                            <div>
+                                <PeriodPredictor entries={entries} />
+                                <CalendarView entries={entries} onDateSelect={handleDateSelect} />
+                            </div>
+                        )}
+                    {showConfirmDialog && (
+                        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center">
+                            <div className="bg-white p-6 rounded-lg shadow-xl max-w-sm mx-4">
+                                <h3 className="text-lg font-semibold mb-4">Confirm Update</h3>
+                                <p className="mb-6">An entry already exists for {selectedDate}. Do you want to update it?</p>
+                                <div className="flex justify-end gap-4">
+                                    <button
+                                        onClick={() => setShowConfirmDialog(false)}
+                                        className="px-4 py-2 text-gray-600 hover:bg-gray-100 rounded"
+                                    >
+                                        Cancel
+                                    </button>
+                                    <button
+                                        onClick={saveEntry}
+                                        className="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600"
+                                    >
+                                        Update
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    )}
+                </div>
+            );
+        };
+
+        const root = ReactDOM.createRoot(document.getElementById('root'));
+        root.render(<PeriodTracker />);
+    </script>
+</body>
+</html>

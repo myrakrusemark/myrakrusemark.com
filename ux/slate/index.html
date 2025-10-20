@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>UuberSlate - Myra Krusemark</title>
+    <link rel="stylesheet" href="/styles.css">
+</head>
+<body>
+    
+    <header>
+        <div class="site-title"><a href="/" style="text-decoration: none; color: inherit;">Myra Krusemark's Cool Little Projects</a></div>
+        
+<p>
+    <a href="/">Home</a> |
+    <a href="/Myra Krusemark - Resume.pdf">Résumé</a> |
+    <a href="https://www.linkedin.com/in/myrasmithkrusemark/" target="_blank">LinkedIn</a> |
+    <a href="/ux/">UX Portfolio</a> |
+    <a href="https://topoco.art/pages/contact">Contact Me!</a>
+</p>
+
+    </header>
+    <div class="article-content">
+        
+<h1>UuberSlate</h1>
+
+<div class="hero-container" style="background-image: url('../screenshots/slate/software-side-by-side.jpg');">
+    <img src="../screenshots/slate/software-side-by-side.jpg" alt="UuberSlate">
+</div>
+
+<h2>Project Overview</h2>
+<p><strong>Role:</strong> Product Designer & Developer<br>
+<strong>Context:</strong> Student project at Webster University<br>
+<strong>Focus:</strong> Hardware/software system for automated film slate and video organization</p>
+
+<h2>The Challenge</h2>
+<p>Film and video production relies on clapperboards (slates) to sync audio and video and organize footage by shot, scene, and take. However, the process of manually entering this metadata into video editing software is time-consuming and error-prone.</p>
+
+<p>I wanted to create a system that could automatically capture slate information at the moment of the clapper slap and use it to organize footage without manual data entry.</p>
+
+<h2>Design Solution</h2>
+
+<div class="content-with-image">
+    <div class="text-content">
+        <p>I designed and built UuberSlate, an Arduino-based smart clapperboard that encodes shot/scene/take information into an audio signal played through a built-in speaker when the slate is slapped. Companion software analyzes video files during ingestion, detects the clapper slap sound, decodes the embedded metadata, and automatically organizes clips in video editing software.</p>
+    </div>
+    <div class="side-image" style="width: 50%; max-width: 50%;">
+        <video autoplay loop muted playsinline controls style="width: 100%; height: auto; display: block; border-radius: 8px; box-shadow: var(--box-shadow);">
+            <source src="../screenshots/slate/Uberclappin-with-waveform.webm" type="video/webm">
+            Your browser does not support the video tag.
+        </video>
+    </div>
+</div>
+
+<h2>Hardware Design</h2>
+
+<h3>Product Sketch and Specifications</h3>
+<a href="../screenshots/slate/product-sketch.JPG" target="_blank">
+    <img src="../screenshots/slate/product-sketch.JPG" alt="UuberSlate Product Sketch" class="screenshot">
+</a>
+<p style="text-align: center; color: #666; font-style: italic; margin-top: -20px;">Hand-drawn technical sketch showing hardware layout, dimensions, and component placement</p>
+
+<p>The hardware design integrated several key components into a traditional clapperboard form factor:</p>
+
+<h3>Key Hardware Components</h3>
+<ul>
+    <li><strong>Arduino microcontroller</strong> - Controls the system and generates encoded audio signals</li>
+    <li><strong>LCD display</strong> - Shows current shot/scene/take information</li>
+    <li><strong>Speaker</strong> - Plays encoded audio signal when slate is clapped</li>
+    <li><strong>Control buttons</strong> - Allows operators to increment/adjust shot, scene, and take numbers</li>
+    <li><strong>Physical clapper mechanism</strong> - Traditional hinged clapper bar for visual/audio sync</li>
+    <li><strong>Compact housing</strong> - Ruggedized design suitable for on-set use</li>
+</ul>
+
+<p>The sketch shows careful consideration of ergonomics, with controls positioned for easy one-handed operation and the display placed for clear visibility by both camera operators and editors reviewing footage.</p>
+
+<h2>Software Solution</h2>
+
+<h3>Automated Video Analysis and Organization</h3>
+<div class="content-with-image">
+    <div class="text-content">
+        <p>The companion software analyzes video files during ingestion, searching for the distinctive clapper slap sound. When detected, it decodes the encoded audio signal containing the shot/scene/take metadata.</p>
+
+        <p>The software visualizes the audio waveform, allowing users to see where the clapper slap was detected (shown by the colored markers in the waveform). The decoded information is then used to automatically name and organize clips in the video editing software's project structure.</p>
+    </div>
+    <div class="side-image">
+        <a href="../screenshots/slate/software-side-by-side.jpg" target="_blank">
+            <img src="../screenshots/slate/software-side-by-side.jpg" alt="UuberSlate Software Interface">
+        </a>
+    </div>
+</div>
+
+<h3>How It Works</h3>
+<ol>
+    <li><strong>On Set:</strong> Operator enters shot/scene/take numbers using the hardware controls</li>
+    <li><strong>Recording:</strong> When the clapper is slapped, the Arduino generates an encoded audio tone containing the metadata</li>
+    <li><strong>Ingestion:</strong> Video files are imported into the companion software</li>
+    <li><strong>Analysis:</strong> Software scans audio tracks for the clapper slap signature and encoded data</li>
+    <li><strong>Decoding:</strong> Metadata is extracted from the audio signal</li>
+    <li><strong>Organization:</strong> Clips are automatically renamed and organized based on decoded information</li>
+</ol>
+
+<h3>Key Software Features</h3>
+<ul>
+    <li>Automatic detection of clapper slap sounds in video files</li>
+    <li>Audio signal decoding to extract shot/scene/take metadata</li>
+    <li>Visual waveform display showing detection points</li>
+    <li>Batch processing of multiple video files</li>
+    <li>Integration with video editing software project structures</li>
+    <li>Error handling for clips where slate data cannot be decoded</li>
+</ul>
+
+<h2>Technical Innovation</h2>
+<p>The core innovation of UuberSlate was embedding metadata directly into the audio track at the moment of the clapper slap. This approach ensured that the metadata traveled with the video file and could be reliably extracted later, even if files were copied, renamed, or moved through different storage systems.</p>
+
+<p>By encoding the information as audio tones rather than relying on timecode or external databases, the system remained simple, reliable, and compatible with any camera or recording device.</p>
+
+<h2>Impact</h2>
+<ul>
+    <li>Eliminated manual metadata entry during video ingestion</li>
+    <li>Reduced organizational errors in footage management</li>
+    <li>Saved significant time in post-production workflow</li>
+    <li>Demonstrated practical application of hardware/software integration</li>
+    <li>Showcased interdisciplinary skills in product design, electronics, and software development</li>
+    <li>Completed as a student project, demonstrating initiative in solving real production problems</li>
+</ul>
+
+    </div>
+</body>
+</html>
