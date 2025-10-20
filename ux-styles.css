@@ -99,3 +99,31 @@
 .honorable-mention .project-info {
     margin-top: 0;
 }
+
+@media (max-width: 768px) {
+    .project-section {
+        padding: 0 15px;
+        margin-bottom: 40px;
+    }
+
+    .honorable-mention {
+        padding: 0 15px;
+        margin-bottom: 60px;
+    }
+
+    .ux-header-wrapper {
+        padding: 0 15px;
+    }
+
+    .screenshot-container {
+        min-height: 250px;
+        max-height: 250px;
+        margin: 20px 0;
+    }
+
+    .screenshot {
+        width: 90%;
+        max-width: 90%;
+        max-height: 250px;
+    }
+}
