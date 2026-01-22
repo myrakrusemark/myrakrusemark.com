@@ -1,0 +1,514 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Future IV: The Pendulum Swings</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+            background: linear-gradient(180deg, #1a1005 0%, #2a1a0a 50%, #1a1005 100%);
+            color: #fff;
+            line-height: 1.7;
+            min-height: 100vh;
+        }
+
+        .hero {
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            padding: 2rem;
+            background:
+                radial-gradient(ellipse at center bottom, rgba(255, 140, 0, 0.25) 0%, transparent 60%),
+                radial-gradient(ellipse at center, rgba(255, 200, 100, 0.1) 0%, transparent 70%),
+                linear-gradient(180deg, #1a1005 0%, #2a1a0a 100%);
+        }
+
+        .hero h1 {
+            font-size: clamp(2.5rem, 8vw, 5rem);
+            font-weight: 800;
+            background: linear-gradient(135deg, #ff8c00, #ffa500, #ffd700);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 0.5rem;
+            text-shadow: 0 0 80px rgba(255, 140, 0, 0.5);
+        }
+
+        .hero .number {
+            font-size: 1.2rem;
+            color: #fff;
+            text-transform: uppercase;
+            letter-spacing: 8px;
+            margin-bottom: 1rem;
+        }
+
+        .hero .subtitle {
+            font-size: 1.4rem;
+            color: #fff;
+            max-width: 650px;
+            margin-bottom: 2rem;
+        }
+
+        .status-banner {
+            background: rgba(255, 140, 0, 0.15);
+            border: 1px solid rgba(255, 140, 0, 0.35);
+            padding: 1rem 2rem;
+            border-radius: 4px;
+            font-size: 0.9rem;
+            color: #daa520;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 0 2rem 4rem;
+        }
+
+        .timeline {
+            position: relative;
+            padding: 2rem 0;
+        }
+
+        .timeline::before {
+            content: '';
+            position: absolute;
+            left: 30px;
+            width: 3px;
+            height: 100%;
+            background: linear-gradient(to bottom,
+                #8a4a0a 0%,
+                #ff8c00 30%,
+                #ffd700 70%,
+                #fffacd 100%);
+        }
+
+        .timeline-item {
+            position: relative;
+            margin-bottom: 3rem;
+            padding-left: 70px;
+        }
+
+        .timeline-dot {
+            position: absolute;
+            left: 20px;
+            width: 22px;
+            height: 22px;
+            background: #ff8c00;
+            border-radius: 50%;
+            box-shadow: 0 0 20px rgba(255, 140, 0, 0.6);
+        }
+
+        .timeline-dot.bright {
+            background: #ffd700;
+            box-shadow: 0 0 25px rgba(255, 215, 0, 0.7);
+        }
+
+        .timeline-content {
+            background: rgba(255, 140, 0, 0.08);
+            border: 1px solid rgba(255, 140, 0, 0.2);
+            border-radius: 8px;
+            padding: 1.5rem;
+        }
+
+        .timeline-content.key-moment {
+            border-left: 3px solid #ff8c00;
+            background: rgba(255, 140, 0, 0.12);
+        }
+
+        .timeline-year {
+            font-size: 0.85rem;
+            color: #ff8c00;
+            font-weight: 700;
+            letter-spacing: 2px;
+            margin-bottom: 0.5rem;
+        }
+
+        .timeline-title {
+            font-size: 1.3rem;
+            font-weight: 700;
+            margin-bottom: 0.75rem;
+            color: #ffd700;
+        }
+
+        .timeline-text {
+            color: #fff;
+            font-size: 0.95rem;
+        }
+
+        .timeline-text a {
+            color: #daa520;
+        }
+
+        .catalyst {
+            display: inline-block;
+            background: rgba(255, 140, 0, 0.25);
+            padding: 0.2rem 0.6rem;
+            border-radius: 4px;
+            font-size: 0.8rem;
+            margin-right: 0.5rem;
+            margin-bottom: 0.5rem;
+            color: #ffc850;
+        }
+
+        .section-break {
+            text-align: center;
+            padding: 3rem 0;
+            color: #ff8c00;
+            font-size: 2rem;
+        }
+
+        .quote-block {
+            background: rgba(50, 40, 20, 0.4);
+            border-left: 3px solid #ff8c00;
+            padding: 1.5rem;
+            margin: 2rem 0;
+            font-style: italic;
+            color: #fff;
+        }
+
+        .quote-block cite {
+            display: block;
+            margin-top: 1rem;
+            font-style: normal;
+            color: #fff;
+            font-size: 0.85rem;
+        }
+
+        .parallel-box {
+            background: rgba(255, 200, 100, 0.08);
+            border: 1px solid rgba(255, 200, 100, 0.2);
+            border-radius: 12px;
+            padding: 1.5rem;
+            margin: 2rem 0;
+        }
+
+        .parallel-box h3 {
+            color: #ffd700;
+            margin-bottom: 1rem;
+            font-size: 1.1rem;
+        }
+
+        .parallel-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1.5rem;
+        }
+
+        @media (max-width: 600px) {
+            .parallel-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .parallel-era {
+            background: rgba(0, 0, 0, 0.2);
+            padding: 1rem;
+            border-radius: 8px;
+        }
+
+        .parallel-era h4 {
+            color: #ff8c00;
+            margin-bottom: 0.5rem;
+            font-size: 0.95rem;
+        }
+
+        .parallel-era ul {
+            list-style: none;
+            font-size: 0.85rem;
+            color: #fff;
+        }
+
+        .parallel-era li {
+            padding: 0.2rem 0;
+        }
+
+        .parallel-era li::before {
+            content: '→ ';
+            color: #ffd700;
+        }
+
+        .outcome-box {
+            background: linear-gradient(135deg, rgba(255, 140, 0, 0.15), rgba(255, 215, 0, 0.1));
+            border: 1px solid rgba(255, 200, 100, 0.3);
+            border-radius: 12px;
+            padding: 2rem;
+            margin: 3rem 0;
+            text-align: center;
+        }
+
+        .outcome-box h2 {
+            background: linear-gradient(135deg, #ff8c00, #ffd700);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 1rem;
+        }
+
+        .outcome-box p {
+            color: #fff;
+        }
+
+        .reform-list {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1rem;
+            margin: 2rem 0;
+        }
+
+        .reform-item {
+            background: rgba(255, 140, 0, 0.1);
+            border: 1px solid rgba(255, 140, 0, 0.2);
+            border-radius: 8px;
+            padding: 1.25rem;
+            text-align: center;
+        }
+
+        .reform-item h4 {
+            color: #ffd700;
+            font-size: 1rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .reform-item p {
+            color: #fff;
+            font-size: 0.85rem;
+        }
+
+        .nav-buttons {
+            display: flex;
+            justify-content: space-between;
+            padding: 2rem 0;
+            gap: 1rem;
+        }
+
+        .nav-buttons a {
+            padding: 1rem 2rem;
+            border-radius: 8px;
+            text-decoration: none;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            background: rgba(255, 140, 0, 0.15);
+            border: 1px solid rgba(255, 140, 0, 0.25);
+            color: #daa520;
+        }
+
+        .nav-buttons a:hover {
+            background: rgba(255, 140, 0, 0.25);
+            color: #ffd700;
+        }
+
+        .sources {
+            margin-top: 3rem;
+            padding: 1.5rem;
+            background: rgba(50, 40, 20, 0.3);
+            border-radius: 8px;
+            font-size: 0.85rem;
+        }
+
+        .sources h4 {
+            color: #fff;
+            margin-bottom: 0.75rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .sources a {
+            color: #daa520;
+            text-decoration: none;
+        }
+    </style>
+</head>
+<body>
+    <section class="hero">
+        <div class="number">Future IV</div>
+        <h1>The Pendulum Swings</h1>
+        <p class="subtitle">In which populist overreach triggers backlash, and a new reform coalition rises from the ashes</p>
+        <div class="status-banner">Probability estimate: 20-30% — the path of course correction</div>
+    </section>
+
+    <div class="container">
+        <div class="quote-block">
+            <p>"52% of all episodes of autocratization become 'U-turns,' increasing to 73% in the last 30 years. The vast majority of these U-turns lead to restored or even improved levels of democracy."</p>
+            <cite>— <a href="https://toda.org/policy-briefs-and-resources/policy-briefs/report-227-full-text.html" target="_blank">Toda Peace Institute, "Democratic Resilience in the United States"</a></cite>
+        </div>
+
+        <div class="parallel-box">
+            <h3>Historical Parallel: The Progressive Era (1900-1920)</h3>
+            <div class="parallel-grid">
+                <div class="parallel-era">
+                    <h4>The Gilded Age (1870-1900)</h4>
+                    <ul>
+                        <li>Extreme inequality ("robber barons")</li>
+                        <li>Corporate monopolies</li>
+                        <li>Political corruption</li>
+                        <li>Worker exploitation</li>
+                        <li>Rising populist movements</li>
+                    </ul>
+                </div>
+                <div class="parallel-era">
+                    <h4>The Progressive Response</h4>
+                    <ul>
+                        <li>Trust-busting reforms</li>
+                        <li>Labor protections</li>
+                        <li>Women's suffrage</li>
+                        <li>Direct election of senators</li>
+                        <li>Food and drug safety laws</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <div class="timeline">
+            <div class="timeline-item">
+                <div class="timeline-dot"></div>
+                <div class="timeline-content key-moment">
+                    <div class="timeline-year">2025-2026</div>
+                    <div class="timeline-title">The Overreach</div>
+                    <div class="timeline-text">
+                        <span class="catalyst">Triggering Events</span>
+                        <p style="margin-top: 0.75rem;">The Trump administration moves too fast, too aggressively. Mass firings, prosecutions of opponents, and attacks on popular programs create backlash even among former supporters. Suburban voters who enabled the victory recoil.</p>
+                        <p style="margin-top: 0.75rem;">As <a href="https://www.brookings.edu/articles/tour-of-trump-predictions/" target="_blank">Brookings researchers noted</a>: "All forms of populism harbor an intrinsic tendency to become a runaway train."</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="timeline-item">
+                <div class="timeline-dot"></div>
+                <div class="timeline-content">
+                    <div class="timeline-year">2026</div>
+                    <div class="timeline-title">The Midterm Wave</div>
+                    <div class="timeline-text">
+                        <span class="catalyst">Electoral Shift</span>
+                        <p style="margin-top: 0.75rem;">Turnout surges. Democrats win the House convincingly. Several governorships flip. The "exhausted majority" finally shows up. It's not a realignment yet, but it's the beginning of one.</p>
+                        <p style="margin-top: 0.75rem;">This aligns with <a href="https://www.natesilver.net/p/113-predictions-for-trumps-second" target="_blank">Nate Silver's prediction</a> that Democrats would win the House—but the margin exceeds expectations.</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="timeline-item">
+                <div class="timeline-dot"></div>
+                <div class="timeline-content">
+                    <div class="timeline-year">2027</div>
+                    <div class="timeline-title">The Coalition Forms</div>
+                    <div class="timeline-text">
+                        <span class="catalyst">Political Realignment</span>
+                        <p style="margin-top: 0.75rem;">A new coalition emerges: progressive Democrats, moderate Republicans disgusted by their party, independents, and first-time voters. They don't agree on everything, but they agree on democracy.</p>
+                        <p style="margin-top: 0.75rem;">Echoing <a href="https://www.brookings.edu/articles/is-another-progressive-era-coming/" target="_blank">Brookings analysis</a>: "Just as moderates of the Progressive era were goaded into action by growing numbers of socialists and populists, activism prods more moderate progressives to find common cause."</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="timeline-item">
+                <div class="timeline-dot bright"></div>
+                <div class="timeline-content key-moment">
+                    <div class="timeline-year">2028</div>
+                    <div class="timeline-title">The Turning Point Election</div>
+                    <div class="timeline-text">
+                        <span class="catalyst">Decisive Victory</span>
+                        <p style="margin-top: 0.75rem;">The reform coalition wins decisively. Not just the presidency—governorships, state legislatures, both chambers of Congress. For the first time in decades, a mandate for structural change exists.</p>
+                        <p style="margin-top: 0.75rem;">The defeated movement doesn't disappear, but it's discredited enough to be contained.</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="section-break">☀</div>
+
+            <div class="timeline-item">
+                <div class="timeline-dot bright"></div>
+                <div class="timeline-content">
+                    <div class="timeline-year">2029-2030</div>
+                    <div class="timeline-title">The Reform Agenda</div>
+                    <div class="timeline-text">
+                        <span class="catalyst">Institutional Repair</span>
+                        <p style="margin-top: 0.75rem;">Constitutional amendments pass: congressional term limits, Supreme Court reform, anti-corruption measures. Voting rights protected nationally. Gerrymandering banned. The guardrails that failed are reinforced.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="reform-list">
+            <div class="reform-item">
+                <h4>Democracy Reforms</h4>
+                <p>Automatic voter registration, ranked choice voting, independent redistricting</p>
+            </div>
+            <div class="reform-item">
+                <h4>Economic Justice</h4>
+                <p>Wealth tax, union rights, antitrust enforcement against tech monopolies</p>
+            </div>
+            <div class="reform-item">
+                <h4>Climate Action</h4>
+                <p>Green New Deal-style investment, just transition for workers, rejoining global agreements</p>
+            </div>
+            <div class="reform-item">
+                <h4>Institutional Repair</h4>
+                <p>Court expansion, civil service protection, media literacy education</p>
+            </div>
+        </div>
+
+        <div class="timeline">
+            <div class="timeline-item">
+                <div class="timeline-dot bright"></div>
+                <div class="timeline-content">
+                    <div class="timeline-year">2031-2035</div>
+                    <div class="timeline-title">The Rebuilding</div>
+                    <div class="timeline-text">
+                        <span class="catalyst">Institutional Renewal</span>
+                        <p style="margin-top: 0.75rem;">Trust in institutions slowly rebuilds as they start working for ordinary people again. Inequality begins to decline for the first time in 40 years. The <a href="https://evonomics.com/rise-of-neoliberalism-inequality/" target="_blank">neoliberal consensus</a> that dominated since 1980 is finally replaced.</p>
+                        <p style="margin-top: 0.75rem;">It's not utopia—there's resistance, setbacks, compromise. But the direction has changed.</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="timeline-item">
+                <div class="timeline-dot bright"></div>
+                <div class="timeline-content">
+                    <div class="timeline-year">2036-2040</div>
+                    <div class="timeline-title">The New Normal</div>
+                    <div class="timeline-text">
+                        <span class="catalyst">Consolidation</span>
+                        <p style="margin-top: 0.75rem;">By 2040, a new political consensus has formed. Not everyone agrees with it, but the extreme polarization has faded. The republic survives—scarred, changed, but intact.</p>
+                        <p style="margin-top: 0.75rem;">As <a href="https://www.foreignaffairs.com/united-states/can-democracy-still-make-comeback" target="_blank">Foreign Affairs noted</a>: "Hope for a freer future is dimmed but not lost." In this timeline, that hope was justified.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="outcome-box">
+            <h2>End State: 2040</h2>
+            <p>America in 2040 has been through a crucible and emerged changed. The populist era is remembered as a warning and a catalyst. Institutions are stronger, inequality is lower, democracy is healthier. It's not perfect—nothing is—but the trajectory has reversed.</p>
+            <p style="margin-top: 1rem; font-style: italic; color: #fff;">This is the path of the pendulum—the pattern that ended the Gilded Age, that defeated fascism, that expanded civil rights. It requires crisis to trigger change, and organized movements to channel it. The question is whether such a movement can form in time.</p>
+        </div>
+
+        <div class="quote-block">
+            <p>"A younger generation entering politics has different expectations and demands, and they are not attached to old structures."</p>
+            <cite>— <a href="https://www.newamerica.org/the-thread/our-three-futures/" target="_blank">New America, "Our Three Futures"</a></cite>
+        </div>
+
+        <div class="sources">
+            <h4>Sources informing this scenario</h4>
+            <p>
+                <a href="https://toda.org/policy-briefs-and-resources/policy-briefs/report-227-full-text.html">Toda Peace Institute: Democratic Resilience</a> •
+                <a href="https://www.brookings.edu/articles/is-another-progressive-era-coming/">Brookings: Is Another Progressive Era Coming?</a> •
+                <a href="https://www.foreignaffairs.com/united-states/can-democracy-still-make-comeback">Foreign Affairs: Can Democracy Make a Comeback?</a> •
+                <a href="https://www.newamerica.org/the-thread/our-three-futures/">New America: Our Three Futures</a> •
+                <a href="https://www.cambridge.org/core/journals/journal-of-economic-history/article/political-extremism-in-the-1920s-and-1930s-do-german-lessons-generalize/0A2ACD66FBF33D2E51145E4FA95A9062">Cambridge: How Democracies Recovered from 1930s</a>
+            </p>
+        </div>
+
+        <div class="nav-buttons">
+            <a href="future-3-fragment.html" class="back">← The Fracturing</a>
+            <a href="future-5-transform.html" class="next">Next: The New Alignment →</a>
+        </div>
+    </div>
+</body>
+</html>

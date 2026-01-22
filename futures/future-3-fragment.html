@@ -1,0 +1,524 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Future III: The Fracturing</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+            background: linear-gradient(135deg, #1a0a2e 0%, #0a1a2e 50%, #2e0a1a 100%);
+            color: #fff;
+            line-height: 1.7;
+            min-height: 100vh;
+        }
+
+        .hero {
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            padding: 2rem;
+            background:
+                linear-gradient(45deg, rgba(100, 0, 100, 0.2) 0%, transparent 50%),
+                linear-gradient(-45deg, rgba(100, 50, 0, 0.2) 50%, transparent 100%),
+                radial-gradient(ellipse at center, rgba(153, 50, 204, 0.15) 0%, transparent 60%);
+        }
+
+        .hero h1 {
+            font-size: clamp(2.5rem, 8vw, 5rem);
+            font-weight: 800;
+            background: linear-gradient(135deg, #9932cc, #666, #cc3232);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 0.5rem;
+        }
+
+        .hero .number {
+            font-size: 1.2rem;
+            color: #fff;
+            text-transform: uppercase;
+            letter-spacing: 8px;
+            margin-bottom: 1rem;
+        }
+
+        .hero .subtitle {
+            font-size: 1.4rem;
+            color: #fff;
+            max-width: 650px;
+            margin-bottom: 2rem;
+        }
+
+        .status-banner {
+            background: linear-gradient(90deg, rgba(153, 50, 204, 0.15), rgba(204, 50, 50, 0.15));
+            border: 1px solid rgba(153, 50, 204, 0.3);
+            padding: 1rem 2rem;
+            border-radius: 4px;
+            font-size: 0.9rem;
+            color: #fff;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 0 2rem 4rem;
+        }
+
+        /* Split line effect */
+        .timeline {
+            position: relative;
+            padding: 2rem 0;
+        }
+
+        .timeline::before {
+            content: '';
+            position: absolute;
+            left: 30px;
+            width: 3px;
+            height: 100%;
+            background: linear-gradient(to bottom,
+                #9932cc 0%,
+                #666 25%,
+                #cc3232 50%,
+                #666 75%,
+                #9932cc 100%);
+        }
+
+        .timeline-item {
+            position: relative;
+            margin-bottom: 3rem;
+            padding-left: 70px;
+        }
+
+        .timeline-dot {
+            position: absolute;
+            left: 20px;
+            width: 22px;
+            height: 22px;
+            border-radius: 50%;
+            box-shadow: 0 0 20px rgba(153, 50, 204, 0.5);
+        }
+
+        .timeline-dot.purple {
+            background: #9932cc;
+        }
+
+        .timeline-dot.red {
+            background: #cc3232;
+        }
+
+        .timeline-dot.split {
+            background: linear-gradient(135deg, #3232cc 50%, #cc3232 50%);
+        }
+
+        .timeline-content {
+            background: rgba(153, 50, 204, 0.08);
+            border: 1px solid rgba(153, 50, 204, 0.2);
+            border-radius: 8px;
+            padding: 1.5rem;
+        }
+
+        .timeline-content.red-tint {
+            background: rgba(204, 50, 50, 0.08);
+            border-color: rgba(204, 50, 50, 0.2);
+        }
+
+        .timeline-content.blue-tint {
+            background: rgba(50, 50, 204, 0.08);
+            border-color: rgba(50, 50, 204, 0.2);
+        }
+
+        .timeline-year {
+            font-size: 0.85rem;
+            color: #fff;
+            font-weight: 700;
+            letter-spacing: 2px;
+            margin-bottom: 0.5rem;
+        }
+
+        .timeline-title {
+            font-size: 1.3rem;
+            font-weight: 700;
+            margin-bottom: 0.75rem;
+            color: #c8a8d8;
+        }
+
+        .timeline-text {
+            color: #fff;
+            font-size: 0.95rem;
+        }
+
+        .timeline-text a {
+            color: #b888d8;
+        }
+
+        .region-tag {
+            display: inline-block;
+            padding: 0.2rem 0.6rem;
+            border-radius: 4px;
+            font-size: 0.75rem;
+            margin-right: 0.5rem;
+            margin-bottom: 0.5rem;
+            font-weight: 600;
+        }
+
+        .region-tag.blue {
+            background: rgba(50, 50, 204, 0.3);
+            color: #fff;
+        }
+
+        .region-tag.red {
+            background: rgba(204, 50, 50, 0.3);
+            color: #ff8888;
+        }
+
+        .region-tag.purple {
+            background: rgba(153, 50, 204, 0.3);
+            color: #fff;
+        }
+
+        .split-box {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1rem;
+            margin: 2rem 0;
+        }
+
+        .split-side {
+            padding: 1.5rem;
+            border-radius: 8px;
+        }
+
+        .split-side.blue {
+            background: rgba(50, 50, 204, 0.1);
+            border: 1px solid rgba(50, 50, 204, 0.25);
+        }
+
+        .split-side.red {
+            background: rgba(204, 50, 50, 0.1);
+            border: 1px solid rgba(204, 50, 50, 0.25);
+        }
+
+        .split-side h4 {
+            margin-bottom: 0.75rem;
+            font-size: 1rem;
+        }
+
+        .split-side.blue h4 {
+            color: #fff;
+        }
+
+        .split-side.red h4 {
+            color: #ff8888;
+        }
+
+        .split-side ul {
+            list-style: none;
+            font-size: 0.9rem;
+            color: #fff;
+        }
+
+        .split-side li {
+            padding: 0.25rem 0;
+        }
+
+        .section-break {
+            text-align: center;
+            padding: 3rem 0;
+            font-size: 2rem;
+        }
+
+        .section-break span {
+            display: inline-block;
+            width: 40px;
+            height: 3px;
+            margin: 0 0.5rem;
+        }
+
+        .section-break .left {
+            background: #3232cc;
+        }
+
+        .section-break .right {
+            background: #cc3232;
+        }
+
+        .quote-block {
+            background: rgba(50, 50, 50, 0.3);
+            border-left: 3px solid #9932cc;
+            padding: 1.5rem;
+            margin: 2rem 0;
+            font-style: italic;
+            color: #fff;
+        }
+
+        .quote-block cite {
+            display: block;
+            margin-top: 1rem;
+            font-style: normal;
+            color: #fff;
+            font-size: 0.85rem;
+        }
+
+        .outcome-box {
+            background: linear-gradient(135deg, rgba(50, 50, 204, 0.15), rgba(204, 50, 50, 0.15));
+            border: 1px solid rgba(153, 50, 204, 0.3);
+            border-radius: 12px;
+            padding: 2rem;
+            margin: 3rem 0;
+            text-align: center;
+        }
+
+        .outcome-box h2 {
+            background: linear-gradient(135deg, #8888ff, #ff8888);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 1rem;
+        }
+
+        .outcome-box p {
+            color: #fff;
+        }
+
+        .nav-buttons {
+            display: flex;
+            justify-content: space-between;
+            padding: 2rem 0;
+            gap: 1rem;
+        }
+
+        .nav-buttons a {
+            padding: 1rem 2rem;
+            border-radius: 8px;
+            text-decoration: none;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            background: rgba(153, 50, 204, 0.15);
+            border: 1px solid rgba(153, 50, 204, 0.25);
+            color: #fff;
+        }
+
+        .nav-buttons a:hover {
+            background: rgba(153, 50, 204, 0.25);
+            color: #fff;
+        }
+
+        .sources {
+            margin-top: 3rem;
+            padding: 1.5rem;
+            background: rgba(50, 50, 50, 0.2);
+            border-radius: 8px;
+            font-size: 0.85rem;
+        }
+
+        .sources h4 {
+            color: #fff;
+            margin-bottom: 0.75rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .sources a {
+            color: #fff;
+            text-decoration: none;
+        }
+
+        @media (max-width: 600px) {
+            .split-box {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <section class="hero">
+        <div class="number">Future III</div>
+        <h1>The Fracturing</h1>
+        <p class="subtitle">In which America doesn't collapse or reform—it splits into two nations sharing a flag</p>
+        <div class="status-banner">Probability estimate: 15-20% — the path of divergence</div>
+    </section>
+
+    <div class="container">
+        <div class="quote-block">
+            <p>"The world today is economically multipolar... still militarily unipolar but challenged in some regions, and politically confused."</p>
+            <cite>— <a href="https://theconversation.com/a-new-world-order-isnt-coming-its-already-here-and-this-is-what-it-looks-like-264622" target="_blank">The Conversation, "A new world order isn't coming—it's already here"</a></cite>
+        </div>
+
+        <div class="timeline">
+            <div class="timeline-item">
+                <div class="timeline-dot split"></div>
+                <div class="timeline-content">
+                    <div class="timeline-year">2025-2026</div>
+                    <div class="timeline-title">The Great Divergence Begins</div>
+                    <div class="timeline-text">
+                        <span class="region-tag blue">BLUE STATES</span>
+                        <span class="region-tag red">RED STATES</span>
+                        <p style="margin-top: 0.75rem;">Federal dysfunction accelerates state-level action. California and New York create their own climate policies. Texas and Florida reject federal oversight entirely. Interstate compacts form along ideological lines.</p>
+                        <p style="margin-top: 0.75rem;">The federal government becomes increasingly irrelevant to daily governance. Real power shifts to state capitals and regional coalitions.</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="timeline-item">
+                <div class="timeline-dot purple"></div>
+                <div class="timeline-content">
+                    <div class="timeline-year">2027</div>
+                    <div class="timeline-title">The Abortion Standoff</div>
+                    <div class="timeline-text">
+                        <span class="region-tag purple">CONSTITUTIONAL CRISIS</span>
+                        <p style="margin-top: 0.75rem;">Red states attempt to prosecute residents who travel for abortions. Blue states refuse extradition. Federal courts deadlock. For the first time since the Civil War, states openly defy each other's legal authority.</p>
+                        <p style="margin-top: 0.75rem;">The Constitution's "full faith and credit" clause becomes a dead letter in practice.</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="timeline-item">
+                <div class="timeline-dot split"></div>
+                <div class="timeline-content">
+                    <div class="timeline-year">2028</div>
+                    <div class="timeline-title">The Election That Satisfied No One</div>
+                    <div class="timeline-text">
+                        <p>The 2028 election is contested, but neither side has the power to impose their will. The resulting administration is weak, governing only with the consent of cooperative states. Federal authority becomes advisory.</p>
+                        <p style="margin-top: 0.75rem;">Some call this "functional federalism." Others call it the beginning of the end.</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="timeline-item">
+                <div class="timeline-dot purple"></div>
+                <div class="timeline-content">
+                    <div class="timeline-year">2029-2030</div>
+                    <div class="timeline-title">The Compact System Emerges</div>
+                    <div class="timeline-text">
+                        <span class="region-tag blue">PACIFIC COMPACT</span>
+                        <span class="region-tag blue">ATLANTIC COMPACT</span>
+                        <span class="region-tag red">HEARTLAND COMPACT</span>
+                        <p style="margin-top: 0.75rem;">Regional compacts formalize. Blue-state coalitions share environmental regulations, healthcare systems, and educational standards. Red-state coalitions do the same with opposite priorities.</p>
+                        <p style="margin-top: 0.75rem;">Internal migration accelerates. People move to states that match their values. The "big sort" becomes a flood.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="split-box">
+            <div class="split-side blue">
+                <h4>Blue America (2030)</h4>
+                <ul>
+                    <li>→ Universal healthcare via state compacts</li>
+                    <li>→ Aggressive climate policy</li>
+                    <li>→ Strong labor protections</li>
+                    <li>→ Higher taxes, more services</li>
+                    <li>→ Abortion and LGBTQ rights protected</li>
+                    <li>→ GDP: 65% of national total</li>
+                </ul>
+            </div>
+            <div class="split-side red">
+                <h4>Red America (2030)</h4>
+                <ul>
+                    <li>→ Private healthcare dominates</li>
+                    <li>→ Fossil fuel expansion</li>
+                    <li>→ "Right to work" everywhere</li>
+                    <li>→ Lower taxes, fewer services</li>
+                    <li>→ Traditional social policies enforced</li>
+                    <li>→ GDP: 35% of national total</li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="section-break">
+            <span class="left"></span>
+            <span class="right"></span>
+        </div>
+
+        <div class="timeline">
+            <div class="timeline-item">
+                <div class="timeline-dot blue" style="background: #3232cc;"></div>
+                <div class="timeline-content blue-tint">
+                    <div class="timeline-year">2031-2033</div>
+                    <div class="timeline-title">Blue America Globalizes</div>
+                    <div class="timeline-text">
+                        <span class="region-tag blue">ECONOMIC REALIGNMENT</span>
+                        <p style="margin-top: 0.75rem;">Coastal compacts negotiate their own trade relationships with Europe, Canada, and Asian democracies. California's economy alone ranks as the 4th largest in the world. Blue America becomes a de facto independent economic bloc.</p>
+                        <p style="margin-top: 0.75rem;">Tech, finance, and knowledge work concentrate further in blue regions. The brain drain from red states accelerates.</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="timeline-item">
+                <div class="timeline-dot red" style="background: #cc3232;"></div>
+                <div class="timeline-content red-tint">
+                    <div class="timeline-year">2031-2033</div>
+                    <div class="timeline-title">Red America Entrenches</div>
+                    <div class="timeline-text">
+                        <span class="region-tag red">CULTURAL CONSOLIDATION</span>
+                        <p style="margin-top: 0.75rem;">Heartland states double down on traditional industries: agriculture, energy extraction, manufacturing. They reject "coastal elitism" and build alternative institutions—universities, media, financial systems.</p>
+                        <p style="margin-top: 0.75rem;">Population declines but community cohesion increases. Those who stay are true believers.</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="timeline-item">
+                <div class="timeline-dot split"></div>
+                <div class="timeline-content">
+                    <div class="timeline-year">2034-2036</div>
+                    <div class="timeline-title">The Currency Question</div>
+                    <div class="timeline-text">
+                        <span class="region-tag purple">ECONOMIC TENSION</span>
+                        <p style="margin-top: 0.75rem;">Blue states subsidize red states through federal taxation—but increasingly resist. Red states resent blue state cultural dominance. Arguments over federal spending become existential.</p>
+                        <p style="margin-top: 0.75rem;">Think tanks begin quietly modeling scenarios for regional currencies. The unthinkable becomes thinkable.</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="timeline-item">
+                <div class="timeline-dot purple"></div>
+                <div class="timeline-content">
+                    <div class="timeline-year">2037-2040</div>
+                    <div class="timeline-title">The American Commonwealth</div>
+                    <div class="timeline-text">
+                        <span class="region-tag purple">NEW STRUCTURE</span>
+                        <p style="margin-top: 0.75rem;">A constitutional convention—the first since 1787—redefines the union. The result resembles the EU more than the old federal system: shared currency, open borders, common defense, but radical autonomy on domestic policy.</p>
+                        <p style="margin-top: 0.75rem;">America remains one country on paper. In practice, it's become three or four.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="outcome-box">
+            <h2>End State: 2040</h2>
+            <p>The United States of America still exists, but it's a confederation more than a nation. Regional compacts handle most governance. The federal government manages defense, currency, and international relations—barely. Blue and red Americans live in increasingly different countries that happen to share a flag.</p>
+            <p style="margin-top: 1rem; font-style: italic; color: #fff;">This is the path of irreconcilable differences resolved not through war or reconciliation, but through distance. It's not the worst outcome—but it's the end of America as a unified project.</p>
+        </div>
+
+        <div class="quote-block">
+            <p>"Freedom House noted that 2024 marked the 19th consecutive year of global democratic decline... The assumption that liberal institutions would continue to spread has collapsed."</p>
+            <cite>— <a href="https://tnsr.org/2025/12/a-new-world-order-careful-what-you-wish-for/" target="_blank">Texas National Security Review</a></cite>
+        </div>
+
+        <div class="sources">
+            <h4>Sources informing this scenario</h4>
+            <p>
+                <a href="https://theconversation.com/a-new-world-order-isnt-coming-its-already-here-and-this-is-what-it-looks-like-264622">The Conversation: New World Order</a> •
+                <a href="https://www.csis.org/analysis/four-scenarios-geopolitical-order-2025-2030-what-will-great-power-competition-look">CSIS: Geopolitical Scenarios</a> •
+                <a href="https://tnsr.org/2025/12/a-new-world-order-careful-what-you-wish-for/">TNSR: New World Order Analysis</a> •
+                Historical precedents: EU formation, Soviet dissolution, Canadian federalism debates
+            </p>
+        </div>
+
+        <div class="nav-buttons">
+            <a href="future-2-stagnation.html" class="back">← The Long Twilight</a>
+            <a href="future-4-reform.html" class="next">Next: The Pendulum Swings →</a>
+        </div>
+    </div>
+</body>
+</html>

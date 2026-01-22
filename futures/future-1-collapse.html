@@ -1,0 +1,398 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Future I: The Dark Spiral</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+            background: linear-gradient(180deg, #0a0000 0%, #1a0505 50%, #0a0000 100%);
+            color: #fff;
+            line-height: 1.7;
+            min-height: 100vh;
+        }
+
+        /* Flickering effect for dystopian feel */
+        @keyframes flicker {
+            0%, 100% { opacity: 1; }
+            92% { opacity: 1; }
+            93% { opacity: 0.8; }
+            94% { opacity: 1; }
+            96% { opacity: 0.9; }
+            97% { opacity: 1; }
+        }
+
+        .hero {
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            padding: 2rem;
+            background:
+                radial-gradient(ellipse at center, rgba(139, 0, 0, 0.3) 0%, transparent 60%),
+                url("data:image/svg+xml,%3Csvg viewBox='0 0 400 400' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E");
+            background-blend-mode: overlay;
+        }
+
+        .hero h1 {
+            font-size: clamp(2.5rem, 8vw, 5rem);
+            font-weight: 800;
+            color: #fff;
+            text-shadow: 0 0 60px rgba(139, 0, 0, 0.8), 0 0 120px rgba(139, 0, 0, 0.4);
+            margin-bottom: 0.5rem;
+            animation: flicker 8s infinite;
+        }
+
+        .hero .number {
+            font-size: 1.2rem;
+            color: #fff;
+            text-transform: uppercase;
+            letter-spacing: 8px;
+            margin-bottom: 1rem;
+        }
+
+        .hero .subtitle {
+            font-size: 1.4rem;
+            color: #fff;
+            max-width: 600px;
+            margin-bottom: 2rem;
+        }
+
+        .warning-banner {
+            background: rgba(139, 0, 0, 0.2);
+            border: 1px solid rgba(139, 0, 0, 0.4);
+            padding: 1rem 2rem;
+            border-radius: 4px;
+            font-size: 0.9rem;
+            color: #fff;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 0 2rem 4rem;
+        }
+
+        .timeline {
+            position: relative;
+            padding: 2rem 0;
+        }
+
+        .timeline::before {
+            content: '';
+            position: absolute;
+            left: 30px;
+            width: 2px;
+            height: 100%;
+            background: linear-gradient(to bottom, #8b0000, #4a0000, #8b0000);
+        }
+
+        .timeline-item {
+            position: relative;
+            margin-bottom: 3rem;
+            padding-left: 70px;
+        }
+
+        .timeline-dot {
+            position: absolute;
+            left: 22px;
+            width: 18px;
+            height: 18px;
+            background: #8b0000;
+            border-radius: 50%;
+            box-shadow: 0 0 20px rgba(139, 0, 0, 0.8);
+        }
+
+        .timeline-content {
+            background: rgba(139, 0, 0, 0.08);
+            border: 1px solid rgba(139, 0, 0, 0.2);
+            border-radius: 8px;
+            padding: 1.5rem;
+        }
+
+        .timeline-year {
+            font-size: 0.85rem;
+            color: #fff;
+            font-weight: 700;
+            letter-spacing: 2px;
+            margin-bottom: 0.5rem;
+        }
+
+        .timeline-title {
+            font-size: 1.3rem;
+            font-weight: 700;
+            margin-bottom: 0.75rem;
+            color: #cd5c5c;
+        }
+
+        .timeline-text {
+            color: #fff;
+            font-size: 0.95rem;
+        }
+
+        .timeline-text a {
+            color: #fff;
+        }
+
+        .key-event {
+            border-left: 3px solid #8b0000;
+            background: rgba(139, 0, 0, 0.15);
+        }
+
+        .section-break {
+            text-align: center;
+            padding: 3rem 0;
+            color: #fff;
+            font-size: 2rem;
+        }
+
+        .quote-block {
+            background: rgba(0, 0, 0, 0.4);
+            border-left: 3px solid #8b0000;
+            padding: 1.5rem;
+            margin: 2rem 0;
+            font-style: italic;
+            color: #fff;
+        }
+
+        .quote-block cite {
+            display: block;
+            margin-top: 1rem;
+            font-style: normal;
+            color: #fff;
+            font-size: 0.85rem;
+        }
+
+        .outcome-box {
+            background: linear-gradient(135deg, rgba(139, 0, 0, 0.2), rgba(0, 0, 0, 0.4));
+            border: 1px solid rgba(139, 0, 0, 0.4);
+            border-radius: 12px;
+            padding: 2rem;
+            margin: 3rem 0;
+            text-align: center;
+        }
+
+        .outcome-box h2 {
+            color: #fff;
+            margin-bottom: 1rem;
+        }
+
+        .outcome-box p {
+            color: #fff;
+        }
+
+        .nav-buttons {
+            display: flex;
+            justify-content: space-between;
+            padding: 2rem 0;
+            gap: 1rem;
+        }
+
+        .nav-buttons a {
+            padding: 1rem 2rem;
+            border-radius: 8px;
+            text-decoration: none;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+
+        .nav-buttons .back {
+            background: rgba(100, 100, 100, 0.2);
+            border: 1px solid rgba(100, 100, 100, 0.3);
+            color: #fff;
+        }
+
+        .nav-buttons .back:hover {
+            background: rgba(100, 100, 100, 0.3);
+            color: #fff;
+        }
+
+        .nav-buttons .next {
+            background: rgba(100, 100, 100, 0.2);
+            border: 1px solid rgba(100, 100, 100, 0.3);
+            color: #fff;
+        }
+
+        .nav-buttons .next:hover {
+            background: rgba(100, 100, 100, 0.3);
+            color: #fff;
+        }
+
+        .sources {
+            margin-top: 3rem;
+            padding: 1.5rem;
+            background: rgba(0, 0, 0, 0.3);
+            border-radius: 8px;
+            font-size: 0.85rem;
+        }
+
+        .sources h4 {
+            color: #fff;
+            margin-bottom: 0.75rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .sources a {
+            color: #fff;
+            text-decoration: none;
+        }
+
+        .sources a:hover {
+            text-decoration: underline;
+        }
+    </style>
+</head>
+<body>
+    <section class="hero">
+        <div class="number">Future I</div>
+        <h1>The Dark Spiral</h1>
+        <p class="subtitle">In which authoritarian consolidation succeeds, and America becomes the thing it once opposed</p>
+        <div class="warning-banner">Probability estimate: 15-25% based on current trajectories</div>
+    </section>
+
+    <div class="container">
+        <div class="quote-block">
+            <p>"U.S. democracy will likely break down during the second Trump administration, in the sense that it will cease to meet standard criteria for liberal democracy."</p>
+            <cite>— <a href="https://www.foreignaffairs.com/united-states/path-american-authoritarianism-trump" target="_blank">Foreign Affairs, "The Path to American Authoritarianism"</a></cite>
+        </div>
+
+        <div class="timeline">
+            <div class="timeline-item">
+                <div class="timeline-dot"></div>
+                <div class="timeline-content key-event">
+                    <div class="timeline-year">2025</div>
+                    <div class="timeline-title">The Purge Begins</div>
+                    <div class="timeline-text">
+                        <p>Mass firings across federal agencies. "Schedule F" reclassifies tens of thousands of civil servants as at-will employees. The DOJ becomes an instrument of political revenge. Investigations opened against political opponents.</p>
+                        <p style="margin-top: 0.75rem;">The <a href="https://www.npr.org/2025/04/22/nx-s1-5340753/trump-democracy-authoritarianism-competive-survey-political-scientist" target="_blank">Bright Line Watch survey</a> of political scientists shows democracy rating plummeting from 67 to 55—"the biggest drop since we started tracking."</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="timeline-item">
+                <div class="timeline-dot"></div>
+                <div class="timeline-content">
+                    <div class="timeline-year">2026</div>
+                    <div class="timeline-title">The Midterms That Weren't</div>
+                    <div class="timeline-text">
+                        <p>Voting restrictions in key states disenfranchise millions. Gerrymandering locks in Republican majorities. Despite widespread discontent, Democrats fail to retake the House. Claims of fraud delegitimize results in close races.</p>
+                        <p style="margin-top: 0.75rem;">Scholars had predicted attacks on minority voting rights as "an expected outcome of authoritarian consolidation." They were right.</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="timeline-item">
+                <div class="timeline-dot"></div>
+                <div class="timeline-content">
+                    <div class="timeline-year">2027</div>
+                    <div class="timeline-title">The Broligarchy Ascendant</div>
+                    <div class="timeline-text">
+                        <p>Tech billionaires formally merge with government. Musk's companies receive exclusive government contracts. Zuckerberg's platforms become de facto state media. AI surveillance systems deployed "for national security."</p>
+                        <p style="margin-top: 0.75rem;">The <a href="https://grayfiles.podbean.com/e/the-rise-of-techno-feudalism-are-billionaire-oligarchs-replacing-democracy/" target="_blank">techno-feudalism</a> analysts warned about becomes reality. Corporations don't just influence government—they become it.</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="timeline-item">
+                <div class="timeline-dot"></div>
+                <div class="timeline-content key-event">
+                    <div class="timeline-year">2028</div>
+                    <div class="timeline-title">The Constitutional Crisis</div>
+                    <div class="timeline-text">
+                        <p>Trump announces intention to seek third term, citing "unfinished business." Loyal courts decline to intervene. The 22nd Amendment, like so many norms before it, proves to be just words on paper when no one enforces them.</p>
+                        <p style="margin-top: 0.75rem;">Some analysts had warned: "The damage Trump and his cronies are willing to do makes it unlikely they will risk having to hand back the keys in 2029. They become prisoners of power."</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="timeline-item">
+                <div class="timeline-dot"></div>
+                <div class="timeline-content">
+                    <div class="timeline-year">2029-2030</div>
+                    <div class="timeline-title">The New Normal</div>
+                    <div class="timeline-text">
+                        <p>Opposition media shuttered or self-censored. Universities defunded and politicized. Protests met with overwhelming force. Elections continue—but outcomes are predetermined. America has become Hungary writ large.</p>
+                        <p style="margin-top: 0.75rem;">The <a href="https://americanaffairsjournal.org/2025/08/authoritarianism-reform-or-capture-democracy-in-trumps-america/" target="_blank">"competitive authoritarianism"</a> model is complete: elections exist, but the playing field is so tilted that the opposition can never win.</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="section-break">· · ·</div>
+
+            <div class="timeline-item">
+                <div class="timeline-dot"></div>
+                <div class="timeline-content">
+                    <div class="timeline-year">2031-2033</div>
+                    <div class="timeline-title">Climate Cooperation Collapses</div>
+                    <div class="timeline-text">
+                        <p>US withdrawal from climate agreements triggers global cascade. Other nations follow suit. The <a href="https://www.ipcc.ch/sr15/chapter/spm/" target="_blank">IPCC's 1.5°C target</a> becomes impossible. We lock in 2.5-3°C warming. Extreme weather events multiply.</p>
+                        <p style="margin-top: 0.75rem;">The window for preventing catastrophic climate change closes. What comes next is adaptation—for those who can afford it.</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="timeline-item">
+                <div class="timeline-dot"></div>
+                <div class="timeline-content">
+                    <div class="timeline-year">2034-2036</div>
+                    <div class="timeline-title">The Great Sorting</div>
+                    <div class="timeline-text">
+                        <p>Internal migration accelerates. Blue-state refugees flee to coasts. Red states entrench. The <a href="https://www.oxfamamerica.org/explore/stories/top-5-ways-billionaires-are-bad-for-the-economy/" target="_blank">richest 1%</a> retreat to fortified enclaves. The middle class effectively ceases to exist.</p>
+                        <p style="margin-top: 0.75rem;">Inequality reaches levels not seen since feudal Europe. 60% of wealth comes from inheritance, cronyism, or monopoly—a "new aristocratic oligarchy."</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="timeline-item">
+                <div class="timeline-dot"></div>
+                <div class="timeline-content key-event">
+                    <div class="timeline-year">2037-2040</div>
+                    <div class="timeline-title">The AI Panopticon</div>
+                    <div class="timeline-text">
+                        <p>AI-powered surveillance becomes total. Predictive policing targets dissidents before they act. Social credit systems determine access to services. <a href="https://gizmodo.com/the-world-will-enter-a-15-year-ai-dystopia-in-2027-former-google-exec-says-2000641195" target="_blank">The "15-year AI dystopia"</a> former Google exec Mo Gawdat predicted is in full swing.</p>
+                        <p style="margin-top: 0.75rem;">Resistance becomes nearly impossible. Not because people don't want change, but because the systems to organize it have been dismantled or surveilled into silence.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="outcome-box">
+            <h2>End State: 2040</h2>
+            <p>America is no longer a democracy by any meaningful definition. It's a competitive authoritarian state with the trappings of elections but none of the substance. The global democratic recession has become a depression. Climate change has accelerated past the point of prevention. The window that existed in 2025 has closed.</p>
+            <p style="margin-top: 1rem; font-style: italic; color: #fff;">This future is not inevitable. It requires sustained institutional failure, public acquiescence, and the absence of effective resistance. But it is possible.</p>
+        </div>
+
+        <div class="quote-block">
+            <p>"This is authoritarianism on the one hand, but it's an authoritarianism that can be reversed—and I think likely will be reversed."</p>
+            <cite>— Steven Levitsky, co-author of "How Democracies Die"</cite>
+        </div>
+
+        <div class="sources">
+            <h4>Sources informing this scenario</h4>
+            <p>
+                <a href="https://www.foreignaffairs.com/united-states/path-american-authoritarianism-trump">Foreign Affairs: Path to American Authoritarianism</a> •
+                <a href="https://www.npr.org/2025/04/22/nx-s1-5340753/trump-democracy-authoritarianism-competive-survey-political-scientist">NPR: 500 Scholars on Authoritarianism</a> •
+                <a href="https://www.scientificamerican.com/article/science-tells-us-the-u-s-is-heading-toward-a-dictatorship/">Scientific American: Heading Toward Dictatorship</a> •
+                <a href="https://www.hks.harvard.edu/faculty-research/policy-topics/democracy-governance/democracy-2025-harvard-professors-rising">Harvard: Democracy in 2025</a> •
+                <a href="https://gizmodo.com/the-world-will-enter-a-15-year-ai-dystopia-in-2027-former-google-exec-says-2000641195">Gizmodo: AI Dystopia Prediction</a> •
+                <a href="https://inequality.org/article/oligarchy-has-arrived-in-america-will-we-confront-it/">Inequality.org: Oligarchy in America</a>
+            </p>
+        </div>
+
+        <div class="nav-buttons">
+            <a href="futures-hub.html" class="back">← All Futures</a>
+            <a href="future-2-stagnation.html" class="next">Next: The Long Twilight →</a>
+        </div>
+    </div>
+</body>
+</html>

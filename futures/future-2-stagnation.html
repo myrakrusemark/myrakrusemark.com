@@ -1,0 +1,440 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Future II: The Long Twilight</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+            background: linear-gradient(180deg, #1a1a1a 0%, #2a2a2a 50%, #1a1a1a 100%);
+            color: #fff;
+            line-height: 1.7;
+            min-height: 100vh;
+        }
+
+        /* Fog/mist effect */
+        .hero {
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            padding: 2rem;
+            background:
+                radial-gradient(ellipse at 30% 20%, rgba(100, 100, 100, 0.2) 0%, transparent 50%),
+                radial-gradient(ellipse at 70% 80%, rgba(80, 80, 80, 0.15) 0%, transparent 50%),
+                linear-gradient(180deg, #1a1a1a 0%, #2a2a2a 100%);
+            position: relative;
+        }
+
+        .hero::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: url("data:image/svg+xml,%3Csvg viewBox='0 0 400 400' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.4' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)' opacity='0.05'/%3E%3C/svg%3E");
+            pointer-events: none;
+        }
+
+        .hero h1 {
+            font-size: clamp(2.5rem, 8vw, 5rem);
+            font-weight: 300;
+            color: #fff;
+            text-shadow: 0 0 60px rgba(100, 100, 100, 0.5);
+            margin-bottom: 0.5rem;
+            letter-spacing: 4px;
+        }
+
+        .hero .number {
+            font-size: 1.2rem;
+            color: #fff;
+            text-transform: uppercase;
+            letter-spacing: 8px;
+            margin-bottom: 1rem;
+        }
+
+        .hero .subtitle {
+            font-size: 1.4rem;
+            color: #fff;
+            max-width: 600px;
+            margin-bottom: 2rem;
+            font-weight: 300;
+        }
+
+        .status-banner {
+            background: rgba(100, 100, 100, 0.15);
+            border: 1px solid rgba(100, 100, 100, 0.3);
+            padding: 1rem 2rem;
+            border-radius: 4px;
+            font-size: 0.9rem;
+            color: #fff;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 0 2rem 4rem;
+        }
+
+        .timeline {
+            position: relative;
+            padding: 2rem 0;
+        }
+
+        .timeline::before {
+            content: '';
+            position: absolute;
+            left: 30px;
+            width: 2px;
+            height: 100%;
+            background: linear-gradient(to bottom, #555, #333, #555);
+        }
+
+        .timeline-item {
+            position: relative;
+            margin-bottom: 3rem;
+            padding-left: 70px;
+        }
+
+        .timeline-dot {
+            position: absolute;
+            left: 22px;
+            width: 18px;
+            height: 18px;
+            background: #555;
+            border-radius: 50%;
+            box-shadow: 0 0 15px rgba(100, 100, 100, 0.4);
+        }
+
+        .timeline-content {
+            background: rgba(100, 100, 100, 0.08);
+            border: 1px solid rgba(100, 100, 100, 0.15);
+            border-radius: 8px;
+            padding: 1.5rem;
+        }
+
+        .timeline-year {
+            font-size: 0.85rem;
+            color: #fff;
+            font-weight: 600;
+            letter-spacing: 2px;
+            margin-bottom: 0.5rem;
+        }
+
+        .timeline-title {
+            font-size: 1.3rem;
+            font-weight: 600;
+            margin-bottom: 0.75rem;
+            color: #aaa;
+        }
+
+        .timeline-text {
+            color: #fff;
+            font-size: 0.95rem;
+        }
+
+        .timeline-text a {
+            color: #fff;
+        }
+
+        .characteristic {
+            display: inline-block;
+            background: rgba(100, 100, 100, 0.2);
+            padding: 0.2rem 0.6rem;
+            border-radius: 4px;
+            font-size: 0.8rem;
+            margin-right: 0.5rem;
+            margin-bottom: 0.5rem;
+            color: #fff;
+        }
+
+        .section-break {
+            text-align: center;
+            padding: 3rem 0;
+            color: #fff;
+            font-size: 1.5rem;
+            letter-spacing: 8px;
+        }
+
+        .quote-block {
+            background: rgba(50, 50, 50, 0.3);
+            border-left: 3px solid #555;
+            padding: 1.5rem;
+            margin: 2rem 0;
+            font-style: italic;
+            color: #fff;
+        }
+
+        .quote-block cite {
+            display: block;
+            margin-top: 1rem;
+            font-style: normal;
+            color: #fff;
+            font-size: 0.85rem;
+        }
+
+        .stats-row {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 1rem;
+            margin: 2rem 0;
+        }
+
+        .stat-box {
+            background: rgba(100, 100, 100, 0.1);
+            border: 1px solid rgba(100, 100, 100, 0.2);
+            border-radius: 8px;
+            padding: 1.25rem;
+            text-align: center;
+        }
+
+        .stat-box .number {
+            font-size: 2rem;
+            font-weight: 700;
+            color: #fff;
+        }
+
+        .stat-box .label {
+            font-size: 0.8rem;
+            color: #fff;
+            margin-top: 0.25rem;
+        }
+
+        .outcome-box {
+            background: linear-gradient(135deg, rgba(80, 80, 80, 0.15), rgba(50, 50, 50, 0.2));
+            border: 1px solid rgba(100, 100, 100, 0.25);
+            border-radius: 12px;
+            padding: 2rem;
+            margin: 3rem 0;
+            text-align: center;
+        }
+
+        .outcome-box h2 {
+            color: #fff;
+            margin-bottom: 1rem;
+            font-weight: 400;
+            letter-spacing: 2px;
+        }
+
+        .outcome-box p {
+            color: #fff;
+        }
+
+        .nav-buttons {
+            display: flex;
+            justify-content: space-between;
+            padding: 2rem 0;
+            gap: 1rem;
+        }
+
+        .nav-buttons a {
+            padding: 1rem 2rem;
+            border-radius: 8px;
+            text-decoration: none;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            background: rgba(100, 100, 100, 0.15);
+            border: 1px solid rgba(100, 100, 100, 0.25);
+            color: #fff;
+        }
+
+        .nav-buttons a:hover {
+            background: rgba(100, 100, 100, 0.25);
+            color: #fff;
+        }
+
+        .sources {
+            margin-top: 3rem;
+            padding: 1.5rem;
+            background: rgba(50, 50, 50, 0.2);
+            border-radius: 8px;
+            font-size: 0.85rem;
+        }
+
+        .sources h4 {
+            color: #fff;
+            margin-bottom: 0.75rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .sources a {
+            color: #fff;
+            text-decoration: none;
+        }
+
+        .sources a:hover {
+            text-decoration: underline;
+        }
+    </style>
+</head>
+<body>
+    <section class="hero">
+        <div class="number">Future II</div>
+        <h1>The Long Twilight</h1>
+        <p class="subtitle">In which nothing collapses, but nothing improves. The gray fog of managed decline.</p>
+        <div class="status-banner">Probability estimate: 30-40% — the most likely scenario</div>
+    </section>
+
+    <div class="container">
+        <div class="quote-block">
+            <p>"Multipolarity is considered one of the most unstable political systems because it assumes high uncertainty... increasing miscalculations, competition, shifting alliances."</p>
+            <cite>— <a href="https://securityconference.org/en/publications/munich-security-report-2025/introduction/" target="_blank">Munich Security Report 2025</a></cite>
+        </div>
+
+        <div class="stats-row">
+            <div class="stat-box">
+                <div class="number">19</div>
+                <div class="label">Years of democratic decline</div>
+            </div>
+            <div class="stat-box">
+                <div class="number">~55</div>
+                <div class="label">Democracy score (down from 67)</div>
+            </div>
+            <div class="stat-box">
+                <div class="number">52%</div>
+                <div class="label">Want to focus on domestic issues</div>
+            </div>
+        </div>
+
+        <div class="timeline">
+            <div class="timeline-item">
+                <div class="timeline-dot"></div>
+                <div class="timeline-content">
+                    <div class="timeline-year">2025-2026</div>
+                    <div class="timeline-title">The Chaos Without Collapse</div>
+                    <div class="timeline-text">
+                        <span class="characteristic">institutional erosion</span>
+                        <span class="characteristic">norm violation</span>
+                        <p style="margin-top: 0.75rem;">Executive overreach continues. Courts are packed but not abolished. Media is pressured but not shuttered. Elections are tilted but not canceled. The system bends without breaking.</p>
+                        <p style="margin-top: 0.75rem;">As one <a href="https://www.idsnews.com/article/2025/01/donald-trump-second-term-indiana-university-political-science" target="_blank">skeptical scholar predicted</a>: claims of "the end of American democracy" don't materialize—but neither does democracy feel healthy.</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="timeline-item">
+                <div class="timeline-dot"></div>
+                <div class="timeline-content">
+                    <div class="timeline-year">2026</div>
+                    <div class="timeline-title">Midterms: A Muddled Message</div>
+                    <div class="timeline-text">
+                        <span class="characteristic">mixed results</span>
+                        <span class="characteristic">low turnout</span>
+                        <p style="margin-top: 0.75rem;">Democrats gain some House seats but fall short of a majority. Republicans retain the Senate. Neither side can claim mandate. Legislative gridlock becomes permanent feature.</p>
+                        <p style="margin-top: 0.75rem;"><a href="https://www.natesilver.net/p/113-predictions-for-trumps-second" target="_blank">Nate Silver had predicted</a> Democrats would win the House at 70% odds. In this timeline, they come close but don't quite make it.</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="timeline-item">
+                <div class="timeline-dot"></div>
+                <div class="timeline-content">
+                    <div class="timeline-year">2027-2028</div>
+                    <div class="timeline-title">The Groundhog Day Election</div>
+                    <div class="timeline-text">
+                        <span class="characteristic">exhaustion</span>
+                        <span class="characteristic">low enthusiasm</span>
+                        <p style="margin-top: 0.75rem;">Trump's second term ends not with a bang but a whimper. He's term-limited (the 22nd Amendment holds, barely). Republicans nominate a successor. Democrats struggle to unify. Turnout drops.</p>
+                        <p style="margin-top: 0.75rem;">Voters are exhausted. Politics feels like weather—something that happens to you, not something you can change.</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="timeline-item">
+                <div class="timeline-dot"></div>
+                <div class="timeline-content">
+                    <div class="timeline-year">2029-2030</div>
+                    <div class="timeline-title">New President, Same Problems</div>
+                    <div class="timeline-text">
+                        <span class="characteristic">continuity</span>
+                        <span class="characteristic">drift</span>
+                        <p style="margin-top: 0.75rem;">Whether Democrat or Republican wins, the structural problems persist: inequality continues rising, climate action remains inadequate, institutions remain weakened, trust stays low.</p>
+                        <p style="margin-top: 0.75rem;">The <a href="https://www.imf.org/external/pubs/ft/fandd/2016/06/ostry.htm" target="_blank">IMF's verdict on neoliberalism</a>—"benefits difficult to establish, costs in increased inequality prominent"—continues to describe policy.</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="section-break">· · ·</div>
+
+            <div class="timeline-item">
+                <div class="timeline-dot"></div>
+                <div class="timeline-content">
+                    <div class="timeline-year">2031-2033</div>
+                    <div class="timeline-title">The Multipolar Muddle</div>
+                    <div class="timeline-text">
+                        <span class="characteristic">geopolitical shift</span>
+                        <span class="characteristic">uncertainty</span>
+                        <p style="margin-top: 0.75rem;">The <a href="https://www.csis.org/analysis/four-scenarios-geopolitical-order-2025-2030-what-will-great-power-competition-look" target="_blank">"loose multipolarity"</a> CSIS predicted becomes reality. US remains powerful but no longer dominant. China rises but doesn't surpass. No one is in charge.</p>
+                        <p style="margin-top: 0.75rem;">International cooperation becomes harder. Climate agreements are weak. Trade disputes simmer. The post-WWII order fades without replacement.</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="timeline-item">
+                <div class="timeline-dot"></div>
+                <div class="timeline-content">
+                    <div class="timeline-year">2034-2036</div>
+                    <div class="timeline-title">The Inequality Plateau</div>
+                    <div class="timeline-text">
+                        <span class="characteristic">entrenchment</span>
+                        <span class="characteristic">adaptation</span>
+                        <p style="margin-top: 0.75rem;">Inequality stops growing—but only because it's plateaued at extreme levels. The <a href="https://www.commondreams.org/news/global-oligarchy" target="_blank">top 1% controlling more than the bottom 95%</a> becomes normalized. People adapt to diminished expectations.</p>
+                        <p style="margin-top: 0.75rem;">Social mobility remains frozen. The American Dream is officially a memory, though no one declares it dead.</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="timeline-item">
+                <div class="timeline-dot"></div>
+                <div class="timeline-content">
+                    <div class="timeline-year">2037-2040</div>
+                    <div class="timeline-title">The New Normal</div>
+                    <div class="timeline-text">
+                        <span class="characteristic">acceptance</span>
+                        <span class="characteristic">resignation</span>
+                        <p style="margin-top: 0.75rem;">Climate change worsens but isn't catastrophic (yet). AI disrupts jobs but doesn't cause mass unemployment. Democracy survives but doesn't thrive. Things are worse than 2020, but life goes on.</p>
+                        <p style="margin-top: 0.75rem;">The <a href="https://news.gallup.com/poll/700448/americans-predict-challenging-2026-across-dimensions.aspx" target="_blank">Gallup prediction</a> that Americans expected challenging years ahead proves accurate—but "challenging" becomes baseline.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="outcome-box">
+            <h2>End State: 2040</h2>
+            <p>America in 2040 is recognizable but diminished. Democracy exists but feels hollow. Elections happen but change little. Inequality is extreme but stable. Climate change is worsening but manageable (for now). The country didn't collapse—it just slowly declined.</p>
+            <p style="margin-top: 1rem; font-style: italic; color: #fff;">This is the future of inertia—what happens when things don't get dramatically better or worse, just slowly grind on. It's perhaps the most likely path because it requires no dramatic changes, only the continuation of current trends.</p>
+        </div>
+
+        <div class="quote-block">
+            <p>"The American people have been willing to accept the burden of international leadership for roughly 80 years, but attitudes are shifting. 52% now say the United States should pay less attention to problems overseas."</p>
+            <cite>— <a href="https://www.stimson.org/2025/an-american-strategy-for-a-multipolar-world/" target="_blank">Stimson Center, "An American Strategy for a Multipolar World"</a></cite>
+        </div>
+
+        <div class="sources">
+            <h4>Sources informing this scenario</h4>
+            <p>
+                <a href="https://www.csis.org/analysis/four-scenarios-geopolitical-order-2025-2030-what-will-great-power-competition-look">CSIS: Four Scenarios for Geopolitical Order</a> •
+                <a href="https://news.gallup.com/poll/700448/americans-predict-challenging-2026-across-dimensions.aspx">Gallup: Americans Predict Challenging Years</a> •
+                <a href="https://www.natesilver.net/p/113-predictions-for-trumps-second">Nate Silver: 113 Predictions</a> •
+                <a href="https://www.stimson.org/2025/an-american-strategy-for-a-multipolar-world/">Stimson: Multipolar World Strategy</a> •
+                <a href="https://securityconference.org/en/publications/munich-security-report-2025/introduction/">Munich Security Report 2025</a>
+            </p>
+        </div>
+
+        <div class="nav-buttons">
+            <a href="future-1-collapse.html" class="back">← The Dark Spiral</a>
+            <a href="future-3-fragment.html" class="next">Next: The Fracturing →</a>
+        </div>
+    </div>
+</body>
+</html>

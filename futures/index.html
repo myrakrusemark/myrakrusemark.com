@@ -1,0 +1,762 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>How We Got Here: A Timeline of Democratic Crisis</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
+            color: #fff;
+            line-height: 1.7;
+            min-height: 100vh;
+        }
+
+        .hero {
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            padding: 2rem;
+            background: radial-gradient(ellipse at center, rgba(233, 69, 96, 0.15) 0%, transparent 70%);
+        }
+
+        .hero h1 {
+            font-size: clamp(2.5rem, 8vw, 5rem);
+            font-weight: 800;
+            background: linear-gradient(135deg, #e94560, #ff6b6b, #feca57);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 1rem;
+            text-shadow: 0 0 60px rgba(233, 69, 96, 0.5);
+        }
+
+        .hero .subtitle {
+            font-size: 1.4rem;
+            color: #fff;
+            max-width: 700px;
+            margin-bottom: 2rem;
+        }
+
+        .scroll-indicator {
+            position: absolute;
+            bottom: 2rem;
+            animation: bounce 2s infinite;
+            font-size: 2rem;
+            opacity: 0.6;
+        }
+
+        @keyframes bounce {
+            0%, 20%, 50%, 80%, 100% { transform: translateY(0); }
+            40% { transform: translateY(-20px); }
+            60% { transform: translateY(-10px); }
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 2rem;
+        }
+
+        /* Timeline styles */
+        .timeline {
+            position: relative;
+            padding: 4rem 0;
+        }
+
+        .timeline::before {
+            content: '';
+            position: absolute;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 4px;
+            height: 100%;
+            background: linear-gradient(to bottom, #e94560, #0f3460, #e94560);
+            border-radius: 2px;
+        }
+
+        @media (max-width: 768px) {
+            .timeline::before {
+                left: 20px;
+            }
+        }
+
+        .timeline-item {
+            position: relative;
+            margin-bottom: 4rem;
+            width: 50%;
+            padding: 0 3rem;
+        }
+
+        .timeline-item:nth-child(odd) {
+            left: 0;
+            text-align: right;
+        }
+
+        .timeline-item:nth-child(even) {
+            left: 50%;
+            text-align: left;
+        }
+
+        @media (max-width: 768px) {
+            .timeline-item,
+            .timeline-item:nth-child(odd),
+            .timeline-item:nth-child(even) {
+                width: 100%;
+                left: 0;
+                text-align: left;
+                padding-left: 50px;
+                padding-right: 1rem;
+            }
+        }
+
+        .timeline-dot {
+            position: absolute;
+            width: 20px;
+            height: 20px;
+            background: #e94560;
+            border-radius: 50%;
+            top: 0;
+            box-shadow: 0 0 20px rgba(233, 69, 96, 0.6);
+        }
+
+        .timeline-item:nth-child(odd) .timeline-dot {
+            right: -10px;
+        }
+
+        .timeline-item:nth-child(even) .timeline-dot {
+            left: -10px;
+        }
+
+        @media (max-width: 768px) {
+            .timeline-item .timeline-dot,
+            .timeline-item:nth-child(odd) .timeline-dot,
+            .timeline-item:nth-child(even) .timeline-dot {
+                left: 10px;
+                right: auto;
+            }
+        }
+
+        .timeline-content {
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 16px;
+            padding: 2rem;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            transition: all 0.3s ease;
+        }
+
+        .timeline-content:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+            border-color: rgba(233, 69, 96, 0.3);
+        }
+
+        .timeline-year {
+            font-size: 0.9rem;
+            color: #e94560;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            margin-bottom: 0.5rem;
+        }
+
+        .timeline-title {
+            font-size: 1.5rem;
+            font-weight: 700;
+            margin-bottom: 1rem;
+            color: #fff;
+        }
+
+        .timeline-text {
+            color: #fff;
+            font-size: 1rem;
+        }
+
+        .timeline-text a {
+            color: #feca57;
+            text-decoration: none;
+        }
+
+        .timeline-text a:hover {
+            text-decoration: underline;
+        }
+
+        /* Section headers */
+        .section-header {
+            text-align: center;
+            padding: 6rem 2rem 2rem;
+        }
+
+        .section-header h2 {
+            font-size: 2.5rem;
+            color: #fff;
+            margin-bottom: 1rem;
+        }
+
+        .section-header p {
+            color: #fff;
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        /* Quote blocks */
+        .quote-block {
+            background: linear-gradient(135deg, rgba(233, 69, 96, 0.1), rgba(254, 202, 87, 0.1));
+            border-left: 4px solid #e94560;
+            padding: 1.5rem;
+            margin: 2rem 0;
+            border-radius: 0 12px 12px 0;
+            font-style: italic;
+        }
+
+        .quote-block cite {
+            display: block;
+            margin-top: 1rem;
+            font-style: normal;
+            color: #feca57;
+            font-size: 0.9rem;
+        }
+
+        /* Stats grid */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 2rem;
+            padding: 3rem 0;
+        }
+
+        .stat-card {
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 16px;
+            padding: 2rem;
+            text-align: center;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .stat-number {
+            font-size: 3rem;
+            font-weight: 800;
+            background: linear-gradient(135deg, #e94560, #feca57);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .stat-label {
+            color: #fff;
+            margin-top: 0.5rem;
+        }
+
+        /* Comparison section */
+        .comparison {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 2rem;
+            padding: 3rem 0;
+        }
+
+        @media (max-width: 768px) {
+            .comparison {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .era-card {
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 16px;
+            padding: 2rem;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .era-card h3 {
+            color: #e94560;
+            margin-bottom: 1rem;
+            font-size: 1.3rem;
+        }
+
+        .era-card ul {
+            list-style: none;
+            padding: 0;
+        }
+
+        .era-card li {
+            padding: 0.5rem 0;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+            color: #fff;
+        }
+
+        .era-card li::before {
+            content: '→ ';
+            color: #feca57;
+        }
+
+        /* Looking forward section */
+        .outlook {
+            background: linear-gradient(135deg, rgba(15, 52, 96, 0.8), rgba(26, 26, 46, 0.9));
+            border-radius: 24px;
+            padding: 3rem;
+            margin: 4rem 0;
+            border: 1px solid rgba(233, 69, 96, 0.2);
+        }
+
+        .outlook h2 {
+            color: #feca57;
+            margin-bottom: 1.5rem;
+        }
+
+        .outlook-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 1.5rem;
+        }
+
+        .outlook-item {
+            background: rgba(0, 0, 0, 0.2);
+            border-radius: 12px;
+            padding: 1.5rem;
+        }
+
+        .outlook-item h4 {
+            color: #e94560;
+            margin-bottom: 0.5rem;
+        }
+
+        .outlook-item p {
+            color: #fff;
+            font-size: 0.95rem;
+        }
+
+        /* Sources section */
+        .sources {
+            background: rgba(0, 0, 0, 0.3);
+            border-radius: 16px;
+            padding: 2rem;
+            margin: 4rem 0;
+        }
+
+        .sources h3 {
+            color: #fff;
+            margin-bottom: 1rem;
+        }
+
+        .sources ul {
+            columns: 2;
+            column-gap: 2rem;
+            list-style: none;
+        }
+
+        @media (max-width: 768px) {
+            .sources ul {
+                columns: 1;
+            }
+        }
+
+        .sources li {
+            padding: 0.3rem 0;
+            font-size: 0.85rem;
+        }
+
+        .sources a {
+            color: #feca57;
+            text-decoration: none;
+        }
+
+        .sources a:hover {
+            text-decoration: underline;
+        }
+
+        /* Footer */
+        footer {
+            text-align: center;
+            padding: 3rem;
+            color: #fff;
+            font-size: 0.9rem;
+        }
+
+        /* Tag styles */
+        .tag {
+            display: inline-block;
+            background: rgba(233, 69, 96, 0.2);
+            color: #e94560;
+            padding: 0.25rem 0.75rem;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            margin-right: 0.5rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .tag.warning {
+            background: rgba(254, 202, 87, 0.2);
+            color: #feca57;
+        }
+
+        .tag.info {
+            background: rgba(72, 219, 251, 0.2);
+            color: #fff;
+        }
+    </style>
+</head>
+<body>
+    <section class="hero">
+        <h1>How We Got Here</h1>
+        <p class="subtitle">A deep dive into democratic crisis, populist revolt, and what history teaches us about recovery</p>
+        <div class="scroll-indicator">↓</div>
+    </section>
+
+    <div class="container">
+        <section class="section-header">
+            <h2>The Seeds Were Planted Long Ago</h2>
+            <p>The current moment didn't emerge from nowhere. It's the culmination of decades of economic, social, and political shifts that left millions feeling abandoned.</p>
+        </section>
+
+        <div class="stats-grid">
+            <div class="stat-card">
+                <div class="stat-number">96%</div>
+                <div class="stat-label">Increase in mortgage payments (2020-2024)</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-number">19</div>
+                <div class="stat-label">Consecutive years of global democratic decline</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-number">52%</div>
+                <div class="stat-label">Americans want to focus on problems at home</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-number">0.6%</div>
+                <div class="stat-label">Average annual wage growth since 1980 (inflation-adjusted)</div>
+            </div>
+        </div>
+
+        <div class="timeline">
+            <!-- 1979-1980 -->
+            <div class="timeline-item">
+                <div class="timeline-dot"></div>
+                <div class="timeline-content">
+                    <div class="timeline-year">1979-1981</div>
+                    <div class="timeline-title">The Neoliberal Turn</div>
+                    <div class="timeline-text">
+                        <span class="tag">Economic Shift</span>
+                        <p>Margaret Thatcher (1979) and Ronald Reagan (1981) usher in a new economic orthodoxy: privatization, deregulation, tax cuts for the wealthy, and the weakening of unions. The <a href="https://evonomics.com/rise-of-neoliberalism-inequality/" target="_blank">neoliberal era begins</a>.</p>
+                        <p style="margin-top: 1rem;">This wasn't just policy—it was ideology. The belief that markets solve everything would reshape the world for 40 years.</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 1989-1991 -->
+            <div class="timeline-item">
+                <div class="timeline-dot"></div>
+                <div class="timeline-content">
+                    <div class="timeline-year">1989-1991</div>
+                    <div class="timeline-title">"The End of History"</div>
+                    <div class="timeline-text">
+                        <span class="tag info">Triumphalism</span>
+                        <p>The Berlin Wall falls. The Soviet Union collapses. Francis Fukuyama declares liberal democracy has won forever. Western elites assume globalization will inevitably spread prosperity and freedom everywhere.</p>
+                        <p style="margin-top: 1rem;">This hubris would prove costly. The assumption that liberal institutions would continue spreading has now "collapsed," and autocratic systems have become <a href="https://tnsr.org/2025/12/a-new-world-order-careful-what-you-wish-for/" target="_blank">the global norm</a>.</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 1990s -->
+            <div class="timeline-item">
+                <div class="timeline-dot"></div>
+                <div class="timeline-content">
+                    <div class="timeline-year">1993-2000</div>
+                    <div class="timeline-title">Globalization Accelerates</div>
+                    <div class="timeline-text">
+                        <span class="tag">Trade</span><span class="tag">Jobs</span>
+                        <p>NAFTA passes. China joins the WTO. Manufacturing jobs begin leaving the American heartland. From 1969-1993, the poorest 5% of Americans saw income <strong>fall 34%</strong> while the richest 5% saw income <strong>rise 43%</strong>.</p>
+                        <p style="margin-top: 1rem;">Both parties embrace "free trade" while communities hollow out. The seeds of Trump's coalition are planted in Rust Belt towns watching factories close.</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 2001 -->
+            <div class="timeline-item">
+                <div class="timeline-dot"></div>
+                <div class="timeline-content">
+                    <div class="timeline-year">September 11, 2001</div>
+                    <div class="timeline-title">The War on Terror Begins</div>
+                    <div class="timeline-text">
+                        <span class="tag warning">Turning Point</span>
+                        <p>9/11 reshapes American politics. The Patriot Act expands surveillance. The invasions of Afghanistan and Iraq begin what would become America's longest wars. Trust in institutions begins its long decline.</p>
+                        <p style="margin-top: 1rem;">The "forever wars" would eventually fuel both left and right populism—and Trump's "America First" isolationism.</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 2008 -->
+            <div class="timeline-item">
+                <div class="timeline-dot"></div>
+                <div class="timeline-content">
+                    <div class="timeline-year">2008</div>
+                    <div class="timeline-title">The Great Financial Crisis</div>
+                    <div class="timeline-text">
+                        <span class="tag warning">Crisis Point</span>
+                        <p>The global economy nearly collapses. Banks are bailed out; homeowners are not. Millions lose homes, jobs, and savings. <a href="https://hub.jhu.edu/2024/11/11/insights-and-impacts-election-2024/" target="_blank">Many are still reeling</a> from this crisis when Trump arrives.</p>
+                        <p style="margin-top: 1rem;">This is the moment when faith in the system breaks for many. The Tea Party rises on the right; Occupy Wall Street on the left. Both are symptoms of the same disease.</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 2010-2015 -->
+            <div class="timeline-item">
+                <div class="timeline-dot"></div>
+                <div class="timeline-content">
+                    <div class="timeline-year">2010-2015</div>
+                    <div class="timeline-title">Austerity & Social Media</div>
+                    <div class="timeline-text">
+                        <span class="tag">Policy</span><span class="tag info">Technology</span>
+                        <p>European austerity devastates Greece, Spain, Portugal. The <a href="https://www.imf.org/external/pubs/ft/fandd/2016/06/ostry.htm" target="_blank">IMF admits</a>: "Instead of delivering growth, some neoliberal policies have increased inequality."</p>
+                        <p style="margin-top: 1rem;">Meanwhile, Facebook and Twitter become primary news sources. Algorithmic feeds reward outrage. Filter bubbles form. The information ecosystem fragments.</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 2015-2016 -->
+            <div class="timeline-item">
+                <div class="timeline-dot"></div>
+                <div class="timeline-content">
+                    <div class="timeline-year">2015-2016</div>
+                    <div class="timeline-title">The Populist Breakthrough</div>
+                    <div class="timeline-text">
+                        <span class="tag warning">Turning Point</span>
+                        <p>Trump descends the escalator. Brexit shocks the world. <a href="https://www.hks.harvard.edu/publications/trump-brexit-and-rise-populism-economic-have-nots-and-cultural-backlash" target="_blank">Harvard research</a> finds support explained "as a reaction against cultural changes that threaten the worldview of once-predominant sectors."</p>
+                        <p style="margin-top: 1rem;">The establishment is blindsided. They'd ignored the brewing discontent for too long.</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 2020 -->
+            <div class="timeline-item">
+                <div class="timeline-dot"></div>
+                <div class="timeline-content">
+                    <div class="timeline-year">2020</div>
+                    <div class="timeline-title">COVID-19: The Accelerant</div>
+                    <div class="timeline-text">
+                        <span class="tag warning">Pandemic</span><span class="tag">Polarization</span>
+                        <p>The pandemic doesn't create new divisions—it accelerates existing ones. Lockdown debates become culture war. Trust in institutions (CDC, media, government) craters further.</p>
+                        <p style="margin-top: 1rem;">Economic disruption hits working class hardest. Remote workers are fine; service workers lose everything. The class divide widens into a chasm.</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 2021-2023 -->
+            <div class="timeline-item">
+                <div class="timeline-dot"></div>
+                <div class="timeline-content">
+                    <div class="timeline-year">2021-2023</div>
+                    <div class="timeline-title">Inflation & Institutional Failure</div>
+                    <div class="timeline-text">
+                        <span class="tag">Economy</span>
+                        <p>Post-pandemic inflation hits hard. <a href="https://www.cbsnews.com/news/factors-that-led-to-donald-trump-victory-60-minutes/" target="_blank">Mortgage payments nearly double</a>. Voters feel economic pain despite "good" GDP numbers. Democrats tout statistics while people struggle at grocery stores.</p>
+                        <p style="margin-top: 1rem;">The disconnect between elite economic metrics and lived experience becomes politically fatal.</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 2024 -->
+            <div class="timeline-item">
+                <div class="timeline-dot"></div>
+                <div class="timeline-content">
+                    <div class="timeline-year">2024</div>
+                    <div class="timeline-title">Trump Returns: The Broligarchy Rises</div>
+                    <div class="timeline-text">
+                        <span class="tag warning">Present Day</span>
+                        <p>Trump wins with a <a href="https://news.berkeley.edu/2024/11/06/uc-berkeley-scholars-say-the-economy-sexism-and-conspiracies-fueled-trumps-reelection/" target="_blank">"multiracial, multi-ethnic coalition of grievance populism."</a> Tech billionaires (Musk, Thiel, others) align openly with the movement.</p>
+                        <p style="margin-top: 1rem;">The "broligarchy"—a fusion of tech wealth, masculine grievance culture, and anti-establishment posturing—becomes a political force. Silicon Valley, once libertarian-leaning but culturally liberal, pivots hard right.</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 2025 -->
+            <div class="timeline-item">
+                <div class="timeline-dot"></div>
+                <div class="timeline-content">
+                    <div class="timeline-year">2025</div>
+                    <div class="timeline-title">The Multipolar Moment</div>
+                    <div class="timeline-text">
+                        <span class="tag info">World Order</span>
+                        <p>The <a href="https://securityconference.org/en/publications/munich-security-report-2025/introduction/" target="_blank">Munich Security Conference 2025</a> declares the theme "multipolarization"—acknowledging the end of American unipolarity.</p>
+                        <p style="margin-top: 1rem;">China and India rise. BRICS expands. The US turns inward. <a href="https://www.populismstudies.org/professor-mccoy-a-trump-victory-to-embolden-populist-movements-and-authoritarian-regimes-globally/" target="_blank">Scholars warn</a> Trump's victory will "embolden populist movements and authoritarian regimes globally."</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <section class="section-header">
+            <h2>Historical Parallels: We've Been Here Before</h2>
+            <p>The 1920s-1930s offer haunting echoes—and important lessons about how democracies can recover.</p>
+        </section>
+
+        <div class="comparison">
+            <div class="era-card">
+                <h3>Then: 1918-1939</h3>
+                <ul>
+                    <li>Spanish Flu kills 50+ million, disrupting society</li>
+                    <li>Economic boom in 1920s masks inequality</li>
+                    <li>1929 crash devastates working class</li>
+                    <li>Elites seem out of touch, corrupt</li>
+                    <li>Charismatic strongmen promise simple solutions</li>
+                    <li>Scapegoating of minorities intensifies</li>
+                    <li>Democratic institutions weakened from within</li>
+                    <li>International order fragments</li>
+                </ul>
+            </div>
+            <div class="era-card">
+                <h3>Now: 2008-2025</h3>
+                <ul>
+                    <li>COVID-19 disrupts society, accelerates divisions</li>
+                    <li>Stock market boom masks inequality</li>
+                    <li>2008 crash devastates working class</li>
+                    <li>Elites seem out of touch, corrupt</li>
+                    <li>Charismatic strongmen promise simple solutions</li>
+                    <li>Scapegoating of immigrants intensifies</li>
+                    <li>Democratic institutions weakened from within</li>
+                    <li>International order fragments</li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="quote-block">
+            <p>"The link between the fascist vote and economic crisis was especially close where the absence of a long-standing democratic tradition made the political soil fertile for those seeking to undermine the existing system."</p>
+            <cite>— <a href="https://cepr.org/voxeu/columns/right-wing-political-extremism-great-depression" target="_blank">CEPR Research on 1930s Extremism</a></cite>
+        </div>
+
+        <section class="section-header">
+            <h2>Did Spanish Flu Cause WWII?</h2>
+            <p>Not directly—but pandemics destabilize societies in ways that enable extremism.</p>
+        </section>
+
+        <div class="timeline-content" style="margin: 2rem 0;">
+            <p>The Spanish Flu (1918-1920) killed more people than WWI itself. It:</p>
+            <ul style="margin: 1rem 0 1rem 1.5rem; color: #fff;">
+                <li>Disrupted economies already stressed by war</li>
+                <li>Created distrust in governments that downplayed or mishandled the crisis</li>
+                <li>Left psychological trauma and social dislocation</li>
+                <li>Hit working-age adults hardest, disrupting families and labor</li>
+            </ul>
+            <p>The pandemic didn't cause fascism, but it contributed to the fragile, traumatized societies in which fascism could take root. Similarly, <strong>COVID didn't make us crazy—it revealed and accelerated fractures that already existed</strong>.</p>
+        </div>
+
+        <section class="section-header">
+            <h2>Other Leaders Like Trump?</h2>
+            <p>History offers several comparisons—though each is imperfect.</p>
+        </section>
+
+        <div class="stats-grid">
+            <div class="stat-card">
+                <div style="font-size: 1.3rem; color: #fff; margin-bottom: 0.5rem;">Silvio Berlusconi</div>
+                <div class="stat-label">Italy, 1994-2011. Media mogul turned populist PM. Scandals, corruption, but kept winning.</div>
+            </div>
+            <div class="stat-card">
+                <div style="font-size: 1.3rem; color: #fff; margin-bottom: 0.5rem;">Boris Johnson</div>
+                <div class="stat-label">UK, 2019-2022. Brexit champion. Charismatic, loose with truth. Eventually ousted by own party.</div>
+            </div>
+            <div class="stat-card">
+                <div style="font-size: 1.3rem; color: #fff; margin-bottom: 0.5rem;">Jair Bolsonaro</div>
+                <div class="stat-label">Brazil, 2019-2022. "Trump of the Tropics." Lost reelection, fled to Florida, faces charges.</div>
+            </div>
+            <div class="stat-card">
+                <div style="font-size: 1.3rem; color: #fff; margin-bottom: 0.5rem;">Viktor Orbán</div>
+                <div class="stat-label">Hungary, 2010-present. Longer-lasting. Built "illiberal democracy" within EU.</div>
+            </div>
+        </div>
+
+        <section class="section-header">
+            <h2>How Did Democracies Recover Last Time?</h2>
+            <p>The post-WWII recovery offers hard-won lessons.</p>
+        </section>
+
+        <div class="timeline-content" style="margin: 2rem 0;">
+            <p><a href="https://www.cambridge.org/core/journals/journal-of-economic-history/article/political-extremism-in-the-1920s-and-1930s-do-german-lessons-generalize/0A2ACD66FBF33D2E51145E4FA95A9062" target="_blank">Research shows</a> democracies survived the 1930s when they had:</p>
+            <ul style="margin: 1rem 0 1rem 1.5rem; color: #fff;">
+                <li><strong>Longer democratic traditions</strong> — Countries accumulated "democratic capital" over generations</li>
+                <li><strong>United middle classes</strong> — Where liberals co-opted workers with reforms, extremism struggled</li>
+                <li><strong>Strong social democratic coalitions</strong> — Nordic countries survived by building broad coalitions</li>
+                <li><strong>Economic recovery</strong> — Prosperity undermines extremist appeal</li>
+            </ul>
+            <p style="margin-top: 1rem;">After WWII, fascism was discredited by its association with genocide and military defeat. The Marshall Plan rebuilt economies. European integration created shared institutions. Sustained democratic practice accumulated new "democratic capital."</p>
+        </div>
+
+        <div class="outlook">
+            <h2>What Can Americans Look Forward To?</h2>
+            <div class="outlook-grid">
+                <div class="outlook-item">
+                    <h4>The Honest Reality</h4>
+                    <p>Things will likely get worse before they get better. <a href="https://www.populismstudies.org/what-do-the-us-election-results-tell-us-about-the-global-trajectory-of-populism/" target="_blank">Democratic decline</a> is in its 19th year globally. The forces driving this—inequality, cultural anxiety, institutional distrust—aren't going away quickly.</p>
+                </div>
+                <div class="outlook-item">
+                    <h4>But History Offers Hope</h4>
+                    <p>Democracies have recovered before. It required discrediting extremism, rebuilding trust through competent governance, and addressing the real economic grievances that fueled populism. None of this is impossible.</p>
+                </div>
+                <div class="outlook-item">
+                    <h4>The Multipolar Future</h4>
+                    <p>The US will no longer be the sole superpower. This means less global influence but potentially less "imperial overstretch." Americans may need to focus more on domestic renewal—which might not be bad.</p>
+                </div>
+                <div class="outlook-item">
+                    <h4>What Actually Helps</h4>
+                    <p>Research suggests: economic security, functioning institutions, cross-cutting social ties, and time. The pendulum has swung before. The question is how much damage occurs before it swings back.</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="quote-block">
+            <p>"Countries with longer histories of democracy seem to have been largely immune from fascism, and the link between economic growth and extremist voting behavior was correspondingly weaker."</p>
+            <cite>— <a href="https://www.cambridge.org/core/journals/journal-of-economic-history/article/political-extremism-in-the-1920s-and-1930s-do-german-lessons-generalize/0A2ACD66FBF33D2E51145E4FA95A9062" target="_blank">Cambridge Economic History Research</a></cite>
+        </div>
+
+        <section class="section-header">
+            <h2>The Bottom Line</h2>
+        </section>
+
+        <div class="timeline-content" style="margin: 2rem 0; text-align: center;">
+            <p style="font-size: 1.2rem; color: #fff;">We're not in unprecedented territory—but we are in dangerous territory.</p>
+            <p style="margin-top: 1rem;">The combination of economic anxiety, cultural backlash, institutional decay, and technological disruption has created conditions similar to the 1930s. COVID accelerated these trends but didn't create them. They were 40 years in the making.</p>
+            <p style="margin-top: 1rem;">Recovery is possible but not guaranteed. It requires addressing real grievances, rebuilding trust, and—crucially—time. The American experiment has survived crises before. Whether it survives this one depends on choices made now.</p>
+        </div>
+
+        <div class="sources">
+            <h3>Sources & Further Reading</h3>
+            <ul>
+                <li><a href="https://hub.jhu.edu/2024/11/11/insights-and-impacts-election-2024/" target="_blank">Johns Hopkins: Seven Key Takeaways from Trump's Victory</a></li>
+                <li><a href="https://news.berkeley.edu/2024/11/06/uc-berkeley-scholars-say-the-economy-sexism-and-conspiracies-fueled-trumps-reelection/" target="_blank">UC Berkeley: Economy, Sexism, Conspiracies Fueled Trump</a></li>
+                <li><a href="https://www.hks.harvard.edu/publications/trump-brexit-and-rise-populism-economic-have-nots-and-cultural-backlash" target="_blank">Harvard Kennedy School: Trump, Brexit, and the Rise of Populism</a></li>
+                <li><a href="https://www.populismstudies.org/professor-mccoy-a-trump-victory-to-embolden-populist-movements-and-authoritarian-regimes-globally/" target="_blank">ECPS: Trump Victory to Embolden Authoritarians</a></li>
+                <li><a href="https://securityconference.org/en/publications/munich-security-report-2025/introduction/" target="_blank">Munich Security Report 2025: Multipolarization</a></li>
+                <li><a href="https://www.stimson.org/2025/an-american-strategy-for-a-multipolar-world/" target="_blank">Stimson Center: American Strategy for a Multipolar World</a></li>
+                <li><a href="https://tnsr.org/2025/12/a-new-world-order-careful-what-you-wish-for/" target="_blank">Texas National Security Review: A New World Order</a></li>
+                <li><a href="https://www.imf.org/external/pubs/ft/fandd/2016/06/ostry.htm" target="_blank">IMF: Neoliberalism Oversold?</a></li>
+                <li><a href="https://evonomics.com/rise-of-neoliberalism-inequality/" target="_blank">Evonomics: Rise of Neoliberalism and Inequality</a></li>
+                <li><a href="https://cepr.org/voxeu/columns/right-wing-political-extremism-great-depression" target="_blank">CEPR: Right-wing Extremism in the Great Depression</a></li>
+                <li><a href="https://www.cambridge.org/core/journals/journal-of-economic-history/article/political-extremism-in-the-1920s-and-1930s-do-german-lessons-generalize/0A2ACD66FBF33D2E51145E4FA95A9062" target="_blank">Cambridge: Political Extremism in the 1920s and 1930s</a></li>
+                <li><a href="https://aeon.co/essays/what-1930s-political-ideologies-can-teach-us-about-the-2020s" target="_blank">Aeon: What 1930s Can Teach Us About the 2020s</a></li>
+            </ul>
+        </div>
+    </div>
+
+        <!-- Next Button -->
+        <div style="text-align: center; padding: 4rem 0;">
+            <p style="color: #fff; margin-bottom: 1.5rem; font-size: 1.1rem;">But what comes next? The future isn't written yet...</p>
+            <a href="futures-hub.html" style="display: inline-block; background: linear-gradient(135deg, #e94560, #ff6b6b); color: white; padding: 1.25rem 3rem; border-radius: 50px; text-decoration: none; font-size: 1.3rem; font-weight: 700; box-shadow: 0 10px 40px rgba(233, 69, 96, 0.4); transition: all 0.3s ease;">
+                Next: Explore Possible Futures →
+            </a>
+        </div>
+    </div>
+
+    <footer>
+        <p>Research compiled January 2026 | Built with search and synthesis</p>
+    </footer>
+</body>
+</html>

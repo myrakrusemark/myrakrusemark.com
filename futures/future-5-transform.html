@@ -1,0 +1,559 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Future V: The New Alignment</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+            background: linear-gradient(180deg, #051a15 0%, #0a2520 50%, #051a15 100%);
+            color: #fff;
+            line-height: 1.7;
+            min-height: 100vh;
+        }
+
+        /* Gentle glow animation for hope theme */
+        @keyframes glow {
+            0%, 100% { opacity: 0.8; }
+            50% { opacity: 1; }
+        }
+
+        .hero {
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            padding: 2rem;
+            background:
+                radial-gradient(ellipse at center, rgba(34, 139, 34, 0.2) 0%, transparent 50%),
+                radial-gradient(ellipse at 30% 70%, rgba(0, 128, 128, 0.15) 0%, transparent 40%),
+                radial-gradient(ellipse at 70% 30%, rgba(64, 224, 208, 0.1) 0%, transparent 40%),
+                linear-gradient(180deg, #051a15 0%, #0a2520 100%);
+        }
+
+        .hero h1 {
+            font-size: clamp(2.5rem, 8vw, 5rem);
+            font-weight: 800;
+            background: linear-gradient(135deg, #228b22, #40e0d0, #98fb98);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 0.5rem;
+            text-shadow: 0 0 80px rgba(34, 139, 34, 0.5);
+            animation: glow 4s infinite;
+        }
+
+        .hero .number {
+            font-size: 1.2rem;
+            color: #2a6a4a;
+            text-transform: uppercase;
+            letter-spacing: 8px;
+            margin-bottom: 1rem;
+        }
+
+        .hero .subtitle {
+            font-size: 1.4rem;
+            color: #fff;
+            max-width: 650px;
+            margin-bottom: 2rem;
+        }
+
+        .status-banner {
+            background: rgba(34, 139, 34, 0.15);
+            border: 1px solid rgba(34, 139, 34, 0.35);
+            padding: 1rem 2rem;
+            border-radius: 4px;
+            font-size: 0.9rem;
+            color: #fff;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 0 2rem 4rem;
+        }
+
+        .timeline {
+            position: relative;
+            padding: 2rem 0;
+        }
+
+        .timeline::before {
+            content: '';
+            position: absolute;
+            left: 30px;
+            width: 3px;
+            height: 100%;
+            background: linear-gradient(to bottom,
+                #1a4a3a 0%,
+                #228b22 20%,
+                #40e0d0 50%,
+                #98fb98 80%,
+                #f0fff0 100%);
+        }
+
+        .timeline-item {
+            position: relative;
+            margin-bottom: 3rem;
+            padding-left: 70px;
+        }
+
+        .timeline-dot {
+            position: absolute;
+            left: 20px;
+            width: 22px;
+            height: 22px;
+            background: #228b22;
+            border-radius: 50%;
+            box-shadow: 0 0 20px rgba(34, 139, 34, 0.6);
+        }
+
+        .timeline-dot.teal {
+            background: #40e0d0;
+            box-shadow: 0 0 25px rgba(64, 224, 208, 0.6);
+        }
+
+        .timeline-dot.bright {
+            background: #98fb98;
+            box-shadow: 0 0 30px rgba(152, 251, 152, 0.7);
+        }
+
+        .timeline-content {
+            background: rgba(34, 139, 34, 0.08);
+            border: 1px solid rgba(34, 139, 34, 0.2);
+            border-radius: 8px;
+            padding: 1.5rem;
+        }
+
+        .timeline-content.breakthrough {
+            border-left: 3px solid #40e0d0;
+            background: rgba(64, 224, 208, 0.1);
+        }
+
+        .timeline-year {
+            font-size: 0.85rem;
+            color: #fff;
+            font-weight: 700;
+            letter-spacing: 2px;
+            margin-bottom: 0.5rem;
+        }
+
+        .timeline-title {
+            font-size: 1.3rem;
+            font-weight: 700;
+            margin-bottom: 0.75rem;
+            color: #98fb98;
+        }
+
+        .timeline-text {
+            color: #fff;
+            font-size: 0.95rem;
+        }
+
+        .timeline-text a {
+            color: #fff;
+        }
+
+        .catalyst {
+            display: inline-block;
+            background: rgba(64, 224, 208, 0.2);
+            padding: 0.2rem 0.6rem;
+            border-radius: 4px;
+            font-size: 0.8rem;
+            margin-right: 0.5rem;
+            margin-bottom: 0.5rem;
+            color: #fff;
+        }
+
+        .section-break {
+            text-align: center;
+            padding: 3rem 0;
+            font-size: 2rem;
+        }
+
+        .section-break .leaf {
+            display: inline-block;
+            color: #fff;
+            margin: 0 0.5rem;
+        }
+
+        .quote-block {
+            background: rgba(20, 60, 50, 0.4);
+            border-left: 3px solid #228b22;
+            padding: 1.5rem;
+            margin: 2rem 0;
+            font-style: italic;
+            color: #fff;
+        }
+
+        .quote-block cite {
+            display: block;
+            margin-top: 1rem;
+            font-style: normal;
+            color: #fff;
+            font-size: 0.85rem;
+        }
+
+        .vision-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1rem;
+            margin: 2rem 0;
+        }
+
+        .vision-card {
+            background: linear-gradient(135deg, rgba(34, 139, 34, 0.15), rgba(64, 224, 208, 0.1));
+            border: 1px solid rgba(64, 224, 208, 0.25);
+            border-radius: 12px;
+            padding: 1.5rem;
+            text-align: center;
+        }
+
+        .vision-card h4 {
+            color: #fff;
+            margin-bottom: 0.5rem;
+            font-size: 1rem;
+        }
+
+        .vision-card p {
+            color: #fff;
+            font-size: 0.85rem;
+        }
+
+        .tech-box {
+            background: rgba(64, 224, 208, 0.08);
+            border: 1px solid rgba(64, 224, 208, 0.2);
+            border-radius: 12px;
+            padding: 1.5rem;
+            margin: 2rem 0;
+        }
+
+        .tech-box h3 {
+            color: #fff;
+            margin-bottom: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .tech-box ul {
+            list-style: none;
+            color: #fff;
+        }
+
+        .tech-box li {
+            padding: 0.4rem 0;
+            padding-left: 1.5rem;
+            position: relative;
+        }
+
+        .tech-box li::before {
+            content: '✓';
+            position: absolute;
+            left: 0;
+            color: #fff;
+        }
+
+        .outcome-box {
+            background: linear-gradient(135deg, rgba(34, 139, 34, 0.2), rgba(64, 224, 208, 0.15), rgba(152, 251, 152, 0.1));
+            border: 1px solid rgba(152, 251, 152, 0.3);
+            border-radius: 12px;
+            padding: 2rem;
+            margin: 3rem 0;
+            text-align: center;
+        }
+
+        .outcome-box h2 {
+            background: linear-gradient(135deg, #228b22, #40e0d0, #98fb98);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 1rem;
+        }
+
+        .outcome-box p {
+            color: #fff;
+        }
+
+        .probability-note {
+            background: rgba(100, 100, 100, 0.1);
+            border: 1px solid rgba(100, 100, 100, 0.2);
+            border-radius: 8px;
+            padding: 1.25rem;
+            margin: 2rem 0;
+            text-align: center;
+            font-size: 0.9rem;
+            color: #fff;
+        }
+
+        .nav-buttons {
+            display: flex;
+            justify-content: space-between;
+            padding: 2rem 0;
+            gap: 1rem;
+        }
+
+        .nav-buttons a {
+            padding: 1rem 2rem;
+            border-radius: 8px;
+            text-decoration: none;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            background: rgba(34, 139, 34, 0.15);
+            border: 1px solid rgba(34, 139, 34, 0.25);
+            color: #fff;
+        }
+
+        .nav-buttons a:hover {
+            background: rgba(34, 139, 34, 0.25);
+            color: #fff;
+        }
+
+        .sources {
+            margin-top: 3rem;
+            padding: 1.5rem;
+            background: rgba(20, 60, 50, 0.3);
+            border-radius: 8px;
+            font-size: 0.85rem;
+        }
+
+        .sources h4 {
+            color: #fff;
+            margin-bottom: 0.75rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .sources a {
+            color: #fff;
+            text-decoration: none;
+        }
+
+        .final-message {
+            text-align: center;
+            padding: 3rem 2rem;
+            background: linear-gradient(135deg, rgba(34, 139, 34, 0.1), rgba(64, 224, 208, 0.08));
+            border-radius: 16px;
+            margin-top: 3rem;
+        }
+
+        .final-message h3 {
+            color: #fff;
+            margin-bottom: 1rem;
+            font-size: 1.5rem;
+        }
+
+        .final-message p {
+            color: #fff;
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        .final-message a.hub-link {
+            display: inline-block;
+            margin-top: 1.5rem;
+            padding: 1rem 2rem;
+            background: linear-gradient(135deg, #228b22, #40e0d0);
+            color: #fff;
+            text-decoration: none;
+            border-radius: 8px;
+            font-weight: 600;
+        }
+    </style>
+</head>
+<body>
+    <section class="hero">
+        <div class="number">Future V</div>
+        <h1>The New Alignment</h1>
+        <p class="subtitle">In which the old divisions collapse, a new generation rises, and technology enables rather than undermines human flourishing</p>
+        <div class="status-banner">Probability estimate: 5-15% — the path of transformation</div>
+    </section>
+
+    <div class="container">
+        <div class="quote-block">
+            <p>"The optimistic scenario is called 'Transformation.' In this scenario, the zero-sum partisan death match between Democrats and Republicans breaks down, and American politics enters a new alignment where participation and inclusion expand."</p>
+            <cite>— <a href="https://www.newamerica.org/the-thread/our-three-futures/" target="_blank">New America, "Our Three Futures"</a></cite>
+        </div>
+
+        <div class="probability-note">
+            <strong>Note:</strong> This is the least likely scenario—but it's not impossible. Major transformations have happened before. The question is whether the conditions exist for one now.
+        </div>
+
+        <div class="timeline">
+            <div class="timeline-item">
+                <div class="timeline-dot"></div>
+                <div class="timeline-content">
+                    <div class="timeline-year">2025-2026</div>
+                    <div class="timeline-title">The Old Guard's Last Stand</div>
+                    <div class="timeline-text">
+                        <span class="catalyst">Generational Shift</span>
+                        <p style="margin-top: 0.75rem;">The Trump administration represents the last gasp of a dying political order. Leaders in their 70s and 80s cling to power, but demographics are destiny. Gen Z and Millennials now outnumber Boomers as eligible voters.</p>
+                        <p style="margin-top: 0.75rem;">As <a href="https://www.newamerica.org/the-thread/our-three-futures/" target="_blank">New America noted</a>: "Though many of today's political leaders are in their 70s and 80s, they will not be in charge forever."</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="timeline-item">
+                <div class="timeline-dot"></div>
+                <div class="timeline-content">
+                    <div class="timeline-year">2026-2027</div>
+                    <div class="timeline-title">The Youth Surge</div>
+                    <div class="timeline-text">
+                        <span class="catalyst">Electoral Revolution</span>
+                        <p style="margin-top: 0.75rem;">Young voter turnout reaches historic levels. They're motivated by climate, by economic precarity, by the sense that the system has failed them. They don't identify with either party—they demand something new.</p>
+                        <p style="margin-top: 0.75rem;">New political movements emerge outside traditional structures. They use technology to organize, bypassing legacy media entirely.</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="timeline-item">
+                <div class="timeline-dot teal"></div>
+                <div class="timeline-content breakthrough">
+                    <div class="timeline-year">2028</div>
+                    <div class="timeline-title">The Realignment Election</div>
+                    <div class="timeline-text">
+                        <span class="catalyst">Breakthrough Moment</span>
+                        <p style="margin-top: 0.75rem;">Neither a Democrat nor a Republican wins—or rather, someone wins who transcends those categories. A new coalition forms around pragmatic problem-solving rather than tribal identity. The culture war exhaustion finally breaks through.</p>
+                        <p style="margin-top: 0.75rem;">This mirrors the <a href="https://www.tandfonline.com/doi/full/10.1080/10438599.2020.1839173" target="_blank">research suggesting</a> that major transitions require both crisis and new vision.</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="section-break">
+                <span class="leaf">🌱</span>
+                <span class="leaf">🌿</span>
+                <span class="leaf">🌱</span>
+            </div>
+
+            <div class="timeline-item">
+                <div class="timeline-dot teal"></div>
+                <div class="timeline-content">
+                    <div class="timeline-year">2029-2030</div>
+                    <div class="timeline-title">Technology Turns Constructive</div>
+                    <div class="timeline-text">
+                        <span class="catalyst">Digital Democracy</span>
+                        <p style="margin-top: 0.75rem;"><a href="https://www.pewresearch.org/internet/2020/06/30/experts-predict-more-digital-innovation-by-2030-aimed-at-enhancing-democracy/" target="_blank">Pew researchers predicted</a> "a wave of new platforms consciously designed to evoke different civic behaviors." In this timeline, that prediction comes true.</p>
+                        <p style="margin-top: 0.75rem;">Real-time fact-checking becomes standard. Deliberative democracy platforms enable citizen input on policy. The algorithms that once divided us are redesigned to connect us.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="tech-box">
+            <h3>🔮 Digital Democracy Tools (2030)</h3>
+            <ul>
+                <li>AI-powered real-time fact-checking integrated into social media</li>
+                <li>Participatory budgeting apps letting citizens allocate local funds</li>
+                <li>Deliberation platforms that surface common ground across divides</li>
+                <li>Transparent AI systems for government decision-making</li>
+                <li>Decentralized identity systems protecting privacy while enabling verification</li>
+            </ul>
+        </div>
+
+        <div class="timeline">
+            <div class="timeline-item">
+                <div class="timeline-dot bright"></div>
+                <div class="timeline-content">
+                    <div class="timeline-year">2031-2033</div>
+                    <div class="timeline-title">The Economic Transformation</div>
+                    <div class="timeline-text">
+                        <span class="catalyst">Structural Reform</span>
+                        <p style="margin-top: 0.75rem;">The grievances that fueled populism are finally addressed. Antitrust breaks up tech monopolies. Wealth taxes reduce inequality. Universal basic services—healthcare, education, childcare—become reality.</p>
+                        <p style="margin-top: 0.75rem;">The <a href="https://time.com/7174892/a-roadmap-to-ai-utopia/" target="_blank">AI optimists' vision</a> of "near-free AI tutors to every child" and "near-free AI physician expertise to everyone" starts to materialize—but with safeguards.</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="timeline-item">
+                <div class="timeline-dot bright"></div>
+                <div class="timeline-content breakthrough">
+                    <div class="timeline-year">2034-2036</div>
+                    <div class="timeline-title">Climate Breakthrough</div>
+                    <div class="timeline-text">
+                        <span class="catalyst">Global Cooperation</span>
+                        <p style="margin-top: 0.75rem;">American leadership on climate returns, catalyzing global action. The <a href="https://www.ipcc.ch/sr15/chapter/spm/" target="_blank">IPCC's 1.5°C target</a> is no longer achievable, but 2°C comes within reach. Clean energy employment surpasses fossil fuels.</p>
+                        <p style="margin-top: 0.75rem;">The just transition that was promised actually happens—workers aren't left behind.</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="timeline-item">
+                <div class="timeline-dot bright"></div>
+                <div class="timeline-content">
+                    <div class="timeline-year">2037-2040</div>
+                    <div class="timeline-title">The New American Project</div>
+                    <div class="timeline-text">
+                        <span class="catalyst">Renewal</span>
+                        <p style="margin-top: 0.75rem;">By 2040, America has become something new. Not the naive optimism of "End of History" triumphalism, but a mature democracy that learned from its failures. Inequality is lower. Trust is higher. The future feels possible again.</p>
+                        <p style="margin-top: 0.75rem;">The multipolar world continues, but America finds its role—not as hegemon, but as partner in building something better.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="vision-grid">
+            <div class="vision-card">
+                <h4>Democratic Health</h4>
+                <p>Trust in institutions at 60%+ for first time in decades</p>
+            </div>
+            <div class="vision-card">
+                <h4>Economic Equality</h4>
+                <p>Gini coefficient back to 1970s levels</p>
+            </div>
+            <div class="vision-card">
+                <h4>Climate Progress</h4>
+                <p>On track for 2°C, adapting to what can't be prevented</p>
+            </div>
+            <div class="vision-card">
+                <h4>Social Cohesion</h4>
+                <p>Cross-partisan friendships at all-time high</p>
+            </div>
+        </div>
+
+        <div class="outcome-box">
+            <h2>End State: 2040</h2>
+            <p>America in 2040 isn't utopia—problems remain, conflicts continue, the work is never done. But the existential despair of the 2020s has lifted. Young people believe they'll be better off than their parents. Democracy works well enough that people trust it. Climate change is being managed. Technology serves human flourishing.</p>
+            <p style="margin-top: 1rem; font-style: italic; color: #fff;">This is the path of transformation—the rarest outcome, requiring everything to go right. It's unlikely. But it's not impossible. And the fact that we can imagine it means we can work toward it.</p>
+        </div>
+
+        <div class="quote-block">
+            <p>"If guardrails, norms and standards are developed that encourage transparency, authenticity and collaboration, democratic institutions could be significantly strengthened."</p>
+            <cite>— Amy Webb, <a href="https://www.pewresearch.org/internet/2020/06/30/innovations-these-experts-predict-by-2030/" target="_blank">Future Today Institute</a></cite>
+        </div>
+
+        <div class="sources">
+            <h4>Sources informing this scenario</h4>
+            <p>
+                <a href="https://www.newamerica.org/the-thread/our-three-futures/">New America: Our Three Futures</a> •
+                <a href="https://www.pewresearch.org/internet/2020/06/30/experts-predict-more-digital-innovation-by-2030-aimed-at-enhancing-democracy/">Pew: Digital Innovation for Democracy</a> •
+                <a href="https://time.com/7174892/a-roadmap-to-ai-utopia/">TIME: Roadmap to AI Utopia</a> •
+                <a href="https://www.foreignaffairs.com/united-states/can-democracy-still-make-comeback">Foreign Affairs: Can Democracy Make a Comeback?</a> •
+                <a href="https://www.weforum.org/stories/2019/10/future-predictions-what-if-get-things-right-visions-for-2030/">WEF: Visions for 2030</a>
+            </p>
+        </div>
+
+        <div class="final-message">
+            <h3>The Future Isn't Written</h3>
+            <p>These five scenarios aren't prophecies—they're possibility spaces. The future that actually unfolds will be shaped by millions of individual choices, unexpected events, and forces we can't predict. But understanding the paths ahead is the first step to choosing which one to work toward.</p>
+            <div style="display: flex; gap: 1rem; justify-content: center; flex-wrap: wrap; margin-top: 1.5rem;">
+                <a href="futures-hub.html" class="hub-link">← Return to All Futures</a>
+                <a href="futures-graph.html" class="hub-link" style="background: linear-gradient(135deg, #444, #666);">📊 View Trajectory Graph</a>
+            </div>
+        </div>
+
+        <div class="nav-buttons">
+            <a href="future-4-reform.html" class="back">← The Pendulum Swings</a>
+            <a href="futures-graph.html" class="next">View Full Graph →</a>
+        </div>
+    </div>
+</body>
+</html>
