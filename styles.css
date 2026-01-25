@@ -135,6 +135,12 @@ hr {
     align-items: center;
     margin-bottom: 20px;
     gap: 15px;
+    width: 100%;
+    max-width: 640px;
+    padding: 0 20px;
+    box-sizing: border-box;
+    margin-left: auto;
+    margin-right: auto;
 }
 
 .link-box {
@@ -143,13 +149,12 @@ hr {
     align-items: center;
     background-color: white;
     color: var(--text-color);
-    padding: 10px 15px;
+    padding: 15px;
     text-align: left;
     text-decoration: none;
     font-size: 16px;
-    width: 80%;
-    max-width: 600px;
-    height: 70px;
+    width: 100%;
+    min-height: 70px;
     border-radius: 12px;
     position: relative;
     overflow: hidden;
@@ -158,6 +163,7 @@ hr {
     transition: var(--transition);
     transform: translateY(0);
     gap: 20px;
+    box-sizing: border-box;
 }
 
 .link-box:hover {
@@ -324,15 +330,18 @@ hr {
 
 .hero-section {
     display: flex;
+    flex-direction: column;
+    align-items: center;
     gap: 40px;
-    max-width: 1100px;
+    width: 100%;
+    max-width: 640px;
+    padding: 0 20px;
+    box-sizing: border-box;
     margin: 40px auto;
-    align-items: flex-start;
 }
 
 .intro-column {
-    flex: 1;
-    min-width: 0;
+    width: 100%;
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -359,13 +368,15 @@ hr {
     width: 150px;
     height: 150px;
     border-radius: 50%;
-    background: var(--accent-color);
-    opacity: 0.3;
+    object-fit: cover;
+}
+
+.mobile-divider {
+    margin: 0 auto;
 }
 
 .topoco-column {
-    flex: 1;
-    min-width: 0;
+    width: 100%;
 }
 
 .topoco-column .project-section {
@@ -375,37 +386,22 @@ hr {
     overflow: hidden;
 }
 
-@media (max-width: 900px) {
+@media (min-width: 901px) {
     .hero-section {
-        flex-direction: column;
-        align-items: center;
-        width: 80%;
-        max-width: 600px;
+        flex-direction: row;
+        align-items: flex-start;
+        max-width: 1100px;
+        padding: 0 40px;
     }
 
     .intro-column,
     .topoco-column {
-        width: 100%;
+        flex: 1;
+        min-width: 0;
     }
 
-    .intro-column .link-box {
-        width: 100%;
-        max-width: 100%;
-    }
-
-    .link-container {
-        width: 80%;
-        max-width: 600px;
-    }
-
-    .link-box {
-        width: 100%;
-        max-width: 100%;
-    }
-
-    .topoco-column .project-section {
-        width: 100%;
-        max-width: 100%;
+    .mobile-divider {
+        display: none;
     }
 }
 
@@ -631,9 +627,7 @@ hr {
     }
 
     .link-box {
-        width: 90%;
-        padding: 12px 20px;
-        height: 70px;
+        padding: 15px 20px;
     }
 
     .link-box .thumbnail {
