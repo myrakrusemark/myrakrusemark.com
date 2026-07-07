@@ -7,7 +7,8 @@
 #        ./sync-engine.sh <ref>      # sync from a specific branch/commit
 set -euo pipefail
 
-ENGINE="${ENGINE_DIR:-../singularity-ui}"
+# Engine lives in Work/, the site in Code/ — absolute default
+ENGINE="${ENGINE_DIR:-$HOME/Dropbox/Work/singularity-ui}"
 REF="${1:-master}"
 DEST="vendor/singularity-ui"
 

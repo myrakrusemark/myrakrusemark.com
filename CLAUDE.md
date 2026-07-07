@@ -4,6 +4,22 @@ Myra's portfolio site, built on the singularity-ui glass engine. Static —
 no build step. Open `index.html` via any static server (`.claude/launch.json`
 runs one on port 8380).
 
+## Deploying
+
+This repo IS the live site: `github.com/myrakrusemark/myrakrusemark.com`
+→ GitHub Pages (main, root, CNAME myrakrusemark.com, Cloudflare-proxied,
+~10 min edge cache). A plain push to main deploys. Live since 2026-07-07;
+developed in a separate repo before that, now retired.
+
+- **GitHub rejects any blob over 100 MiB.** The resume-dvd videos are
+  already re-encoded under it (CRF 25); run `find . -size +100M` before
+  committing new media.
+- This repo also hosts standalone apps the site links to — `futures/`,
+  `period-tracker/`, `spot-the-difference/`, `image-request-form/`, and
+  their `images/` dir. They predate the rebuild; never delete them.
+- The watercolor background is CC BY (calebkimbrough) — the footer
+  PAPER credit must survive any footer redesign.
+
 ## The design law
 
 **Glass = things you can act on. Plain DOM = things you read.**
