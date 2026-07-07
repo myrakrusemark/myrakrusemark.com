@@ -1,262 +1,209 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>UX/UI Portfolio - Myra Krusemark</title>
-    <link rel="stylesheet" href="/styles.css">
-    <link rel="stylesheet" href="/ux-styles.css">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>UX/UI Design Portfolio — Myra Krusemark</title>
+<meta name="description" content="UX/UI design case studies — almost two decades of enterprise UX, from data security to business telephony to regulated healthcare.">
+<meta property="og:title" content="UX/UI Design Portfolio — Myra Krusemark">
+<meta property="og:description" content="Almost two decades of enterprise UX, from data security to business telephony to regulated healthcare — dashboards, CLIs, versioned design systems, and more.">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://myrakrusemark.com/ux/">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='M12 2l2.4 7.6L22 12l-7.6 2.4L12 22l-2.4-7.6L2 12l7.6-2.4z' fill='%23e2725b'/%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Jost:wght@200;300;400;500&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/css/site.css">
+<style>
+  /* Honorable-mention media: plain content, not glass */
+  .mention-media {
+    display: block;
+    width: min(440px, 100%);
+    margin-top: 12px;
+    border: 1px solid rgba(232, 238, 248, 0.14);
+    filter: saturate(0.92);
+  }
+</style>
 </head>
 <body>
-    
-    <header>
-        <div class="logo-placeholder">
-            <span class="logo-icon">✦</span>
-        </div>
-        <div class="site-title"><a href="/">Myra Krusemark's Cool Little Projects</a></div>
 
-        <nav class="main-nav">
-            <a href="/">Home</a>
-            <a href="/Myra Krusemark - Resume.pdf">Résumé</a>
-            <a href="/ux/">UX Portfolio</a>
-            <a href="https://topoco.art/pages/contact">Contact</a>
-        </nav>
+<div class="page" id="app">
 
-        <div class="social-icons">
-            <a href="https://github.com/myrakrusemark" target="_blank" title="GitHub">
-                <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor"><path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z"/></svg>
-            </a>
-            <a href="https://www.linkedin.com/in/myrasmithkrusemark/" target="_blank" title="LinkedIn">
-                <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor"><path d="M19 0h-14c-2.761 0-5 2.239-5 5v14c0 2.761 2.239 5 5 5h14c2.762 0 5-2.239 5-5v-14c0-2.761-2.238-5-5-5zm-11 19h-3v-11h3v11zm-1.5-12.268c-.966 0-1.75-.79-1.75-1.764s.784-1.764 1.75-1.764 1.75.79 1.75 1.764-.783 1.764-1.75 1.764zm13.5 12.268h-3v-5.604c0-3.368-4-3.113-4 0v5.604h-3v-11h3v1.765c1.396-2.586 7-2.777 7 2.476v6.759z"/></svg>
-            </a>
-            <a href="mailto:myrakrusemark@gmail.com" title="Email">
-                <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor"><path d="M0 3v18h24v-18h-24zm21.518 2l-9.518 7.713-9.518-7.713h19.036zm-19.518 14v-11.817l10 8.104 10-8.104v11.817h-20z"/></svg>
-            </a>
-        </div>
-    </header>
-    
-
-
-<div class="ux-header-wrapper">
-    <h1>UX/UI Design Portfolio</h1>
-</div>
-
-
-    
-
-<div class="project-section">
-    <div class="screenshot-container" style="background-image: url('screenshots/fathom/hero.png');">
-
-        <a href="https://fathomdx.io" target="_blank">
-            <img src="screenshots/fathom/hero.png" alt="Fathom" class="screenshot">
-        </a>
-
+  <!-- ======================= HERO ======================= -->
+  <header style="padding-top: 42px;">
+    <div class="eyebrow">St. Louis, MO · <em>UX / UI Design Portfolio</em></div>
+    <h1>Case studies</h1>
+    <p class="section-note">
+      Almost two decades of enterprise UX, from data security to
+      business telephony to regulated healthcare. Design and
+      engineering expert in internal dashboards, CLIs, versioned
+      design systems, public-facing marketing and management tools,
+      and more.
+    </p>
+    <div class="cta-row">
+      <a class="g sg-button g-chip" href="/" sg-material="clear" sg-tilt sg-press>← Home</a>
     </div>
-    <div class="project-info">
-        <h2 class="project-title">Fathom</h2>
-        <div class="project-meta">2026 • Independent</div>
-        <p>A self-hosted memory and identity platform for persistent AI agents, designed and built end-to-end: a dashboard, CLI, versioned design system, and integrations over a Postgres/pgvector store. An exercise in synthesizing individuality in an agent framework — a personality and continuity agnostic from the models that run it.</p>
+  </header>
 
-        <a href="https://fathomdx.io" target="_blank" class="topoco-link-container">
-            View Live →
-        </a>
+  <!-- ======================= CASE STUDIES ======================= -->
+  <div class="dim" aria-hidden="true"></div>
+  <section id="case-studies">
+    <h2>Selected work</h2>
 
-    </div>
-</div>
-
-
-    <hr>
-
-
-
-<div class="project-section">
-    <div class="screenshot-container" style="background-image: url('screenshots/fap/search-results.png');">
-
-        <a href="fap/">
-            <img src="screenshots/fap/search-results.png" alt="Find A Provider" class="screenshot">
-        </a>
-
-    </div>
-    <div class="project-info">
-        <h2 class="project-title">Find A Provider</h2>
-        <div class="project-meta">2025 • Centene</div>
-        <p>Healthcare provider search and directory interface.</p>
-        
-        <a href="fap/" class="topoco-link-container">
-            Read Full Case Study →
-        </a>
-        
-    </div>
-</div>
-
-
-    <hr>
-
-    
-
-<div class="project-section">
-    <div class="screenshot-container" style="background-image: url('screenshots/design-explorations/thumbnail.png');">
-        
-        <a href="design-explorations/">
-            <img src="screenshots/design-explorations/thumbnail.png" alt="Design Explorations" class="screenshot">
-        </a>
-        
-    </div>
-    <div class="project-info">
-        <h2 class="project-title">Design Explorations</h2>
-        <div class="project-meta">2023 • Centene</div>
-        <p>Collection of interface design concepts including dashboards, digital delivery, ID cards, progressive display patterns, recent claims, and secure messaging.</p>
-        
-        <a href="design-explorations/" class="topoco-link-container">
-            Read Full Case Study →
-        </a>
-        
-    </div>
-</div>
-
-
-    <hr>
-
-    
-
-<div class="project-section">
-    <div class="screenshot-container" style="background-image: url('screenshots/anpi-cust-portal/dashboard-prototype.png');">
-        
-        <a href="anpi-cust-portal/">
-            <img src="screenshots/anpi-cust-portal/dashboard-prototype.png" alt="ANPI Customer Portal" class="screenshot">
-        </a>
-        
-    </div>
-    <div class="project-info">
-        <h2 class="project-title">ANPI Customer Portal</h2>
-        <div class="project-meta">2014</div>
-        <p>Customer-facing portal interface with widgets and mockups for VIP CAP platform.</p>
-        
-        <a href="anpi-cust-portal/" class="topoco-link-container">
-            Read Full Case Study →
-        </a>
-        
-    </div>
-</div>
-
-
-    <hr>
-
-    
-
-<div class="project-section">
-    <div class="screenshot-container" style="background-image: url('screenshots/style-browser/hero-screenshot.png');">
-        
-        <a href="style-browser/">
-            <img src="screenshots/style-browser/hero-screenshot.png" alt="Style Browser" class="screenshot">
-        </a>
-        
-    </div>
-    <div class="project-info">
-        <h2 class="project-title">Style Browser</h2>
-        <div class="project-meta">2009 • Weissman Designs for Dance</div>
-        <p>Interactive costume catalog and video showcase system for browsing dance costumes in motion.</p>
-        
-        <a href="style-browser/" class="topoco-link-container">
-            Read Full Case Study →
-        </a>
-        
-    </div>
-</div>
-
-
-    <hr>
-
-    
-
-<div class="project-section">
-    <div class="screenshot-container" style="background-image: url('screenshots/slate/software-side-by-side.jpg');">
-        
-        <a href="slate/">
-            <img src="screenshots/slate/software-side-by-side.jpg" alt="UuberSlate" class="screenshot">
-        </a>
-        
-    </div>
-    <div class="project-info">
-        <h2 class="project-title">UuberSlate</h2>
-        <div class="project-meta">2008 • Webster University</div>
-        <p>Arduino-based smart clapperboard with automated video organization software for film production.</p>
-        
-        <a href="slate/" class="topoco-link-container">
-            Read Full Case Study →
-        </a>
-        
-    </div>
-</div>
-
-
-    <hr>
-
-
-<h2 class="project-title">Honorable Mentions</h2>
-
-
-    
-
-<div class="honorable-mention">
-    
-    <a href="screenshots/vaa/image12.png" target="_blank">
-        <img src="screenshots/vaa/image12.png" alt="Visual Auto Attendant" class="screenshot">
+    <a class="g g-card" href="https://fathomdx.io/">
+      <div class="card-body">
+        <div class="card-meta">2026 · Independent · Designer &amp; Architect</div>
+        <h3>Fathom</h3>
+        <p>Self-hosted memory and identity platform for persistent AI agents:
+        dashboard, CLI, versioned design system, and integrations over a
+        Postgres/pgvector store. An exercise in synthesizing individuality
+        in an agent framework — personality and continuity agnostic from
+        the models that run it.</p>
+      </div>
+      <img class="card-img" src="/assets/work/fathom.webp" alt="Fathom dashboard" loading="lazy" style="object-position: center 32%;">
+      <div class="card-foot">
+        <span class="card-stat">DESIGNED &amp; SHIPPED END-TO-END</span>
+        <span class="card-go">fathomdx.io →</span>
+      </div>
     </a>
-    
-    <div class="project-info">
-        <h3 class="project-title">Visual Auto Attendant</h3>
-        <div class="project-meta">2011 • Masergy</div>
-        <p>Telephone extension management tool in a multi-column layout. This fully responsive management system made it simple to search for and manage individual business phone lines. The tool allowed public members to call telephones directly from the company website, and allowed businesses to implement real telephone contact via their website.</p>
-        
-    </div>
-</div>
 
-
-
-    
-
-<div class="honorable-mention">
-    
-    <a href="screenshots/nruf/image6.png" target="_blank">
-        <img src="screenshots/nruf/image6.png" alt="NRUF (National Research University Fund Eligibility)" class="screenshot">
+    <a class="g g-card" href="/ux/fap/">
+      <div class="card-body">
+        <div class="card-meta">2025 · Centene (Fortune 25) · UX Team Lead</div>
+        <h3>Find A Provider</h3>
+        <p>Ground-up redesign of a decade-old provider search used by tens of
+        millions of Medicaid, Medicare, and Commercial members. Led research,
+        content, and design across a three-phase delivery.</p>
+      </div>
+      <img class="card-img" src="/assets/work/fap.webp" alt="Find A Provider search results interface" loading="lazy">
+      <div class="card-foot">
+        <span class="card-stat">+40% USER SATISFACTION</span>
+        <span class="card-go">Read the case study →</span>
+      </div>
     </a>
-    
-    <div class="project-info">
-        <h3 class="project-title">NRUF (National Research University Fund Eligibility)</h3>
-        <div class="project-meta">2012 • University of North Texas</div>
-        <p>Bar-chart visualization comparing values held by UNT with other universities who received funding. Won Texas Association for Institutional Research award for best visualization of data in 2012.</p>
-        
-        <a href="nruf/" target="_blank" class="topoco-link-container">
-            
-            Try it out! →
-            
-        </a>
-        
+
+    <a class="g g-card" href="/ux/design-explorations/">
+      <div class="card-body">
+        <div class="card-meta">2023 · Centene</div>
+        <h3>Design Explorations</h3>
+        <p>Concept work across member experience: dashboards, digital
+        delivery, ID cards, progressive display patterns, recent claims,
+        and secure messaging.</p>
+      </div>
+      <img class="card-img" src="/assets/work/design-explorations.webp" alt="Member experience design concepts" loading="lazy">
+      <div class="card-foot">
+        <span class="card-stat">PATTERNS ADOPTED INTO PRODUCTION</span>
+        <span class="card-go">Read the case study →</span>
+      </div>
+    </a>
+
+    <a class="g g-card" href="/ux/anpi-cust-portal/">
+      <div class="card-body">
+        <div class="card-meta">2014 · Associated Network Partners</div>
+        <h3>ANPI Customer Admin Portal</h3>
+        <p>Customer-facing portal for the VIP CAP Unified Communications
+        platform — dashboard widgets, admin views, and interactive network
+        maps for an enterprise telecom.</p>
+      </div>
+      <img class="card-img" src="/assets/ux/anpi-cust-portal/dashboard-widgets.webp" alt="ANPI customer portal dashboard widgets" loading="lazy">
+      <div class="card-foot">
+        <span class="card-stat">ENTERPRISE TELECOM PORTAL</span>
+        <span class="card-go">Read the case study →</span>
+      </div>
+    </a>
+
+    <a class="g g-card" href="/ux/style-browser/">
+      <div class="card-body">
+        <div class="card-meta">2009 · Weissman Designs for Dance</div>
+        <h3>Style Browser</h3>
+        <p>Interactive costume catalog and video showcase system for
+        browsing dance costumes in motion.</p>
+      </div>
+      <img class="card-img" src="/assets/work/style-browser.webp" alt="Style Browser costume catalog" loading="lazy">
+      <div class="card-foot">
+        <span class="card-stat">A CATALOG THAT MOVES</span>
+        <span class="card-go">Read the case study →</span>
+      </div>
+    </a>
+
+    <a class="g g-card" href="/ux/slate/">
+      <div class="card-body">
+        <div class="card-meta">2008 · Webster University</div>
+        <h3>UuberSlate</h3>
+        <p>Arduino-based smart clapperboard with automated video
+        organization software for film production.</p>
+      </div>
+      <img class="card-img" src="/assets/work/slate.webp" alt="UuberSlate hardware and software side by side" loading="lazy">
+      <div class="card-foot">
+        <span class="card-stat">HARDWARE + SOFTWARE, ONE SYSTEM</span>
+        <span class="card-go">Read the case study →</span>
+      </div>
+    </a>
+  </section>
+
+  <!-- ======================= HONORABLE MENTIONS ======================= -->
+  <div class="dim" aria-hidden="true"></div>
+  <section id="mentions">
+    <h2>Honorable mentions</h2>
+    <ol class="xp">
+      <li>
+        <span class="xp-when">2011</span>
+        <div class="xp-body">
+          <h3>Visual Auto Attendant · Masergy</h3>
+          <p>Telephone extension management in a multi-column, fully
+          responsive layout. Public visitors could call phone lines
+          directly from the company website — real telephone contact,
+          straight from the page.</p>
+          <img class="mention-media" src="/assets/work/vaa.webp" alt="Visual Auto Attendant extension manager" loading="lazy">
+        </div>
+      </li>
+      <li>
+        <span class="xp-when">2012</span>
+        <div class="xp-body">
+          <h3>NRUF · University of North Texas</h3>
+          <p>Bar-chart visualization comparing values held by UNT against
+          other funded universities. Won the Texas Association for
+          Institutional Research award for best data visualization, 2012.
+          <a class="plain-link" href="/ux/nruf/">Try it out →</a></p>
+          <img class="mention-media" src="/assets/work/nruf.webp" alt="NRUF funding eligibility visualization" loading="lazy">
+        </div>
+      </li>
+      <li>
+        <span class="xp-when">2009</span>
+        <div class="xp-body">
+          <h3>Graduate Project · Webster University</h3>
+          <p>A touch-screen kiosk for watching custom video: slide a white
+          dot across a spectrum of topics and transcript snippets float up
+          as previews, while an algorithm stitches interview clips —
+          students, professionals, Jason Silva — to match the selection.</p>
+          <video class="mention-media" src="/assets/work/grad-project.webm" autoplay muted loop playsinline aria-label="Graduate project kiosk interface demo"></video>
+        </div>
+      </li>
+    </ol>
+  </section>
+
+  <!-- ======================= TITLE BLOCK ======================= -->
+  <footer>
+    <div class="title-block" aria-label="Drawing title block">
+      <div class="tb-cell"><span class="k">Me</span><span class="v">Myra Krusemark</span></div>
+      <div class="tb-cell"><span class="k">Email</span><span class="v"><a href="mailto:myra@myrakrusemark.com">myra@myrakrusemark.com</a></span></div>
+      <div class="tb-cell"><span class="k">Copyright</span><span class="v">2026</span></div>
+      <div class="tb-cell"><span class="k">Paper</span><span class="v"><a href="https://www.flickr.com/photos/calebkimbrough/4636948388" rel="license noopener">watercolor · calebkimbrough · CC BY</a></span></div>
     </div>
+  </footer>
+
 </div>
 
+<script src="/js/physics.js"></script>
 
+<script type="importmap">
+{ "imports": {
+  "three": "https://cdn.jsdelivr.net/npm/three@0.171.0/build/three.module.js",
+  "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.171.0/examples/jsm/"
+}}
+</script>
 
-    
-
-<div class="honorable-mention">
-    
-    <video autoplay loop muted playsinline class="screenshot">
-        <source src="screenshots/webster/graduate-project-ui-optimized.webm" type="video/webm">
-        Your browser does not support the video tag.
-    </video>
-    
-    <div class="project-info">
-        <h3 class="project-title">Graduate Project</h3>
-        <div class="project-meta">2009 • Webster University</div>
-        <p>Novel approach to watching custom video through a touch screen kiosk. Users slide a white dot across a spectrum of topics, causing video transcript snippets to float up as previews. An algorithm stitches together short video clips from interviews with students and professionals including Jason Silva based on user selections.</p>
-        
-    </div>
-</div>
-
-
-
+<script type="module" src="/js/glass.js"></script>
 
 </body>
 </html>

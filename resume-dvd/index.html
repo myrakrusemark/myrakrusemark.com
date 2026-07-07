@@ -1,0 +1,348 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Resume DVD (2010)</title>
+<style>
+  :root {
+    --cream: #f0e4cf;
+    --brown: #4a1e10;
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  html, body { height: 100%; }
+  body {
+    background: #171310;
+    color: var(--cream);
+    font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 14px;
+    padding: 16px;
+  }
+  #stage {
+    position: relative;
+    width: min(96vw, calc(92vh * 872 / 480), 1100px);
+    aspect-ratio: 872 / 480;
+    background: #000;
+    border-radius: 6px;
+    overflow: hidden;
+    box-shadow: 0 20px 60px rgba(0,0,0,0.6);
+  }
+  .bgv {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    background: transparent;
+    opacity: 0;
+    z-index: 1;
+  }
+  .bgv.active { opacity: 1; z-index: 2; }
+
+  /* DVD hotspots — rects from the original DVD Studio Pro project */
+  .hotspot {
+    position: absolute;
+    z-index: 4;
+    cursor: pointer;
+    border-radius: 8px;
+    border: 3px solid transparent;
+    transition: border-color 0.18s ease, box-shadow 0.18s ease;
+  }
+  .hotspot:hover, .hotspot:focus-visible, #stage.reveal .hotspot {
+    border-color: rgba(74, 30, 16, 0.85);
+    box-shadow: 0 0 0 3px rgba(240, 228, 207, 0.35), inset 0 0 30px rgba(240, 228, 207, 0.25);
+    outline: none;
+  }
+  .hotspot::after {
+    content: attr(data-label);
+    position: absolute;
+    left: 50%;
+    bottom: -4px;
+    transform: translate(-50%, 100%);
+    font: 700 11px/1 "Helvetica Neue", Helvetica, Arial, sans-serif;
+    letter-spacing: 0.08em;
+    white-space: nowrap;
+    color: var(--brown);
+    background: var(--cream);
+    padding: 4px 8px;
+    border-radius: 3px;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.18s ease;
+  }
+  .hotspot:hover::after, #stage.reveal .hotspot::after { opacity: 0.95; }
+  /* entry flash — brief DVD-remote-style highlight pulse */
+  #stage.flash .hotspot {
+    border-color: rgba(74, 30, 16, 0.7);
+    box-shadow: 0 0 0 3px rgba(240, 228, 207, 0.3);
+  }
+
+  /* corner chrome */
+  .chrome {
+    position: absolute;
+    z-index: 6;
+    font: 700 12px/1 "Helvetica Neue", Helvetica, Arial, sans-serif;
+    letter-spacing: 0.08em;
+    color: var(--cream);
+    background: rgba(23, 14, 9, 0.55);
+    border: none;
+    border-radius: 3px;
+    padding: 8px 12px;
+    cursor: pointer;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.3s ease;
+  }
+  .chrome.show { opacity: 0.85; pointer-events: auto; }
+  .chrome:hover { opacity: 1; }
+  #btn-menu  { top: 10px; left: 10px; }
+  #btn-audio { top: 10px; right: 10px; }
+  #btn-hint  { bottom: 10px; left: 10px; }
+  #btn-skip  { bottom: 10px; right: 10px; }
+
+</style>
+</head>
+<body>
+
+<div id="stage">
+  <video id="bgA" class="bgv active" muted playsinline></video>
+  <video id="bgB" class="bgv" muted playsinline></video>
+  <button id="btn-menu" class="chrome">◂ MENU</button>
+  <button id="btn-audio" class="chrome show" title="ambient menu audio">♪ SOUND OFF</button>
+  <button id="btn-hint" class="chrome" title="highlight the clickable regions">□ BUTTONS</button>
+  <button id="btn-skip" class="chrome show">SKIP ▸</button>
+  <div id="hotspots"></div>
+</div>
+
+<audio id="ambient" src="assets/ambient-wind.mp3" loop></audio>
+
+<script>
+/* Menu graph recovered from DVD.dspproj ObjectDataB (button rects are
+   normalized [x, y, w, h] exactly as authored; loop points from the
+   project's 27 MHz clock values). */
+const MENUS = {
+  main: {
+    src: "menus/main.mp4", loop: 2.5025,
+    buttons: [
+      { rect: [0.4306, 0.0271, 0.1389, 0.1875], label: "PROJECTS", act: { menu: "projects" } },
+      { rect: [0.0472, 0.4062, 0.1389, 0.1875], label: "CONTACT",  act: { menu: "contact" } },
+      { rect: [0.8486, 0.3708, 0.1389, 0.1875], label: "WEBSITE",  act: { menu: "website" } },
+      { rect: [0.4306, 0.7854, 0.1389, 0.1875], label: "RESUMÉ",   act: { menu: "resume" } },
+      { rect: [0.4306, 0.4062, 0.1389, 0.1875], label: "REPLAY FLYBY", act: { flyby: true } },
+    ],
+  },
+  projects: {
+    src: "menus/to-projects.mp4", loop: 2.5025, out: 58.058, backTo: "main",
+    buttons: [
+      { rect: [0.1125, 0.1312, 0.3042, 0.3229], label: "WHAT DADDY DOES", act: { play: "what-daddy-does", page: "p", start: 14.514 } },
+      { rect: [0.4569, 0.1312, 0.3042, 0.3229], label: "GTV",             act: { play: "gtv", page: "p" } },
+      { rect: [0.2486, 0.5458, 0.3042, 0.3229], label: "MANUFACTURED FAMILIES", act: { play: "manfam", page: "p" } },
+      { rect: [0.6042, 0.5458, 0.3042, 0.3229], label: "ROMANCE",         act: { play: "dws", page: "p" } },
+      { rect: [0.8347, 0.1854, 0.1389, 0.1875], label: "MORE",            act: { menu: "projects2" } },
+      { rect: [0.0667, 0.7542, 0.1389, 0.1875], label: "BACK TO MENU",    act: { back: true } },
+    ],
+  },
+  projects2: {
+    src: "menus/to-projects-2.mp4", loop: 2.5025, out: 57.557, backTo: "projects",
+    buttons: [
+      { rect: [0.1125, 0.1208, 0.2681, 0.3229], label: "COLOR", act: { play: "corrected-re", page: "p2" } },
+      { rect: [0.4181, 0.1000, 0.3000, 0.3458], label: "BSCC",  act: { play: "bscc", page: "p2" } },
+      { rect: [0.0306, 0.7312, 0.1458, 0.2062], label: "BACK TO PROJECTS", act: { back: true } },
+    ],
+  },
+  contact: {
+    src: "menus/to-contact.mp4", loop: 2.002, out: 57.557, backTo: "main",
+    buttons: [
+      { rect: [0.8361, 0.3917, 0.1389, 0.1875], label: "BACK", act: { back: true } },
+    ],
+  },
+  resume: {
+    src: "menus/to-resume.mp4", loop: 2.5025, out: 31.031, backTo: "main",
+    buttons: [
+      { rect: [0.4167, 0.0479, 0.1667, 0.1688], label: "BACK", act: { back: true } },
+      { rect: [0.4167, 0.5792, 0.1667, 0.1688], label: "OPEN PDF", act: { href: "assets/resume.pdf" } },
+    ],
+  },
+  website: {
+    src: "menus/to-website.mp4", loop: 2.5025, out: 82.082, backTo: "main",
+    buttons: [
+      { rect: [0.0389, 0.4146, 0.1667, 0.1688], label: "BACK", act: { back: true } },
+      { rect: [0.4222, 0.4187, 0.1667, 0.1688], label: "SITE TOUR (CROPPED)", act: { play: "site-tour", page: null } },
+    ],
+  },
+};
+
+const SCREEN = {  // zoom-in / zoom-out transition pairs per projects page
+  p:  { to: "menus/to-screen-from-p.mp4",  from: "menus/from-screen-to-p.mp4",  home: "projects"  },
+  p2: { to: "menus/to-screen-from-p2.mp4", from: "menus/from-screen-to-p2.mp4", home: "projects2" },
+};
+
+const $ = id => document.getElementById(id);
+const stage = $("stage"), spots = $("hotspots");
+const vids = [$("bgA"), $("bgB")];
+let bg = vids[0];        // the visible <video>; its twin preloads the next clip
+let gen = 0;             // playBg generation — ignores stale loads on rapid clicks
+let cur = null;          // current menu key, or null during transitions/videos
+let mode = "intro";      // intro | menu | screen-in | video | screen-out
+let pending = null;      // context for the screen-transition chain
+let flashTimer = null;
+
+function setChrome({ menu = false, skip = false, hint = false } = {}) {
+  $("btn-menu").classList.toggle("show", menu);
+  $("btn-skip").classList.toggle("show", skip);
+  $("btn-hint").classList.toggle("show", hint);
+}
+
+function clearSpots() {
+  spots.innerHTML = "";
+  stage.classList.remove("flash", "reveal");
+  clearTimeout(flashTimer);
+}
+
+function buildSpots(menuKey) {
+  clearSpots();
+  MENUS[menuKey].buttons.forEach(b => {
+    const d = document.createElement("div");
+    d.className = "hotspot";
+    d.tabIndex = 0;
+    d.dataset.label = b.label;
+    d.title = b.label;
+    const [x, y, w, h] = b.rect;
+    d.style.cssText = `left:${x*100}%;top:${y*100}%;width:${w*100}%;height:${h*100}%`;
+    const go = () => act(b.act);
+    d.addEventListener("click", go);
+    d.addEventListener("keydown", e => { if (e.key === "Enter") go(); });
+    spots.appendChild(d);
+  });
+  // brief highlight pulse so the invisible DVD buttons are discoverable
+  stage.classList.add("flash");
+  flashTimer = setTimeout(() => stage.classList.remove("flash"), 1400);
+  if (new URLSearchParams(location.search).has("hint")) stage.classList.add("reveal");
+}
+
+function playBg(src, { at = 0, unmuted = false, controls = false } = {}) {
+  // double-buffer: load into the hidden twin, swap once its first frame renders,
+  // so the outgoing clip stays on screen instead of flashing black
+  const myGen = ++gen;
+  const next = vids[0] === bg ? vids[1] : vids[0];
+  next.loop = false;
+  next.controls = false;
+  next.muted = !unmuted;
+  next.src = at > 0 ? src + "#t=" + at : src;
+  const swap = () => {
+    if (myGen !== gen) return;               // superseded by a newer playBg
+    const old = bg;
+    bg = next;
+    next.classList.add("active");
+    next.controls = controls;
+    old.classList.remove("active");
+    old.pause();
+    old.controls = false;
+  };
+  if (next.requestVideoFrameCallback) next.requestVideoFrameCallback(swap);
+  else next.addEventListener("playing", swap, { once: true });
+  next.addEventListener("error", () => {
+    if (myGen !== gen) return;
+    if (mode === "intro") enterMenu("main");
+  }, { once: true });
+  next.play().catch(() => {});
+}
+
+function enterMenu(key, { at = 0 } = {}) {
+  const m = MENUS[key];
+  cur = key; mode = "menu"; pending = null;
+  clearSpots();
+  setChrome({ menu: key !== "main", skip: false, hint: true });
+  playBg(m.src, { at: at === "loop" ? m.loop : at });
+  if (at) buildSpots(key);            // entering mid-loop: buttons live now
+  // otherwise buttons appear once the fly-in settles (see timeupdate)
+}
+
+function act(a) {
+  if (a.href) { window.open(a.href, "_blank"); return; }
+  if (a.flyby) { mode = "intro"; clearSpots(); setChrome({ skip: true }); playBg("menus/flyby.mp4"); return; }
+  if (a.back) {           // authentic fly-out: the tail segment of this menu's video
+    const m = MENUS[cur];
+    pending = { backTo: m.backTo };
+    mode = "back";
+    clearSpots();
+    setChrome({});
+    bg.currentTime = m.out;   // same element, already loaded — seamless
+    bg.play().catch(() => {});
+    return;
+  }
+  if (a.menu) { enterMenu(a.menu, { at: a.at || 0 }); return; }
+  if (a.play) {
+    pending = a;
+    clearSpots();
+    setChrome({ menu: true });
+    if (a.page) { mode = "screen-in"; playBg(SCREEN[a.page].to); }
+    else startVideo();
+  }
+}
+
+function startVideo() {
+  mode = "video";
+  setChrome({ menu: true });
+  playBg("videos/" + pending.play + ".mp4", { at: pending.start || 0, unmuted: true, controls: true });
+}
+
+function onEnded(e) {
+  if (e.target !== bg) return;
+  if (mode === "intro") { enterMenu("main"); return; }
+  if (mode === "back") { enterMenu(pending.backTo, { at: "loop" }); return; }
+  if (mode === "menu" && cur) {           // motion menu: loop from the authored loop point
+    bg.currentTime = MENUS[cur].loop;
+    bg.play().catch(() => {});
+    return;
+  }
+  if (mode === "screen-in") { startVideo(); return; }
+  if (mode === "video") {
+    if (pending && pending.page) { mode = "screen-out"; playBg(SCREEN[pending.page].from); }
+    else enterMenu("website", { at: "loop" });   // site tour returns to the website menu
+    return;
+  }
+  if (mode === "screen-out") { enterMenu(SCREEN[pending.page].home, { at: "loop" }); }
+}
+
+function onTimeUpdate(e) {
+  if (e.target !== bg) return;
+  if (mode !== "menu" || !cur) return;
+  const m = MENUS[cur];
+  if (!spots.childElementCount && bg.currentTime >= m.loop) buildSpots(cur);
+  if (m.out && bg.currentTime >= m.out) {   // idle loop must not run into the fly-out tail
+    bg.currentTime = m.loop;
+  }
+}
+
+vids.forEach(v => {
+  v.addEventListener("ended", onEnded);
+  v.addEventListener("timeupdate", onTimeUpdate);
+});
+
+$("btn-skip").addEventListener("click", () => enterMenu("main"));
+$("btn-menu").addEventListener("click", () => enterMenu("main", { at: "loop" }));
+$("btn-hint").addEventListener("mousedown", e => e.preventDefault());
+$("btn-hint").addEventListener("click", () => stage.classList.toggle("reveal"));
+document.addEventListener("keydown", e => {
+  if (e.key === "Escape" && mode !== "intro") enterMenu("main", { at: "loop" });
+});
+
+/* ambient menu audio (user-initiated; browsers block autoplaying audio) */
+const ambient = $("ambient");
+$("btn-audio").addEventListener("click", () => {
+  if (ambient.paused) { ambient.play(); $("btn-audio").textContent = "♪ SOUND ON"; }
+  else { ambient.pause(); $("btn-audio").textContent = "♪ SOUND OFF"; }
+});
+
+/* boot — ?state=main|projects|projects2|contact|resume|website jumps straight there */
+const boot = new URLSearchParams(location.search).get("state");
+if (boot && MENUS[boot]) enterMenu(boot);
+else { mode = "intro"; setChrome({ skip: true }); playBg("menus/flyby.mp4"); }
+</script>
+</body>
+</html>

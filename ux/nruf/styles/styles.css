@@ -46,7 +46,7 @@ padding-bottom:10px;
 }
 
 #logo{
-background-image:url("/nruf/images/logo.png");
+background-image:url("images/logo.png");
 background-size: 100% 100%;
 
 margin:10px 0 0 10px;
@@ -196,7 +196,7 @@ font-weight:800;
 
 @media (max-width: 460px){
   #logo{
-  background-image:url('/nruf/images/logoVert.png');
+  background-image:url('images/logoVert.png');
 
   height:45px;
   width:57.6px;

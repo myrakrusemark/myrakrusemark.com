@@ -1,0 +1,19 @@
+{
+  "version": "0.0.1",
+  "configurations": [
+    {
+      "name": "site",
+      "runtimeExecutable": "python3",
+      "runtimeArgs": [".claude/dev-server.py"],
+      "port": 8380,
+      "autoPort": true
+    },
+    {
+      "name": "vite",
+      "runtimeExecutable": "npx",
+      "runtimeArgs": ["--yes", "vite", "--port", "8381", "--strictPort"],
+      "port": 8381,
+      "autoPort": false
+    }
+  ]
+}

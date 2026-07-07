@@ -1,0 +1,697 @@
+/* site.css — the whole design system, one sheet, no build step.
+   Sections run: base & wallpaper, hero, sheen overlay, glass
+   buttons/chips (+ flush groups & seams), ribbon, lightbox, work
+   cards, xp timeline, title block, small screens. Cascade order
+   matters — append page-specific styles in the page itself. */
+
+  /* ------------------------------------------------------------------
+     The design law: glass = things you can act on (cards, buttons,
+     links). Plain DOM = things you read. Glass is currently benched;
+     g-* classes mark the candidates for when it earns its way back.
+
+     The visual language is a drafting table: slate paper, dot lattice,
+     coral margin rule, mono annotations, dimension-line dividers.
+     ------------------------------------------------------------------ */
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  /* overflow-x clip: the full-bleed ribbon uses 100vw, which includes
+     the scrollbar gutter and would otherwise cause sideways scroll */
+  html { scroll-behavior: smooth; overflow-x: clip; }
+  body {
+    font-family: 'IBM Plex Sans', -apple-system, system-ui, sans-serif;
+    -webkit-font-smoothing: antialiased;
+    /* Blue-slate watercolor paper: dot lattice over a watercolor wash
+       (texture 381, CC BY calebkimbrough — flickr.com/photos/calebkimbrough/4636948388)
+       over the kraft-fiber grain, on a lightened blue slate. Both
+       textures are normalized to mean 50% gray, so soft-light leaves
+       the base color alone and contributes only texture. */
+    background-color: #343b49;
+    background-image:
+      radial-gradient(circle, rgba(232, 238, 248, 0.10) 1.1px, transparent 1.4px),
+      url('/assets/texture/watercolor-381.webp'),
+      url('/assets/texture/paper.webp');
+    /* the wash stretches once across the viewport; the grain tiles */
+    background-size: 22px 22px, cover, 1200px auto;
+    background-position: 11px 11px, center, top left;
+    background-repeat: repeat, no-repeat, repeat;
+    background-blend-mode: normal, soft-light, soft-light;
+    /* Fixed so the glass's refracted copy (engine wallpaper plane,
+       wallpaperScroll: 0) stays in register with the page under scroll */
+    background-attachment: fixed, fixed;
+    color: #d7dde8;
+  }
+  ::selection { background: rgba(226, 114, 91, 0.45); color: #fff; }
+
+  /* Coral margin rule — the notebook line from the drafting paper */
+  body::before {
+    content: '';
+    position: fixed;
+    top: 0; bottom: 0;
+    left: max(28px, calc(50vw - 505px));
+    width: 2px;
+    background: rgba(226, 114, 91, 0.38);
+    pointer-events: none;
+    z-index: 1; /* above the engine canvas (z0), below the glass (z2+) */
+  }
+  @media (max-width: 900px) { body::before { display: none; } }
+
+  .page {
+    max-width: 780px;
+    margin: 0 auto;
+    padding: 40px 28px 90px;
+  }
+  /* Readable content rides above the engine canvas (z0, opaque
+     wallpaper render) and below the CSS3D glass layers (z2+). The
+     engine mounts its canvas and layers INSIDE .page, so lift every
+     direct child except those — anything unlifted paints behind the
+     wallpaper once the engine boots: visible at first paint, then
+     gone. If the engine ever grows a new layer element, exclude it
+     here too. */
+  .page > :not(canvas):not(.sg-css3d-layer) {
+    position: relative;
+    z-index: 1;
+  }
+
+  a:focus-visible, .g:focus-visible {
+    outline: 2px solid rgba(226, 114, 91, 0.8);
+    outline-offset: 3px;
+    border-radius: 4px;
+  }
+
+  /* ---- Readable content (plain DOM) ---- */
+  .eyebrow {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 12px;
+    letter-spacing: 0.16em;
+    color: rgba(178, 192, 214, 0.6);
+    text-transform: uppercase;
+    margin-bottom: 20px;
+  }
+  .eyebrow em { font-style: normal; color: rgba(226, 114, 91, 0.85); }
+
+  h1 {
+    font-family: 'Jost', 'Futura', sans-serif;
+    font-weight: 200;
+    font-size: clamp(46px, 8vw, 76px);
+    letter-spacing: 0.015em;
+    color: #f0f3f8;
+    line-height: 1.02;
+    margin-bottom: 26px;
+  }
+  .lede {
+    font-size: 18px;
+    line-height: 1.65;
+    color: rgba(215, 221, 232, 0.88);
+    max-width: 58ch;
+    margin-bottom: 14px;
+  }
+  .lede strong { color: #f0f3f8; font-weight: 600; }
+  .lede-sub {
+    font-size: 15px;
+    line-height: 1.6;
+    color: rgba(178, 192, 214, 0.65);
+    max-width: 58ch;
+    margin-bottom: 44px;
+  }
+
+  /* Proof strip — same construction as the footer title block:
+     a technical drawing annotates its own numbers */
+  .stats {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr 1fr;
+    border: 1px solid rgba(178, 192, 214, 0.22);
+    margin: 0 0 52px;
+  }
+  .stat {
+    padding: 12px 16px 14px;
+    border-right: 1px solid rgba(178, 192, 214, 0.22);
+  }
+  .stat:last-child { border-right: none; }
+  .stat .n {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 24px;
+    font-weight: 500;
+    color: #eef1f6;
+    display: block;
+    line-height: 1.25;
+    margin-bottom: 4px;
+  }
+  .stat .l {
+    display: block;
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: rgba(178, 192, 214, 0.5);
+  }
+
+  /* Section spacers — the old dashed dividers, now invisible; the
+     element stays because its margin is the inter-section rhythm */
+  .dim {
+    margin: 132px 0 0;
+  }
+
+  h2 {
+    font-family: 'Jost', 'Futura', sans-serif;
+    font-weight: 300;
+    font-size: 30px;
+    letter-spacing: 0.04em;
+    color: #eef1f6;
+    margin: 30px 0 8px;
+  }
+  .section-note {
+    font-size: 14.5px;
+    line-height: 1.6;
+    color: rgba(178, 192, 214, 0.62);
+    margin-bottom: 30px;
+    max-width: 62ch;
+  }
+  .plain-link {
+    color: #a8c4ea;
+    text-decoration: none;
+    border-bottom: 1px solid rgba(168, 196, 234, 0.3);
+    transition: border-color 0.15s ease, color 0.15s ease;
+  }
+  .plain-link:hover { border-bottom-color: #e2725b; color: #e9edf4; }
+
+  /* ---- Case-study prose — long-form reading, plain DOM, never glass */
+  .prose { max-width: 72ch; }
+  .prose h3 {
+    font-family: 'Jost', 'Futura', sans-serif;
+    font-weight: 400;
+    font-size: 20px;
+    letter-spacing: 0.03em;
+    color: #eef1f6;
+    margin: 38px 0 10px;
+  }
+  .prose p, .prose ul {
+    font-size: 15.5px;
+    line-height: 1.7;
+    color: rgba(215, 221, 232, 0.82);
+    margin: 0 0 16px;
+  }
+  .prose ul { padding-left: 22px; }
+  .prose li { margin-bottom: 6px; }
+  .prose blockquote {
+    margin: 26px 0;
+    padding: 2px 0 2px 20px;
+    border-left: 2px solid rgba(226, 114, 91, 0.6);
+    color: #dfe5ee;
+    font-size: 17.5px;
+    line-height: 1.6;
+  }
+  .prose blockquote p { color: inherit; font-size: inherit; margin: 0; }
+  .cs-fig { margin: 30px 0 34px; }
+  /* Figures self-limit: natural size, capped both ways and centered —
+     tall screenshots stop dominating the scroll, small ones stop being
+     stretched to fill the column. */
+  .cs-fig img, .cs-fig video {
+    display: block;
+    width: auto;
+    max-width: 100%;
+    max-height: 540px;
+    margin-inline: auto;
+    border: 1px solid rgba(232, 238, 248, 0.14);
+    filter: saturate(0.92);
+  }
+  .cs-fig figcaption { text-align: center; }
+  /* Editorial layouts, applied where the content supports them */
+  .cs-pair {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 20px;
+    align-items: start;
+    margin: 30px 0 34px;
+  }
+  .cs-pair .cs-fig { margin: 0; }
+  .cs-fig--side {
+    float: right;
+    width: min(360px, 45%);
+    margin: 6px 0 18px 26px;
+  }
+  .cs-fig--side img { width: 100%; }
+  .prose::after { content: ''; display: block; clear: both; }
+  @media (max-width: 700px) {
+    .cs-pair { grid-template-columns: 1fr; gap: 30px; }
+    .cs-fig--side { float: none; width: 100%; margin: 30px 0 34px; }
+  }
+  .cs-fig figcaption {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 0.08em;
+    color: rgba(178, 192, 214, 0.5);
+    margin-top: 8px;
+  }
+  /* spec sheet: the footer title-block motif at page top for
+     role / team / focus facts */
+  .title-block.spec { margin: 26px 0 0; grid-template-columns: repeat(auto-fit, minmax(170px, 1fr)); }
+
+  /* ---- Interactive elements (glass candidates, CSS for now) ---- */
+  a.g { color: inherit; text-decoration: none; cursor: pointer; -webkit-user-drag: none; }
+  .g-cta, .g-chip { user-select: none; } /* labels shouldn't select mid-press */
+  .g-card img { -webkit-user-drag: none; user-select: none; }
+
+  /* Window-light sheen: the physics script drives --shi (how much the
+     tilted face points at the upper-left light) and --shx (glint band
+     slide). At rest a faint static glaze keeps the surface glassy. */
+  .g-cta, .g-chip, .g-card, .ribbon figure, .topoco-gallery a { position: relative; }
+  .g-cta::after, .g-chip::after, .g-card::after,
+  .ribbon figure::after, .topoco-gallery a::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    border-radius: inherit;
+    pointer-events: none;
+    background:
+      /* --dm: flat dimming when the face tips away from the light —
+         the up/down disambiguation cue for the ortho camera */
+      linear-gradient(rgba(8, 10, 14, calc(0.4 * var(--dm, 0))),
+        rgba(8, 10, 14, calc(0.4 * var(--dm, 0)))),
+      linear-gradient(115deg,
+        rgba(223, 233, 247, calc(0.07 + 0.18 * var(--shi, 0))),
+        rgba(223, 233, 247, 0) 55%),
+      linear-gradient(100deg,
+        transparent calc(18% + var(--shx, 0%)),
+        rgba(223, 233, 247, calc(0.14 * var(--shi, 0))) calc(32% + var(--shx, 0%)),
+        transparent calc(46% + var(--shx, 0%)));
+    /* touching groups read as one slab: the group-glaze script sets
+       --grp* so each cell shows its slice of a gradient spanning the
+       whole group box. Defaults keep standalone elements per-element. */
+    background-repeat: no-repeat;
+    background-size: var(--grpw, 100%) var(--grph, 100%);
+    background-position: calc(-1 * var(--grpx, 0px)) calc(-1 * var(--grpy, 0px));
+  }
+
+  .g-cta, .g-chip {
+    height: 64px;
+    border-radius: 0;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-family: 'Jost', 'Futura', sans-serif;
+    font-size: 23px;
+    font-weight: 300;
+    letter-spacing: 0.05em;
+    color: #e9edf4;
+    white-space: nowrap;
+    border: 1px solid rgba(232, 238, 248, 0.16);
+    background: rgba(232, 238, 248, 0.035);
+    /* transform belongs to the physics script — keep it out of
+       transitions so the per-frame lerp isn't double-eased */
+    transition: background 0.18s ease, border-color 0.18s ease;
+    will-change: transform;
+  }
+  .g-cta:hover, .g-chip:hover {
+    background: rgba(232, 238, 248, 0.08);
+    border-color: rgba(232, 238, 248, 0.34);
+  }
+  .g-cta:active, .g-chip:active {
+    background: rgba(232, 238, 248, 0.055);
+  }
+  /* Primary action carries the coral */
+  .g-cta {
+    width: 210px;
+    border-color: rgba(226, 114, 91, 0.5);
+    background: rgba(226, 114, 91, 0.08);
+  }
+  .g-cta:hover {
+    border-color: rgba(226, 114, 91, 0.85);
+    background: rgba(226, 114, 91, 0.14);
+  }
+  .g-chip { padding: 0 34px; }
+
+  /* Project thumbnails inside chips — small rounded token before the label */
+  .cta-row { display: flex; gap: 18px; align-items: center; flex-wrap: wrap; }
+  .chip-row { display: flex; gap: 14px; flex-wrap: wrap; }
+  /* flush variant: buttons pack into one strip, borders collapse to
+     hairlines (layout here; seam-left on the buttons handles color) */
+  .chip-row.flush, .cta-row.flush { gap: 0; }
+  .chip-row.flush .g-chip + .g-chip,
+  .cta-row.flush :is(.g-cta, .g-chip) + :is(.g-cta, .g-chip) { margin-left: -1px; }
+  .chip-row.flush .g-chip:hover,
+  .cta-row.flush :is(.g-cta, .g-chip):hover { z-index: 1; }
+  /* overlapped borders are translucent, so two stacked reads brighter
+     than one — drop the overlapping side entirely and let the
+     neighbor's border be the seam. Classes (not positional selectors)
+     so the engine's CSS3D clone matches too. */
+  .g-chip.seam-left { border-left-color: transparent; }
+  .g-chip.seam-top { border-top-color: transparent; }
+  .g-chip.seam-left:hover, .g-chip.seam-top:hover {
+    border-color: rgba(232, 238, 248, 0.34);
+  }
+
+  /* Media ribbon — a row of small thumbnails stretching across the
+     page. Double duty: media display and horizontal rule. Quiet at
+     rest, wakes on hover. */
+  .ribbon-wrap {
+    position: relative;
+    z-index: 1; /* above the engine canvas */
+    width: 100vw;
+    margin-left: calc(50% - 50vw);
+    /* section rhythm above; tighter below so the ribbon reads as a
+       lead-in to the section that follows it */
+    margin-top: 132px;
+    margin-bottom: 64px;
+  }
+  .ribbon {
+    display: flex;
+    gap: 10px;
+    overflow-x: auto;
+    padding: 4px max(28px, calc(50vw - 505px));
+    scrollbar-width: none;
+  }
+  .ribbon::-webkit-scrollbar { display: none; }
+  .ribbon figure {
+    flex: 0 0 auto;
+    margin: 0;
+  }
+  /* Thumbs carry the button physics: radius on the container so the
+     sheen ::after clips to the same shape as the image */
+  .ribbon figure, .topoco-gallery a {
+    display: block;
+    border-radius: 8px;
+    will-change: transform;
+  }
+  .ribbon img, .ribbon video {
+    display: block;
+    height: 64px;
+    width: auto;
+    max-width: 128px; /* panoramas crop rather than dominate the strip */
+    object-fit: cover;
+    border-radius: 8px;
+    border: 1px solid rgba(232, 238, 248, 0.12);
+    filter: saturate(0.85);
+    opacity: 0.85;
+    transition: filter 0.18s ease, opacity 0.18s ease, border-color 0.18s ease;
+    -webkit-user-drag: none;
+    user-select: none;
+  }
+  .ribbon figure:hover img, .ribbon figure:hover video {
+    filter: saturate(1);
+    opacity: 1;
+    border-color: rgba(232, 238, 248, 0.3);
+  }
+  .ribbon figure { cursor: zoom-in; }
+  @media (max-width: 560px) {
+    .ribbon img, .ribbon video { height: 48px; }
+  }
+  /* TopoCo product gallery — centered row of shop photos, each a plain
+     link to the shop. Same visual treatment as the ribbon thumbs. */
+  .topoco-gallery {
+    display: flex;
+    gap: 10px;
+    justify-content: center;
+    flex-wrap: wrap;
+    margin: 0 0 30px;
+  }
+  .topoco-gallery img {
+    display: block;
+    height: 96px;
+    width: auto;
+    max-width: 192px;
+    object-fit: cover;
+    border-radius: 8px;
+    border: 1px solid rgba(232, 238, 248, 0.12);
+    filter: saturate(0.85);
+    opacity: 0.85;
+    transition: filter 0.18s ease, opacity 0.18s ease, border-color 0.18s ease;
+    -webkit-user-drag: none;
+    user-select: none;
+  }
+  .topoco-gallery a:hover img {
+    filter: saturate(1);
+    opacity: 1;
+    border-color: rgba(232, 238, 248, 0.3);
+  }
+  @media (max-width: 560px) {
+    .topoco-gallery img { height: 72px; }
+  }
+
+  /* Lightbox — full versions of the ribbon media, loaded on demand
+     from assets/media/full/. Click, Esc, or × closes; ←/→ browse. */
+  .lightbox {
+    position: fixed;
+    inset: 0;
+    z-index: 50;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+    gap: 12px;
+    padding: 32px;
+    background: rgba(8, 11, 17, 0.88);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    cursor: zoom-out;
+  }
+  .lightbox[hidden] { display: none; }
+  .lightbox img, .lightbox video {
+    max-width: min(1200px, 92vw);
+    max-height: 82vh;
+    border-radius: 10px;
+    border: 1px solid rgba(232, 238, 248, 0.18);
+    box-shadow: 0 24px 80px rgba(0, 0, 0, 0.55);
+    cursor: default;
+  }
+  /* Embedded experiences (e.g. the Resume DVD) open as a framed stage */
+  .lightbox iframe {
+    width: min(1100px, 92vw);
+    aspect-ratio: 872 / 480;
+    max-height: 82vh;
+    border: 1px solid rgba(232, 238, 248, 0.18);
+    border-radius: 10px;
+    background: #000;
+    box-shadow: 0 24px 80px rgba(0, 0, 0, 0.55);
+    cursor: default;
+  }
+  .lightbox figcaption {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 11.5px;
+    letter-spacing: 0.05em;
+    color: rgba(178, 192, 214, 0.75);
+    text-align: center;
+    max-width: 80ch;
+  }
+  .lightbox .lb-btn {
+    position: absolute;
+    background: none;
+    border: none;
+    color: rgba(232, 238, 248, 0.55);
+    font: 300 34px/1 'Jost', sans-serif;
+    padding: 14px;
+    cursor: pointer;
+    transition: color 0.15s ease;
+  }
+  .lightbox .lb-btn:hover { color: #eef1f6; }
+  .lightbox .lb-close { top: 14px; right: 18px; }
+  .lightbox .lb-prev { left: 10px; top: 50%; transform: translateY(-50%); }
+  .lightbox .lb-next { right: 10px; top: 50%; transform: translateY(-50%); }
+  @media (max-width: 560px) {
+    .lightbox { padding: 16px; }
+    .lightbox .lb-prev, .lightbox .lb-next { top: auto; bottom: 8px; transform: none; }
+  }
+
+  /* Work cards */
+  .g-card {
+    border-radius: 0;
+    padding: 28px 30px 24px;
+    margin-bottom: 26px;
+    border: 1px solid rgba(232, 238, 248, 0.12);
+    background: rgba(232, 238, 248, 0.025);
+    transition: background 0.18s ease, border-color 0.18s ease;
+    will-change: transform;
+    display: grid;
+    grid-template-columns: 1fr 216px;
+    grid-template-areas: "body media" "foot foot";
+    gap: 6px 26px;
+    align-items: start;
+  }
+  .g-card .card-body { grid-area: body; }
+  .g-card .card-img {
+    grid-area: media;
+    width: 216px;
+    height: 158px;
+    object-fit: cover;
+    object-position: top center;
+    border-radius: 0;
+    border: 1px solid rgba(232, 238, 248, 0.14);
+    filter: saturate(0.92);
+    transition: filter 0.18s ease, border-color 0.18s ease;
+  }
+  .g-card:hover .card-img {
+    filter: saturate(1);
+    border-color: rgba(232, 238, 248, 0.3);
+  }
+  .g-card:hover {
+    background: rgba(232, 238, 248, 0.055);
+    border-color: rgba(232, 238, 248, 0.28);
+  }
+  .g-card .card-meta {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 0.12em;
+    color: rgba(178, 192, 214, 0.6);
+    text-transform: uppercase;
+    margin-bottom: 12px;
+  }
+  .g-card h3 {
+    font-family: 'Jost', 'Futura', sans-serif;
+    font-weight: 400;
+    font-size: 26px;
+    letter-spacing: 0.03em;
+    color: #f0f3f8;
+    margin-bottom: 8px;
+  }
+  .g-card p {
+    font-size: 14.5px;
+    line-height: 1.6;
+    color: rgba(215, 221, 232, 0.75);
+    max-width: 58ch;
+  }
+  .g-card .card-foot {
+    grid-area: foot;
+    margin-top: 16px;
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    gap: 16px;
+    flex-wrap: wrap;
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 12px;
+    letter-spacing: 0.06em;
+  }
+  .g-card .card-stat { color: rgba(226, 114, 91, 0.9); }
+  .g-card .card-go { color: #a8c4ea; }
+
+  /* Experience — the résumé compressed to rows */
+  .xp {
+    list-style: none;
+    margin: 0 0 26px;
+    padding: 0;
+  }
+  .xp li {
+    display: grid;
+    grid-template-columns: 108px 1fr;
+    gap: 20px;
+    padding: 16px 0;
+    border-top: 1px solid rgba(178, 192, 214, 0.14);
+  }
+  .xp li:last-child { border-bottom: 1px solid rgba(178, 192, 214, 0.14); }
+  .xp-when {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 11.5px;
+    letter-spacing: 0.06em;
+    color: rgba(178, 192, 214, 0.55);
+    padding-top: 4px;
+    white-space: nowrap;
+  }
+  .xp-body h3 {
+    font-family: 'Jost', 'Futura', sans-serif;
+    font-weight: 400;
+    font-size: 17px;
+    letter-spacing: 0.02em;
+    color: #eef1f6;
+    margin: 0 0 4px;
+  }
+  /* linked entry titles stay quiet: inherit the h3 color, coral on hover */
+  .xp-body h3 a {
+    color: inherit;
+    text-decoration: none;
+    border-bottom: 1px solid rgba(232, 238, 248, 0.22);
+    transition: color 0.15s ease, border-color 0.15s ease;
+  }
+  .xp-body h3 a:hover { color: #fff; border-bottom-color: #e2725b; }
+  /* projects list: the year column carries a thumbnail instead —
+     same treatment as the TopoCo gallery thumbs */
+  .proj .xp-when { padding-top: 0; }
+  .proj-thumb {
+    display: block;
+    width: 88px;
+    height: 88px;
+    object-fit: cover;
+    border-radius: 8px;
+    border: 1px solid rgba(232, 238, 248, 0.12);
+    filter: saturate(0.85);
+    opacity: 0.85;
+    transition: filter 0.18s ease, opacity 0.18s ease, border-color 0.18s ease;
+    -webkit-user-drag: none;
+    user-select: none;
+  }
+  .proj li:hover .proj-thumb {
+    filter: saturate(1);
+    opacity: 1;
+    border-color: rgba(232, 238, 248, 0.3);
+  }
+  .xp-tag {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 9.5px;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: rgba(226, 114, 91, 0.9);
+    border: 1px solid rgba(226, 114, 91, 0.35);
+    border-radius: 4px;
+    padding: 2px 6px;
+    margin-left: 8px;
+    vertical-align: 2px;
+    white-space: nowrap;
+  }
+  .xp-body p {
+    font-size: 13.5px;
+    line-height: 1.6;
+    color: rgba(178, 192, 214, 0.7);
+    margin: 0;
+  }
+
+  /* Title block — a technical drawing signs itself */
+  .title-block {
+    margin-top: 100px;
+    border: 1px solid rgba(178, 192, 214, 0.22);
+    display: grid;
+    grid-template-columns: 1fr 1.4fr 0.6fr 1.6fr;
+    font-family: 'IBM Plex Mono', monospace;
+  }
+  .tb-cell {
+    padding: 10px 14px 12px;
+    border-right: 1px solid rgba(178, 192, 214, 0.22);
+  }
+  .tb-cell:last-child { border-right: none; }
+  .tb-cell .k {
+    display: block;
+    font-size: 9.5px;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: rgba(178, 192, 214, 0.45);
+    margin-bottom: 4px;
+  }
+  .tb-cell .v { font-size: 12.5px; color: rgba(215, 221, 232, 0.85); }
+  .tb-cell .v a { color: inherit; text-decoration: none; border-bottom: 1px solid rgba(178, 192, 214, 0.25); }
+  .tb-cell .v a:hover { color: #e9edf4; }
+
+  /* ---- Small screens ---- */
+  @media (max-width: 700px) {
+    .xp li { grid-template-columns: 1fr; gap: 4px; padding: 14px 0; }
+    .xp-when { padding-top: 0; }
+    .title-block { grid-template-columns: 1fr 1fr; }
+    .tb-cell:nth-child(2) { border-right: none; }
+  }
+  @media (max-width: 700px) {
+    .stats { grid-template-columns: 1fr 1fr; }
+    .stat:nth-child(2) { border-right: none; }
+    .stat:nth-child(-n+2) { border-bottom: 1px solid rgba(178, 192, 214, 0.22); }
+  }
+  @media (max-width: 560px) {
+    .page { padding: 28px 20px 70px; }
+    .dim { margin-top: 96px; }
+    .ribbon-wrap { margin-top: 96px; margin-bottom: 48px; }
+    .g-cta, .g-chip {
+      height: 52px;
+      font-size: 18px;
+    }
+    .g-cta { width: 100%; }
+    .g-chip { padding: 0 24px; flex: 1 1 auto; }
+    .g-card {
+      padding: 22px 20px 18px;
+      grid-template-columns: 1fr;
+      grid-template-areas: "media" "body" "foot";
+    }
+    .g-card .card-img { width: 100%; height: 150px; margin-bottom: 12px; }
+  }

@@ -1,137 +1,176 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ANPI Customer Portal - Myra Krusemark</title>
-    <link rel="stylesheet" href="/styles.css">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ANPI Customer Admin Portal — Myra Krusemark</title>
+<meta name="description" content="Case study: a widget-based self-service customer portal for ANPI's VIP CAP Unified Communications platform.">
+<meta property="og:title" content="ANPI Customer Admin Portal — Myra Krusemark">
+<meta property="og:description" content="Case study: a widget-based self-service customer portal for ANPI's VIP CAP Unified Communications platform.">
+<meta property="og:type" content="article">
+<meta property="og:url" content="https://myrakrusemark.com/ux/anpi-cust-portal/">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='M12 2l2.4 7.6L22 12l-7.6 2.4L12 22l-2.4-7.6L2 12l7.6-2.4z' fill='%23e2725b'/%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Jost:wght@200;300;400;500&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/css/site.css">
 </head>
 <body>
-    
-    <header>
-        <div class="logo-placeholder">
-            <span class="logo-icon">✦</span>
-        </div>
-        <div class="site-title"><a href="/">Myra Krusemark's Cool Little Projects</a></div>
 
-        <nav class="main-nav">
-            <a href="/">Home</a>
-            <a href="/Myra Krusemark - Resume.pdf">Résumé</a>
-            <a href="/ux/">UX Portfolio</a>
-            <a href="https://topoco.art/pages/contact">Contact</a>
-        </nav>
+<div class="page" id="app">
 
-        <div class="social-icons">
-            <a href="https://github.com/myrakrusemark" target="_blank" title="GitHub">
-                <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor"><path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z"/></svg>
-            </a>
-            <a href="https://www.linkedin.com/in/myrasmithkrusemark/" target="_blank" title="LinkedIn">
-                <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor"><path d="M19 0h-14c-2.761 0-5 2.239-5 5v14c0 2.761 2.239 5 5 5h14c2.762 0 5-2.239 5-5v-14c0-2.761-2.238-5-5-5zm-11 19h-3v-11h3v11zm-1.5-12.268c-.966 0-1.75-.79-1.75-1.764s.784-1.764 1.75-1.764 1.75.79 1.75 1.764-.783 1.764-1.75 1.764zm13.5 12.268h-3v-5.604c0-3.368-4-3.113-4 0v5.604h-3v-11h3v1.765c1.396-2.586 7-2.777 7 2.476v6.759z"/></svg>
-            </a>
-            <a href="mailto:myrakrusemark@gmail.com" title="Email">
-                <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor"><path d="M0 3v18h24v-18h-24zm21.518 2l-9.518 7.713-9.518-7.713h19.036zm-19.518 14v-11.817l10 8.104 10-8.104v11.817h-20z"/></svg>
-            </a>
-        </div>
-    </header>
-    <div class="article-content">
-        
-<h1>ANPI Customer Portal</h1>
+  <!-- ======================= HERO ======================= -->
+  <header style="padding-top: 42px;">
+    <div class="eyebrow">2014 · <em>Associated Network Partners</em></div>
+    <h1>ANPI Customer Admin Portal</h1>
+    <p class="section-note">
+      A customizable, widget-based self-service portal for the VIP CAP
+      Unified Communications platform — built to put enterprise telecom
+      customers in control of their own services.
+    </p>
+    <div class="cta-row">
+      <a class="g sg-button g-chip" href="/ux/" sg-material="clear" sg-tilt sg-press>← UX Portfolio</a>
+    </div>
 
-<div class="hero-container" style="background-image: url('../screenshots/anpi-cust-portal/dashboard-prototype.png');">
-    <img src="../screenshots/anpi-cust-portal/dashboard-prototype.png" alt="ANPI Customer Portal">
+    <div class="title-block spec" aria-label="Project spec">
+      <div class="tb-cell"><span class="k">Role</span><span class="v">UX Designer</span></div>
+      <div class="tb-cell"><span class="k">Focus</span><span class="v">Customer-facing portal for VIP CAP platform</span></div>
+      <div class="tb-cell"><span class="k">Duration</span><span class="v">Multi-phase project with iterative design cycles</span></div>
+    </div>
+  </header>
+
+  <!-- ======================= CASE STUDY ======================= -->
+  <div class="dim" aria-hidden="true"></div>
+
+  <figure class="cs-fig">
+    <img src="/assets/ux/anpi-cust-portal/dashboard-prototype.webp" alt="ANPI Customer Admin Portal" loading="lazy">
+  </figure>
+
+  <section id="challenge">
+    <h2>The Challenge</h2>
+    <div class="prose">
+      <p>ANPI's VIP CAP platform needed a comprehensive customer portal that would give enterprise customers easy access to their telecommunications services, account information, and support resources. The existing system required customers to contact support for basic information and service changes, creating inefficiencies for both customers and support staff.</p>
+
+      <p>The challenge was to create a self-service portal that would empower customers to manage their own services while reducing the burden on support teams.</p>
+    </div>
+  </section>
+
+  <section id="design-solution">
+    <h2>Design Solution</h2>
+    <div class="prose">
+      <p>I designed a modular widget-based interface that allows customers to customize their dashboard and quickly access the information most relevant to their needs. The flexible architecture accommodates different customer types—from small businesses to large enterprises—with varying information priorities.</p>
+    </div>
+
+    <figure class="cs-fig">
+      <img src="/assets/ux/anpi-cust-portal/manage-extensions.webp" alt="Customer Portal Design" loading="lazy">
+    </figure>
+
+    <div class="prose">
+      <h3>Customizable Widget Dashboard</h3>
+      <figure class="cs-fig cs-fig--side">
+        <img src="/assets/ux/anpi-cust-portal/dashboard-widgets.webp" alt="Customizable Widget Dashboard" loading="lazy">
+      </figure>
+      <p>The core of the portal is a customizable dashboard where customers can arrange widgets based on their priorities. Customers can drag and drop widgets to reorganize their view, hide widgets they don't need, and quickly access the tools most important to their daily operations.</p>
+
+      <p>This approach recognizes that different users have different needs—a billing manager cares about invoices and payment history, while a technical administrator needs quick access to service status and configuration tools.</p>
+    </div>
+
+    <div class="prose">
+      <h3>Administration and Access Management</h3>
+    </div>
+
+    <figure class="cs-fig">
+      <img src="/assets/ux/anpi-cust-portal/admin-access-wireframes.webp" alt="Administration and Access Wireframes" loading="lazy">
+      <figcaption>Wireframes showing the administration and access management workflow</figcaption>
+    </figure>
+
+    <div class="prose">
+      <p>Customers can view real-time service status, configure settings, and manage their telecommunications services without needing to contact support. This self-service capability significantly reduced support requests for routine tasks.</p>
+
+      <h3>Widget Customization</h3>
+    </div>
+
+    <figure class="cs-fig">
+      <img src="/assets/ux/anpi-cust-portal/widget-detail.webp" alt="Widget Detail View" loading="lazy">
+      <figcaption>Detailed view showing widget customization options and interactions</figcaption>
+    </figure>
+
+    <div class="prose">
+      <p>Each widget can be configured to display the specific information customers need. The flexible design allows for resizing, repositioning, and customizing widget content to match individual workflow requirements.</p>
+    </div>
+  </section>
+
+  <section id="design-process">
+    <h2>Design Process</h2>
+
+    <div class="prose">
+      <h3>Dashboard Prototype Evolution</h3>
+    </div>
+
+    <div class="prose">
+      <figure class="cs-fig cs-fig--side">
+        <img src="/assets/ux/anpi-cust-portal/dashboard-prototype.webp" alt="Dashboard Prototype" loading="lazy">
+        <figcaption>Dashboard prototype showing the widget-based layout with status map, billing, and service information</figcaption>
+      </figure>
+      <p>I started with low-fidelity wireframes to quickly explore different layout options and information hierarchies. This rapid prototyping approach allowed us to test multiple concepts with stakeholders before investing in high-fidelity designs.</p>
+
+      <h3>Iterative Refinement</h3>
+      <p>Through multiple design iterations, I refined the interface based on:</p>
+      <ul>
+        <li>User research with existing customers to identify pain points and priorities</li>
+        <li>Stakeholder feedback on business requirements and technical constraints</li>
+        <li>Usability testing to validate the widget-based approach</li>
+        <li>Technical feasibility discussions with the development team</li>
+      </ul>
+
+      <h3>Key Features</h3>
+      <ul>
+        <li>Customizable dashboard with drag-and-drop widgets</li>
+        <li>Real-time service status monitoring</li>
+        <li>Self-service configuration and management tools</li>
+        <li>Account management and billing information</li>
+        <li>Integrated support and documentation</li>
+        <li>Responsive design for desktop and mobile access</li>
+        <li>Role-based access control for enterprise teams</li>
+      </ul>
+    </div>
+  </section>
+
+  <section id="impact">
+    <h2>Impact</h2>
+    <div class="prose">
+      <ul>
+        <li>Reduced support requests for routine account and service inquiries</li>
+        <li>Enabled self-service for common tasks, improving customer satisfaction</li>
+        <li>Provided customers with 24/7 access to account information</li>
+        <li>Flexible widget-based design accommodated diverse customer needs</li>
+        <li>Improved transparency with real-time service status and billing information</li>
+      </ul>
+    </div>
+  </section>
+
+  <!-- ======================= TITLE BLOCK ======================= -->
+  <footer>
+    <div class="title-block" aria-label="Drawing title block">
+      <div class="tb-cell"><span class="k">Me</span><span class="v">Myra Krusemark</span></div>
+      <div class="tb-cell"><span class="k">Email</span><span class="v"><a href="mailto:myra@myrakrusemark.com">myra@myrakrusemark.com</a></span></div>
+      <div class="tb-cell"><span class="k">Copyright</span><span class="v">2026</span></div>
+      <div class="tb-cell"><span class="k">Paper</span><span class="v"><a href="https://www.flickr.com/photos/calebkimbrough/4636948388" rel="license noopener">watercolor · calebkimbrough · CC BY</a></span></div>
+    </div>
+  </footer>
+
 </div>
 
-<h2>Project Overview</h2>
-<p><strong>Role:</strong> UX Designer<br>
-<strong>Focus:</strong> Customer-facing portal for VIP CAP platform<br>
-<strong>Duration:</strong> Multi-phase project with iterative design cycles</p>
+<script src="/js/physics.js"></script>
 
-<h2>The Challenge</h2>
-<p>ANPI's VIP CAP platform needed a comprehensive customer portal that would give enterprise customers easy access to their telecommunications services, account information, and support resources. The existing system required customers to contact support for basic information and service changes, creating inefficiencies for both customers and support staff.</p>
+<script type="importmap">
+{ "imports": {
+  "three": "https://cdn.jsdelivr.net/npm/three@0.171.0/build/three.module.js",
+  "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.171.0/examples/jsm/"
+}}
+</script>
 
-<p>The challenge was to create a self-service portal that would empower customers to manage their own services while reducing the burden on support teams.</p>
+<script type="module" src="/js/glass.js"></script>
 
-<h2>Design Solution</h2>
-<div class="content-with-image">
-    <div class="text-content">
-        <p>I designed a modular widget-based interface that allows customers to customize their dashboard and quickly access the information most relevant to their needs. The flexible architecture accommodates different customer types—from small businesses to large enterprises—with varying information priorities.</p>
-    </div>
-    <div class="side-image">
-        <a href="../screenshots/anpi-cust-portal/manage-extensions.png" target="_blank">
-            <img src="../screenshots/anpi-cust-portal/manage-extensions.png" alt="Customer Portal Design">
-        </a>
-    </div>
-</div>
-
-<h3>Customizable Widget Dashboard</h3>
-<div class="content-with-image">
-    <div class="text-content">
-        <p>The core of the portal is a customizable dashboard where customers can arrange widgets based on their priorities. Customers can drag and drop widgets to reorganize their view, hide widgets they don't need, and quickly access the tools most important to their daily operations.</p>
-
-        <p>This approach recognizes that different users have different needs—a billing manager cares about invoices and payment history, while a technical administrator needs quick access to service status and configuration tools.</p>
-    </div>
-    <div class="side-image">
-        <a href="../screenshots/anpi-cust-portal/dashboard-widgets.png" target="_blank">
-            <img src="../screenshots/anpi-cust-portal/dashboard-widgets.png" alt="Customizable Widget Dashboard">
-        </a>
-    </div>
-</div>
-
-<h3>Administration and Access Management</h3>
-<a href="../screenshots/anpi-cust-portal/admin-access-wireframes.png" target="_blank">
-    <img src="../screenshots/anpi-cust-portal/admin-access-wireframes.png" alt="Administration and Access Wireframes" class="screenshot">
-</a>
-<p style="text-align: center; color: #666; font-style: italic; margin-top: -20px;">Wireframes showing the administration and access management workflow</p>
-
-<p>Customers can view real-time service status, configure settings, and manage their telecommunications services without needing to contact support. This self-service capability significantly reduced support requests for routine tasks.</p>
-
-<h3>Widget Customization</h3>
-<a href="../screenshots/anpi-cust-portal/widget-detail.png" target="_blank">
-    <img src="../screenshots/anpi-cust-portal/widget-detail.png" alt="Widget Detail View" class="screenshot">
-</a>
-<p style="text-align: center; color: #666; font-style: italic; margin-top: -20px;">Detailed view showing widget customization options and interactions</p>
-
-<p>Each widget can be configured to display the specific information customers need. The flexible design allows for resizing, repositioning, and customizing widget content to match individual workflow requirements.</p>
-
-<h2>Design Process</h2>
-
-<h3>Dashboard Prototype Evolution</h3>
-<a href="../screenshots/anpi-cust-portal/dashboard-prototype.png" target="_blank">
-    <img src="../screenshots/anpi-cust-portal/dashboard-prototype.png" alt="Dashboard Prototype" class="screenshot">
-</a>
-<p style="text-align: center; color: #666; font-style: italic; margin-top: -20px;">Dashboard prototype showing the widget-based layout with status map, billing, and service information</p>
-
-<p>I started with low-fidelity wireframes to quickly explore different layout options and information hierarchies. This rapid prototyping approach allowed us to test multiple concepts with stakeholders before investing in high-fidelity designs.</p>
-
-<h3>Iterative Refinement</h3>
-<p>Through multiple design iterations, I refined the interface based on:</p>
-<ul>
-    <li>User research with existing customers to identify pain points and priorities</li>
-    <li>Stakeholder feedback on business requirements and technical constraints</li>
-    <li>Usability testing to validate the widget-based approach</li>
-    <li>Technical feasibility discussions with the development team</li>
-</ul>
-
-<h3>Key Features</h3>
-<ul>
-    <li>Customizable dashboard with drag-and-drop widgets</li>
-    <li>Real-time service status monitoring</li>
-    <li>Self-service configuration and management tools</li>
-    <li>Account management and billing information</li>
-    <li>Integrated support and documentation</li>
-    <li>Responsive design for desktop and mobile access</li>
-    <li>Role-based access control for enterprise teams</li>
-</ul>
-
-<h2>Impact</h2>
-<ul>
-    <li>Reduced support requests for routine account and service inquiries</li>
-    <li>Enabled self-service for common tasks, improving customer satisfaction</li>
-    <li>Provided customers with 24/7 access to account information</li>
-    <li>Flexible widget-based design accommodated diverse customer needs</li>
-    <li>Improved transparency with real-time service status and billing information</li>
-</ul>
-
-    </div>
 </body>
 </html>
