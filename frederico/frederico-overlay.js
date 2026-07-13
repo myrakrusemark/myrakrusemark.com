@@ -78,7 +78,8 @@ let dragTarget = { x: 0, y: 0 };
 // `soft-light` blend that means a streak starts by *darkening* the page (wet)
 // and ends by faintly *lightening* it (a dried crust) — bg-agnostic. Two phases:
 //   1. Each render frame: stamp a fresh wet silhouette (WET_SLIME).
-//   2. Each second: nudge existing trail pixels toward CRUST_SLIME.
+//   2. Each render frame: nudge existing trail pixels a little toward CRUST_SLIME
+//      (scaled by frame time), so drying is a smooth drift, not a 1 Hz step.
 const TRAIL_BLEND_MODE = 'soft-light'; // how the canvas composites onto the page
 let TRAIL_ALPHA  = 0.55;               // wet stroke opacity
 let CRUST_RATE   = 0.05;               // per second; how fast wet dries to crust
@@ -761,7 +762,7 @@ function releaseRope(w) {
 }
 
 // ─── render loop ──────────────────────────────────────────────────────
-let lastWall = performance.now(), lastChemo = 0, lastEvap = 0;
+let lastWall = performance.now(), lastChemo = 0;
 
 // Tick speed: how many seconds of sim per second of wall clock.
 // Mobile defaults lower so phones don't roast.
@@ -794,12 +795,13 @@ function loop() {
 
   // (Drag is handled inline in the per-worm render branch below.)
 
-  // Trail evaporation (shared canvas, ticks once per second).
-  if (now - lastEvap > 1000) {
-    lastEvap = now;
+  // Trail evaporation: nudge existing trail pixels toward the dried-crust colour a
+  // little EVERY frame, scaled by frame time, so wet→dry is a continuous drift
+  // instead of a visible once-a-second step.
+  if (dt > 0) {
     trailCtx.save();
     trailCtx.globalCompositeOperation = 'source-atop';
-    trailCtx.fillStyle = trailColorString(CRUST_SLIME, CRUST_RATE);
+    trailCtx.fillStyle = trailColorString(CRUST_SLIME, CRUST_RATE * dt);
     trailCtx.fillRect(0, 0, trailCanvas.width, trailCanvas.height);
     trailCtx.restore();
   }
