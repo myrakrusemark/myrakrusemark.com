@@ -82,7 +82,13 @@ let dragTarget = { x: 0, y: 0 };
 //      (scaled by frame time), so drying is a smooth drift, not a 1 Hz step.
 const TRAIL_BLEND_MODE = 'soft-light'; // how the canvas composites onto the page
 let TRAIL_ALPHA  = 0.55;               // wet stroke opacity
-let CRUST_RATE   = 0.05;               // per second; how fast wet dries to crust
+let CRUST_RATE   = 0.16;               // per second; how fast wet dries to crust colour. Fast
+                                       // enough that crust forms in his wake as he moves, since
+                                       // an anchored worm re-wets its own patch; lower = wetter longer.
+let FADE_RATE    = 0.1;                // per second; how fast the DRIED crust then clears. Slower
+                                       // than CRUST_RATE so slime fully dries to crust (the good
+                                       // part) before it goes, but fast enough that old crust turns
+                                       // over into a moving trail instead of piling into a huge blob.
 const WET_SLIME   = [16, 26, 22];      // dark cool tone → darkens the page (wet)
 const CRUST_SLIME = [234, 238, 230];   // pale tone → lightens the page (dried)
 
@@ -795,13 +801,17 @@ function loop() {
 
   // (Drag is handled inline in the per-worm render branch below.)
 
-  // Trail evaporation: nudge existing trail pixels toward the dried-crust colour a
-  // little EVERY frame, scaled by frame time, so wet→dry is a continuous drift
-  // instead of a visible once-a-second step.
+  // Trail evaporation, every frame (scaled by frame time) so it's a continuous
+  // drift, not a 1 Hz step: (1) shift wet pixels toward the dried-crust colour,
+  // then (2) slowly fade the whole trail to transparent so it dries AND clears
+  // instead of piling into permanent patches where the worm lingers.
   if (dt > 0) {
     trailCtx.save();
     trailCtx.globalCompositeOperation = 'source-atop';
-    trailCtx.fillStyle = trailColorString(CRUST_SLIME, CRUST_RATE * dt);
+    trailCtx.fillStyle = trailColorString(CRUST_SLIME, Math.min(1, CRUST_RATE * dt));
+    trailCtx.fillRect(0, 0, trailCanvas.width, trailCanvas.height);
+    trailCtx.globalCompositeOperation = 'destination-out';
+    trailCtx.fillStyle = `rgba(0,0,0,${Math.min(1, FADE_RATE * dt)})`;
     trailCtx.fillRect(0, 0, trailCanvas.width, trailCanvas.height);
     trailCtx.restore();
   }
