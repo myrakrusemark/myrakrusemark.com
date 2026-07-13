@@ -594,54 +594,78 @@ function gutTubeHtml(pellets) {
   return `<svg width="${W}" height="${H}" style="vertical-align:middle"><rect width="${W}" height="${H}" rx="${H/2}" fill="#0d1f26"/>${dots}</svg>`;
 }
 
-// Mousedown on a worm grabs him (poke + drag-start). Off-body in feed mode
-// sprinkles. Drag = grab a body point; the rest of the worm hangs off the
-// cursor like a length of rope (see the pick-up physics below).
-document.addEventListener('mousedown', (e) => {
-  if (e.button !== 0) return;
-  if (e.target.closest('button, input, [data-frederico-ui]')) return;
+// Pointer (mouse OR touch) on a worm grabs him (poke + drag-start). Off-body in
+// feed mode sprinkles. Drag = grab a body point; the rest of the worm hangs off
+// the pointer like a length of rope (see the pick-up physics below). Shared logic
+// so mouse and touch behave identically. `grabR` is the hit radius (bigger for
+// fat fingers). Returns 'grab' | 'pour' | null so callers can preventDefault.
+function pointerStart(cx, cy, target, allowPour, grabR) {
+  if (target && target.closest && target.closest('button, input, [data-frederico-ui]')) return null;
   let minD = Infinity, minWorm = null, minIdx = 0;
   for (const w of worms) {
     if (!w.lastBodyVp) continue;
     for (let i = 0; i < w.lastBodyVp.length; i++) {
-      const dx = w.lastBodyVp[i].x - e.clientX, dy = w.lastBodyVp[i].y - e.clientY;
+      const dx = w.lastBodyVp[i].x - cx, dy = w.lastBodyVp[i].y - cy;
       const d = dx*dx + dy*dy;
       if (d < minD) { minD = d; minWorm = w; minIdx = i; }
     }
   }
-  if (minD < 28*28 && minWorm) {
+  if (minD < grabR*grabR && minWorm) {
     draggingWorm = minWorm;
-    dragTarget = { x: e.clientX, y: e.clientY };
-    startRope(minWorm, minIdx, e.clientX, e.clientY);  // grab a point; the body dangles from it
+    dragTarget = { x: cx, y: cy };
+    startRope(minWorm, minIdx, cx, cy);  // grab a point; the body dangles from it
     activeWormIdx = worms.indexOf(minWorm);
     panelOpen = true;   // grabbing a worm expands his pill
     refreshPanel();
-    poke(minWorm); // startle reflex when grabbed (no-op if dead)
-    document.body.style.cursor = 'grabbing';
-    e.preventDefault();
-  } else if (feedMode || e.shiftKey) {
+    poke(minWorm);      // startle reflex when grabbed (no-op if dead)
+    return 'grab';
+  } else if (allowPour) {
     // Begin a continuous pour. Immediate burst so a tap still feeds; the pour
-    // interval keeps the stream going while the button stays down.
+    // interval keeps the stream going while the pointer stays down.
     pouring = true;
-    pourPos = { x: e.clientX, y: e.clientY };
-    sprinkleBurst(e.clientX, e.clientY, 3);
-    e.preventDefault();
+    pourPos = { x: cx, y: cy };
+    sprinkleBurst(cx, cy, 3);
+    return 'pour';
   }
-});
-
-window.addEventListener('mousemove', (e) => {
-  if (draggingWorm) dragTarget = { x: e.clientX, y: e.clientY };
-  if (pouring) pourPos = { x: e.clientX, y: e.clientY };
-});
-
-window.addEventListener('mouseup', () => {
+  return null;
+}
+function pointerMove(cx, cy) {
+  if (draggingWorm) dragTarget = { x: cx, y: cy };
+  if (pouring) pourPos = { x: cx, y: cy };
+}
+function pointerEnd() {
   if (draggingWorm) {
     releaseRope(draggingWorm);   // resume swimming from where the rope left off
     draggingWorm = null;
     document.body.style.cursor = feedMode ? 'copy' : '';
   }
   if (pouring) { pouring = false; refreshBottleUI(); }
+}
+
+document.addEventListener('mousedown', (e) => {
+  if (e.button !== 0) return;
+  const r = pointerStart(e.clientX, e.clientY, e.target, feedMode || e.shiftKey, 28);
+  if (r === 'grab') document.body.style.cursor = 'grabbing';
+  if (r) e.preventDefault();
 });
+window.addEventListener('mousemove', (e) => pointerMove(e.clientX, e.clientY));
+window.addEventListener('mouseup', pointerEnd);
+
+// Touch: same behaviour. A bigger hit radius for fingers, and while a worm is held
+// (or you're pouring) we preventDefault so the page doesn't scroll under the drag.
+document.addEventListener('touchstart', (e) => {
+  const t = e.touches[0]; if (!t) return;
+  const r = pointerStart(t.clientX, t.clientY, e.target, feedMode, 44);
+  if (r) e.preventDefault();   // grabbed a worm / started a pour → own the gesture, no scroll
+}, { passive: false });
+window.addEventListener('touchmove', (e) => {
+  if (!draggingWorm && !pouring) return;   // not our gesture → let the page scroll normally
+  const t = e.touches[0]; if (!t) return;
+  pointerMove(t.clientX, t.clientY);
+  e.preventDefault();          // hold the worm still under the finger; block scroll
+}, { passive: false });
+window.addEventListener('touchend', pointerEnd);
+window.addEventListener('touchcancel', pointerEnd);
 
 // ─── pick-up physics ────────────────────────────────────────────────────────
 // While a worm is held it stops swimming and drapes over the cursor as an ARCH,
@@ -824,7 +848,6 @@ function loop() {
   const sy = window.scrollY;
   const doChemo = now - lastChemo > 33;
   if (doChemo) lastChemo = now;
-  const margin = 80;
 
   for (const w of worms) {
     // Centroid in worm-meters.
@@ -850,16 +873,16 @@ function loop() {
       const dxc = cx - w.lastCxCy.cx, dyc = cy - w.lastCxCy.cy;
       w.worldOffset.x += dxc * SCALE * 1000;
       w.worldOffset.y += dyc * SCALE * 1000;
-      // Keep him bounded to the PAGE (document), not the viewport. He stays put
-      // where he is on the page and swims/eats there; scrolling just moves past
-      // him. (The old viewport-wrap teleported him back into view on every scroll,
-      // which made one worm look like many and smeared a trail down the whole doc.)
+      // Bound him to the page but let him reach the very EDGES. Clamp his centre to
+      // the full, stable viewport width (clientWidth — not scrollWidth, which drifts
+      // on mobile as content/overflow changes) so he can get to letters right at the
+      // margin instead of stalling short of them. Vertically he stays anchored within
+      // the document, so scrolling just moves past him.
       const de = document.documentElement;
-      const docW = Math.max(de.scrollWidth, window.innerWidth);
+      const viewW = de.clientWidth;
       const docH = Math.max(de.scrollHeight, window.innerHeight);
-      const dpX = clamp(w.worldOffset.x + window.scrollX, margin, docW - margin);
-      const dpY = clamp(w.worldOffset.y + window.scrollY, margin, docH - margin);
-      w.worldOffset.x = dpX - window.scrollX;
+      w.worldOffset.x = clamp(w.worldOffset.x, 0, viewW);
+      const dpY = clamp(w.worldOffset.y + window.scrollY, 0, docH);
       w.worldOffset.y = dpY - window.scrollY;
       w.lastCxCy = { cx, cy };
       vp = [];
