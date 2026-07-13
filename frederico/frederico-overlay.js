@@ -838,11 +838,17 @@ function loop() {
       const dxc = cx - w.lastCxCy.cx, dyc = cy - w.lastCxCy.cy;
       w.worldOffset.x += dxc * SCALE * 1000;
       w.worldOffset.y += dyc * SCALE * 1000;
-      // Wrap around the viewport so he doesn't disappear.
-      if (w.worldOffset.x < -margin) w.worldOffset.x = window.innerWidth + margin;
-      if (w.worldOffset.x > window.innerWidth + margin) w.worldOffset.x = -margin;
-      if (w.worldOffset.y < -margin) w.worldOffset.y = window.innerHeight + margin;
-      if (w.worldOffset.y > window.innerHeight + margin) w.worldOffset.y = -margin;
+      // Keep him bounded to the PAGE (document), not the viewport. He stays put
+      // where he is on the page and swims/eats there; scrolling just moves past
+      // him. (The old viewport-wrap teleported him back into view on every scroll,
+      // which made one worm look like many and smeared a trail down the whole doc.)
+      const de = document.documentElement;
+      const docW = Math.max(de.scrollWidth, window.innerWidth);
+      const docH = Math.max(de.scrollHeight, window.innerHeight);
+      const dpX = clamp(w.worldOffset.x + window.scrollX, margin, docW - margin);
+      const dpY = clamp(w.worldOffset.y + window.scrollY, margin, docH - margin);
+      w.worldOffset.x = dpX - window.scrollX;
+      w.worldOffset.y = dpY - window.scrollY;
       w.lastCxCy = { cx, cy };
       vp = [];
       for (let i = 0; i < N; i++) {
