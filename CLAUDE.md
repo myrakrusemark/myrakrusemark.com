@@ -7,10 +7,19 @@ runs one on port 8380).
 ## Deploying
 
 This repo IS the live site: `github.com/myrakrusemark/myrakrusemark.com`
-→ GitHub Pages (main, root, CNAME myrakrusemark.com, Cloudflare-proxied,
-~10 min edge cache). A plain push to main deploys. Live since 2026-07-07;
-developed in a separate repo before that, now retired.
+→ GitHub Pages (main, root, CNAME myrakrusemark.com, Cloudflare-proxied).
+A plain push to main deploys. Live since 2026-07-07; developed in a
+separate repo before that, now retired.
 
+- **Bump `?v=` on css/js links whenever you change one.** Cloudflare
+  caches HTML for 10 minutes but CSS and JS for **four hours**
+  (`cache-control: max-age=14400`, `cf-cache-status: HIT`). So after a
+  deploy the new HTML goes out immediately while the old stylesheet
+  keeps being served, and the site renders as unstyled markup for hours.
+  Every page links its assets as `/css/site.css?v=<date>`; a changed
+  query is a new cache key, so bumping the date on the 7 pages that
+  carry those links ships CSS and markup together. Measured 2026-08-12,
+  after shipping the hero rail without it.
 - **GitHub rejects any blob over 100 MiB.** The resume-dvd videos are
   already re-encoded under it (CRF 25); run `find . -size +100M` before
   committing new media.
