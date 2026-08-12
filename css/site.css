@@ -646,7 +646,7 @@
     margin-top: 100px;
     border: 1px solid rgba(178, 192, 214, 0.22);
     display: grid;
-    grid-template-columns: 1fr 1.4fr 0.6fr 1.6fr;
+    grid-template-columns: 1fr 1.4fr 0.6fr;
     font-family: 'IBM Plex Mono', monospace;
   }
   .tb-cell {
@@ -672,6 +672,8 @@
     .xp-when { padding-top: 0; }
     .title-block { grid-template-columns: 1fr 1fr; }
     .tb-cell:nth-child(2) { border-right: none; }
+    /* odd cell count: the last one takes the whole second row */
+    .tb-cell:last-child:nth-child(odd) { grid-column: 1 / -1; }
   }
   @media (max-width: 700px) {
     .stats { grid-template-columns: 1fr 1fr; }

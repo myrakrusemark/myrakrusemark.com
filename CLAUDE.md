@@ -17,8 +17,11 @@ developed in a separate repo before that, now retired.
 - This repo also hosts standalone apps the site links to — `futures/`,
   `period-tracker/`, `spot-the-difference/`, `image-request-form/`, and
   their `images/` dir. They predate the rebuild; never delete them.
-- The watercolor background is CC BY (calebkimbrough) — the footer
-  PAPER credit must survive any footer redesign.
+- The watercolor background is CC BY (calebkimbrough), sourced from
+  flickr.com/photos/calebkimbrough/4636948388. Myra had the footer PAPER
+  credit removed on 2026-08-12; don't re-add it. The license still asks
+  for attribution, so the provenance lives in the `body` comment in
+  css/site.css instead. Swapping the texture retires the question.
 
 ## The design law
 
