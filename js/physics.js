@@ -19,8 +19,8 @@
   const clamp = (v, m) => v < -m ? -m : v > m ? m : v;
 
   const states = new Map();
-  for (const el of document.querySelectorAll('.g-cta, .g-chip, .g-card, .ribbon figure, .topoco-gallery a')) {
-    const t = el.classList.contains('g-card') ? TUNE.card
+  for (const el of document.querySelectorAll('.g-cta, .g-chip, .g-card, .rail-item, .ribbon figure, .topoco-gallery a')) {
+    const t = el.matches('.g-card, .rail-item') ? TUNE.card
       : el.matches('.ribbon figure, .topoco-gallery a') ? TUNE.thumb
       : TUNE.chip;
     const s = { t, rx: 0, ry: 0, sc: 1, pressed: false };
@@ -41,7 +41,7 @@
   // the gesture from the physics. Kill it for buttons, cards, and their
   // glass clones (which carry the same classes).
   document.addEventListener('dragstart', (e) => {
-    if (e.target.closest && e.target.closest('.g, .g-card, .g-chip, .g-cta, .ribbon figure, .topoco-gallery a')) e.preventDefault();
+    if (e.target.closest && e.target.closest('.g, .g-card, .g-chip, .g-cta, .rail-item, .ribbon figure, .topoco-gallery a')) e.preventDefault();
   }, true);
 
   // Smoothed cursor velocity, engine-style

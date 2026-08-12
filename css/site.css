@@ -144,6 +144,134 @@
     color: rgba(178, 192, 214, 0.5);
   }
 
+  /* ---- Hero split: identity left, project index right ----
+     On wide screens the top runs two columns. The right one hangs out
+     past the text column into the margin, stopping at the drawing edge
+     — the mirror of the coral rule on the left — so the hero reaches
+     exactly as wide as the media ribbon further down. The stats table
+     and buttons span both columns underneath. Below 1080px the grid
+     collapses and the index becomes a two-up block under the lede. */
+  @media (min-width: 1080px) {
+    .hero {
+      /* the coral rule is inset max(28px, 50vw - 505px) from the left;
+         the text column's edge is inset max(28px, 50vw - 362px). The
+         difference is the room to grow into, and the hero takes it on
+         both sides: right out to the drawing edge (where the ribbon
+         reaches), left to just shy of the rule. */
+      --hero-bleed: calc(max(28px, 50vw - 362px) - max(28px, 50vw - 505px));
+      --rule-gap: 24px; /* so the type doesn't sit on the margin rule */
+      margin-left: calc(var(--rule-gap) - var(--hero-bleed));
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) 250px;
+      column-gap: 36px;
+      /* the lede's own bottom margin becomes the row gap */
+      row-gap: 44px;
+      align-items: start;
+      width: calc(100% + 2 * var(--hero-bleed) - var(--rule-gap));
+    }
+    .hero .lede-sub { margin-bottom: 0; }
+    /* The stats sit under the lede rather than under everything, and the
+       rail runs down beside both — otherwise the rail's extra height
+       opens a band of empty slate to its left. The buttons then close
+       the hero across the full width. */
+    .hero-lead { grid-column: 1; grid-row: 1; }
+    .hero .rail { grid-column: 2; grid-row: 1 / span 2; }
+    .hero .stats { grid-column: 1; grid-row: 2; margin-bottom: 0; }
+    .hero .cta-row { grid-column: 1 / -1; grid-row: 3; }
+  }
+
+  /* The index itself — same construction as the stats strip and the
+     footer title block: hairline rules, mono annotations, numbered
+     rows. Each row is a link, so it carries the button physics. */
+  .rail { border: 1px solid rgba(178, 192, 214, 0.22); }
+  .rail-head {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 10px;
+    padding: 9px 12px 8px;
+    border-bottom: 1px solid rgba(178, 192, 214, 0.22);
+  }
+  .rail-k, .rail-all {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    white-space: nowrap;
+  }
+  .rail-k { color: rgba(178, 192, 214, 0.5); }
+  .rail-all {
+    color: rgba(168, 196, 234, 0.8);
+    text-decoration: none;
+    transition: color 0.15s ease;
+  }
+  .rail-all:hover { color: #e9edf4; }
+
+  .rail-list { list-style: none; }
+  .rail-list li + li { border-top: 1px solid rgba(178, 192, 214, 0.14); }
+  .rail-item {
+    display: grid;
+    grid-template-columns: 38px minmax(0, 1fr);
+    gap: 11px;
+    align-items: center;
+    padding: 8px 12px 9px;
+    transition: background 0.18s ease;
+    will-change: transform;
+  }
+  .rail-item:hover { background: rgba(232, 238, 248, 0.05); }
+  .rail-thumb {
+    display: block;
+    width: 38px;
+    height: 38px;
+    object-fit: cover;
+    border-radius: 6px;
+    border: 1px solid rgba(232, 238, 248, 0.12);
+    filter: saturate(0.85);
+    opacity: 0.85;
+    transition: filter 0.18s ease, opacity 0.18s ease, border-color 0.18s ease;
+  }
+  .rail-item:hover .rail-thumb {
+    filter: saturate(1);
+    opacity: 1;
+    border-color: rgba(232, 238, 248, 0.3);
+  }
+  .rail-name {
+    display: block;
+    font-family: 'Jost', 'Futura', sans-serif;
+    font-size: 15.5px;
+    font-weight: 400;
+    letter-spacing: 0.015em;
+    line-height: 1.2;
+    color: #e9edf4;
+    transition: color 0.15s ease;
+  }
+  .rail-item:hover .rail-name { color: #fff; }
+  .rail-hook {
+    display: block;
+    font-size: 11.5px;
+    line-height: 1.38;
+    color: rgba(178, 192, 214, 0.62);
+    margin-top: 2px;
+  }
+
+  @media (max-width: 1079px) {
+    .rail { margin-bottom: 46px; }
+    .rail-list { display: grid; grid-template-columns: 1fr 1fr; }
+    .rail-list li { border-top: 1px solid rgba(178, 192, 214, 0.14); }
+    .rail-list li:nth-child(-n+2) { border-top: none; }
+    .rail-list li:nth-child(odd) { border-right: 1px solid rgba(178, 192, 214, 0.14); }
+    /* odd count: the last row would leave an empty cell, so span it */
+    .rail-list li:last-child:nth-child(odd) {
+      grid-column: 1 / -1;
+      border-right: none;
+    }
+  }
+  @media (max-width: 620px) {
+    .rail-list { grid-template-columns: 1fr; }
+    .rail-list li:nth-child(2) { border-top: 1px solid rgba(178, 192, 214, 0.14); }
+    .rail-list li:nth-child(odd) { border-right: none; }
+  }
+
   /* Section spacers — the old dashed dividers, now invisible; the
      element stays because its margin is the inter-section rhythm */
   .dim {
@@ -253,8 +381,9 @@
   /* Window-light sheen: the physics script drives --shi (how much the
      tilted face points at the upper-left light) and --shx (glint band
      slide). At rest a faint static glaze keeps the surface glassy. */
-  .g-cta, .g-chip, .g-card, .ribbon figure, .topoco-gallery a { position: relative; }
-  .g-cta::after, .g-chip::after, .g-card::after,
+  .g-cta, .g-chip, .g-card, .rail-item,
+  .ribbon figure, .topoco-gallery a { position: relative; }
+  .g-cta::after, .g-chip::after, .g-card::after, .rail-item::after,
   .ribbon figure::after, .topoco-gallery a::after {
     content: '';
     position: absolute;
