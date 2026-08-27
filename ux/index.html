@@ -13,14 +13,14 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Jost:wght@200;300;400;500&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="/css/site.css?v=2026-08-12">
+<link rel="stylesheet" href="/css/site.css?v=2026-08-27">
 <style>
   /* Honorable-mention media: plain content, not glass */
   .mention-media {
     display: block;
     width: min(440px, 100%);
     margin-top: 12px;
-    border: 1px solid rgba(232, 238, 248, 0.14);
+    border: 1px solid var(--border);
     filter: saturate(0.92);
   }
 </style>
@@ -31,16 +31,19 @@
 
   <!-- ======================= HERO ======================= -->
   <header style="padding-top: 42px;">
-    <div class="eyebrow">St. Louis, MO · <em>UX / UI Design Portfolio</em></div>
-    <h1>Case studies</h1>
-    <p class="section-note">
-      Almost two decades of enterprise UX, from data security to
-      business telephony to regulated healthcare. Design and
-      engineering expert in internal dashboards, CLIs, versioned
-      design systems, public-facing marketing and management tools,
-      and more.
-    </p>
-    <div class="cta-row">
+    <div data-reveal>
+      <div class="eyebrow">St. Louis, MO · <em>UX / UI Design Portfolio</em></div>
+      <h1>Case studies</h1>
+      <div class="dimline" aria-hidden="true"></div>
+      <p class="section-note">
+        Almost two decades of enterprise UX, from data security to
+        business telephony to regulated healthcare. Design and
+        engineering expert in internal dashboards, CLIs, versioned
+        design systems, public-facing marketing and management tools,
+        and more.
+      </p>
+    </div>
+    <div class="cta-row" data-reveal>
       <a class="g sg-button g-chip" href="/" sg-material="clear" sg-tilt sg-press>← Home</a>
     </div>
   </header>
@@ -48,9 +51,12 @@
   <!-- ======================= CASE STUDIES ======================= -->
   <div class="dim" aria-hidden="true"></div>
   <section id="case-studies">
-    <h2>Selected work</h2>
+    <div data-reveal>
+      <h2><span class="hx">01 /</span>Selected work</h2>
+      <div class="dimline" aria-hidden="true"></div>
+    </div>
 
-    <a class="g g-card" href="https://fathomdx.io/">
+    <a class="g g-card" href="https://fathomdx.io/" data-reveal>
       <div class="card-body">
         <div class="card-meta">2026 · Independent · Designer &amp; Architect</div>
         <h3>Fathom</h3>
@@ -67,7 +73,7 @@
       </div>
     </a>
 
-    <a class="g g-card" href="/ux/fap/">
+    <a class="g g-card" href="/ux/fap/" data-reveal>
       <div class="card-body">
         <div class="card-meta">2025 · Centene (Fortune 25) · UX Team Lead</div>
         <h3>Find A Provider</h3>
@@ -82,7 +88,7 @@
       </div>
     </a>
 
-    <a class="g g-card" href="/ux/design-explorations/">
+    <a class="g g-card" href="/ux/design-explorations/" data-reveal>
       <div class="card-body">
         <div class="card-meta">2023 · Centene</div>
         <h3>Design Explorations</h3>
@@ -97,7 +103,7 @@
       </div>
     </a>
 
-    <a class="g g-card" href="/ux/anpi-cust-portal/">
+    <a class="g g-card" href="/ux/anpi-cust-portal/" data-reveal>
       <div class="card-body">
         <div class="card-meta">2014 · Associated Network Partners</div>
         <h3>ANPI Customer Admin Portal</h3>
@@ -112,7 +118,7 @@
       </div>
     </a>
 
-    <a class="g g-card" href="/ux/style-browser/">
+    <a class="g g-card" href="/ux/style-browser/" data-reveal>
       <div class="card-body">
         <div class="card-meta">2009 · Weissman Designs for Dance</div>
         <h3>Style Browser</h3>
@@ -126,7 +132,7 @@
       </div>
     </a>
 
-    <a class="g g-card" href="/ux/slate/">
+    <a class="g g-card" href="/ux/slate/" data-reveal>
       <div class="card-body">
         <div class="card-meta">2008 · Webster University</div>
         <h3>UuberSlate</h3>
@@ -144,9 +150,12 @@
   <!-- ======================= HONORABLE MENTIONS ======================= -->
   <div class="dim" aria-hidden="true"></div>
   <section id="mentions">
-    <h2>Honorable mentions</h2>
+    <div data-reveal>
+      <h2><span class="hx">02 /</span>Honorable mentions</h2>
+      <div class="dimline" aria-hidden="true"></div>
+    </div>
     <ol class="xp">
-      <li>
+      <li data-reveal>
         <span class="xp-when">2011</span>
         <div class="xp-body">
           <h3>Visual Auto Attendant · Masergy</h3>
@@ -157,7 +166,7 @@
           <img class="mention-media" src="/assets/work/vaa.webp" alt="Visual Auto Attendant extension manager" loading="lazy">
         </div>
       </li>
-      <li>
+      <li data-reveal>
         <span class="xp-when">2012</span>
         <div class="xp-body">
           <h3>NRUF · University of North Texas</h3>
@@ -168,7 +177,7 @@
           <img class="mention-media" src="/assets/work/nruf.webp" alt="NRUF funding eligibility visualization" loading="lazy">
         </div>
       </li>
-      <li>
+      <li data-reveal>
         <span class="xp-when">2009</span>
         <div class="xp-body">
           <h3>Graduate Project · Webster University</h3>
@@ -187,13 +196,17 @@
     <div class="title-block" aria-label="Drawing title block">
       <div class="tb-cell"><span class="k">Me</span><span class="v">Myra Krusemark</span></div>
       <div class="tb-cell"><span class="k">Email</span><span class="v"><a href="mailto:myra@myrakrusemark.com">myra@myrakrusemark.com</a></span></div>
+      <div class="tb-cell"><span class="k">Notes</span><span class="v"><a href="/blog/">/blog/</a></span></div>
+      <div class="tb-cell"><span class="k">Feed</span><span class="v"><a href="/feed.xml">/feed.xml</a></span></div>
       <div class="tb-cell"><span class="k">Copyright</span><span class="v">2026</span></div>
     </div>
   </footer>
 
 </div>
 
-<script src="/js/physics.js?v=2026-08-12"></script>
+<script src="/js/physics.js?v=2026-08-27"></script>
+
+<script src="/js/reveal.js?v=2026-08-27"></script>
 
 <script type="importmap">
 { "imports": {
@@ -202,7 +215,7 @@
 }}
 </script>
 
-<script type="module" src="/js/glass.js?v=2026-08-12"></script>
+<script type="module" src="/js/glass.js?v=2026-08-27"></script>
 
 </body>
 </html>

@@ -14,50 +14,45 @@ if (!window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
     ]);
 
     // The engine's wallpaper plane must match the page background —
-    // it's what the glass refracts: blue slate, kraft grain,
-    // watercolor wash, dot lattice. Layer order mirrors the CSS
-    // background list (bottom-up: paper, then watercolor).
-    const load = (src) => new Promise((res, rej) => {
-      const img = new Image();
-      img.onload = () => res(img);
-      img.onerror = rej;
-      img.src = src;
-    });
-    const [paper, wash] = await Promise.all([
-      load('/assets/texture/paper.webp'),
-      load('/assets/texture/watercolor-381.webp'),
-    ]);
-
+    // it's what the glass refracts: warm cream paper, blue drafting
+    // grid (minor 22px, major 110px), warm radial light. Pure canvas,
+    // no texture loads — the layers mirror the CSS background list.
     const c = document.createElement('canvas');
     c.width = Math.round(window.innerWidth * 1.5);
     c.height = Math.round(window.innerHeight * 1.5);
     const ctx = c.getContext('2d');
-    ctx.fillStyle = '#343b49';
+    ctx.fillStyle = '#faf6ef';
     ctx.fillRect(0, 0, c.width, c.height);
-    ctx.globalCompositeOperation = 'soft-light';
-    for (let y = 0; y < c.height; y += 800) {
-      for (let x = 0; x < c.width; x += 1200) {
-        ctx.drawImage(paper, x, y, 1200, 800);
-      }
-    }
-    // the wash stretches once over the whole plane (CSS: cover/center)
-    const s = Math.max(c.width / wash.width, c.height / wash.height);
-    ctx.drawImage(wash, (c.width - wash.width * s) / 2,
-      (c.height - wash.height * s) / 2, wash.width * s, wash.height * s);
-    ctx.globalCompositeOperation = 'source-over';
-    ctx.fillStyle = 'rgba(232, 238, 248, 0.10)';
     // The plane is 1.5x the viewport, centered — its left/top edge sits
-    // 0.25 viewport off-screen. Phase the dots so they land exactly on
-    // the DOM background's fixed 22px lattice (origin 11,11).
-    const phaseX = ((11 + c.width / 6) % 22 + 22) % 22;
-    const phaseY = ((11 + c.height / 6) % 22 + 22) % 22;
-    for (let y = phaseY; y < c.height; y += 22) {
-      for (let x = phaseX; x < c.width; x += 22) {
-        ctx.beginPath();
-        ctx.arc(x, y, 1.1, 0, Math.PI * 2);
-        ctx.fill();
+    // 0.25 viewport off-screen. Phase the grid so it lands exactly on
+    // the DOM background's fixed lattice (origin 0,0), the same way the
+    // dot lattice was phased.
+    const phase = (n) => ((c.width / 6) % n + n) % n;
+    const phaseY = (n) => ((c.height / 6) % n + n) % n;
+    const gridPass = (period, color) => {
+      ctx.fillStyle = color;
+      for (let x = phase(period); x < c.width; x += period) {
+        ctx.fillRect(Math.round(x), 0, 1, c.height);
       }
-    }
+      for (let y = phaseY(period); y < c.height; y += period) {
+        ctx.fillRect(0, Math.round(y), c.width, 1);
+      }
+    };
+    gridPass(22, 'rgba(96, 140, 190, 0.11)');
+    gridPass(110, 'rgba(96, 140, 190, 0.18)');
+    // Warm radial — CSS: radial-gradient(1200px 800px at 18% -8%, …).
+    // CSS geometry is viewport-relative; map it onto the plane.
+    const cx0 = 0.18 * (c.width / 1.5) + c.width / 6;
+    const cy0 = -0.08 * (c.height / 1.5) + c.height / 6;
+    ctx.save();
+    ctx.translate(cx0, cy0);
+    ctx.scale(1, 800 / 1200); // circular gradient → 1200x800 ellipse
+    const rg = ctx.createRadialGradient(0, 0, 0, 0, 0, 1200);
+    rg.addColorStop(0, 'rgba(255, 211, 160, 0.32)');
+    rg.addColorStop(0.62, 'rgba(255, 211, 160, 0)');
+    ctx.fillStyle = rg;
+    ctx.fillRect(-10000, -10000, 20000, 20000);
+    ctx.restore();
 
     const engine = SingularityEngine.init('#app', {
       wallpaper: c.toDataURL(),
@@ -86,9 +81,9 @@ if (!window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
     for (const comp of engine.components) {
       comp.setMaterial(GLASS.material);
       comp.rebuild(GLASS.geometry);
-      // Contact shadows were tuned for white paper; on slate they read
-      // as smudges. The sheen and refraction carry the depth instead.
-      if (comp.shadow) comp.shadow.visible = false;
+      // Contact shadows were tuned for white paper — back on for the
+      // warm-light theme.
+      if (comp.shadow) comp.shadow.visible = true;
       window.__physicsDrop?.(comp.element);
     }
 
