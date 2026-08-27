@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Myra Krusemark — Notes</title>
+    <link>https://myrakrusemark.com/blog/</link>
+    <description>Notes from my workbench in St. Louis. What I'm building and how it went.</description>
+    <language>en-us</language>
+    <atom:link href="https://myrakrusemark.com/feed.xml" rel="self" type="application/rss+xml"/>
+    <!-- Hand-maintained. New post: add an <item> above this comment,
+         newest first, matching the post's /blog/<slug>/ page.
+
+    <item>
+      <title>The post title</title>
+      <link>https://myrakrusemark.com/blog/the-post-slug/</link>
+      <guid>https://myrakrusemark.com/blog/the-post-slug/</guid>
+      <pubDate>Fri, 04 Sep 2026 09:00:00 -0500</pubDate>
+      <description>One-sentence summary of the post.</description>
+    </item>
+    -->
+  </channel>
+</rss>

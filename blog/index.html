@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Notes — Myra Krusemark</title>
+<meta name="description" content="Notes from Myra Krusemark's workbench in St. Louis. Longer than a commit message, shorter than a case study.">
+<meta property="og:title" content="Notes — Myra Krusemark">
+<meta property="og:description" content="Notes from Myra Krusemark's workbench in St. Louis. Longer than a commit message, shorter than a case study.">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://myrakrusemark.com/blog/">
+<link rel="alternate" type="application/rss+xml" title="Myra Krusemark — Notes" href="/feed.xml">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='M12 2l2.4 7.6L22 12l-7.6 2.4L12 22l-2.4-7.6L2 12l7.6-2.4z' fill='%23e2725b'/%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Jost:wght@200;300;400;500&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/css/site.css?v=2026-08-27">
+<style>
+  /* Lab-notebook register — page-local dressing over the .xp row
+     system (site.css owns the base). Post rows: mono date column,
+     Jost 400 22px title link, one-line summary. */
+  .notes.xp li { grid-template-columns: 128px 1fr; }
+  .notes .xp-body h3 {
+    font-size: 22px;
+    letter-spacing: 0.01em;
+  }
+  .notes .xp-body p {
+    font-size: 14.5px;
+    color: rgba(31, 33, 41, 0.72);
+  }
+  /* Zero-state: one empty register row, ruled like the rest */
+  .register-empty {
+    border-top: 1px solid var(--border);
+    border-bottom: 1px solid var(--border);
+    padding: 22px 0 24px;
+    font-size: 14.5px;
+    line-height: 1.6;
+    color: var(--ink-muted);
+    margin: 0;
+  }
+</style>
+</head>
+<body>
+
+<div class="page" id="app">
+
+  <!-- ======================= HERO ======================= -->
+  <header style="padding-top: 42px;">
+    <div class="eyebrow">St. Louis, MO · <em>Notes</em></div>
+    <h1>Notes</h1>
+    <div class="dimline" aria-hidden="true"></div>
+    <p class="section-note">
+      A lab notebook for the builds. Longer than a commit message,
+      shorter than a case study.
+    </p>
+    <div class="cta-row">
+      <a class="g sg-button g-chip" href="/" sg-material="clear" sg-tilt sg-press>← Home</a>
+    </div>
+  </header>
+
+  <!-- ======================= REGISTER ======================= -->
+  <div class="dim" aria-hidden="true"></div>
+  <section id="register">
+    <div data-reveal>
+      <h2><span class="hx">01 /</span>Register</h2>
+      <div class="dimline" aria-hidden="true"></div>
+    </div>
+
+    <!-- Posts list here as they're written. Row pattern (newest first):
+
+    <ol class="xp notes">
+      <li data-reveal>
+        <span class="xp-when">2026-09-04</span>
+        <div class="xp-body">
+          <h3><a href="/blog/the-post-slug/">The post title →</a></h3>
+          <p>One line saying what the note covers.</p>
+        </div>
+      </li>
+    </ol>
+
+    When the first row lands: delete the .register-empty line below,
+    add the post to /feed.xml, and add the Notes link to the site nav. -->
+
+    <p class="register-empty" data-reveal>
+      Nothing published here yet. The feed already exists at
+      <a class="plain-link" href="/feed.xml">/feed.xml</a>.
+    </p>
+  </section>
+
+  <!-- ======================= TITLE BLOCK ======================= -->
+  <footer>
+    <div class="title-block" aria-label="Drawing title block">
+      <div class="tb-cell"><span class="k">Me</span><span class="v">Myra Krusemark</span></div>
+      <div class="tb-cell"><span class="k">Email</span><span class="v"><a href="mailto:myra@myrakrusemark.com">myra@myrakrusemark.com</a></span></div>
+      <div class="tb-cell"><span class="k">Notes</span><span class="v"><a href="/blog/">/blog/</a></span></div>
+      <div class="tb-cell"><span class="k">Feed</span><span class="v"><a href="/feed.xml">/feed.xml</a></span></div>
+      <div class="tb-cell"><span class="k">Copyright</span><span class="v">2026</span></div>
+    </div>
+  </footer>
+
+</div>
+
+<script src="/js/physics.js?v=2026-08-27"></script>
+
+<script src="/js/reveal.js?v=2026-08-27"></script>
+
+<script type="importmap">
+{ "imports": {
+  "three": "https://cdn.jsdelivr.net/npm/three@0.171.0/build/three.module.js",
+  "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.171.0/examples/jsm/"
+}}
+</script>
+
+<script type="module" src="/js/glass.js?v=2026-08-27"></script>
+</body>
+</html>
