@@ -6,202 +6,148 @@
 <title>UuberSlate — Myra Krusemark</title>
 <meta name="description" content="Arduino-based smart clapperboard with automated video organization software for film production — a hardware/software case study.">
 <meta property="og:title" content="UuberSlate — Myra Krusemark">
-<meta property="og:description" content="Arduino-based smart clapperboard with automated video organization software for film production.">
+<meta property="og:description" content="Arduino-based smart clapperboard with automated video organization software for film production — a hardware/software case study.">
 <meta property="og:type" content="article">
-<meta property="og:url" content="https://myrakrusemark.com/ux/slate/">
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='M12 2l2.4 7.6L22 12l-7.6 2.4L12 22l-2.4-7.6L2 12l7.6-2.4z' fill='%23e2725b'/%3E%3C/svg%3E">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Jost:wght@200;300;400;500&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="/css/site.css?v=2026-08-27">
+<link rel="stylesheet" href="/subpage.css">
+<style>
+  .paper figure video { display: block; width: 100%; border-radius: 8px; border: 1px solid rgba(35,38,31,0.14); }
+</style>
 </head>
 <body>
 
-<div class="page" id="app">
-
-  <!-- ======================= HERO ======================= -->
-  <header style="padding-top: 42px;">
+<div class="wrap">
+  <header>
     <div class="eyebrow">2008 · <em>Webster University</em></div>
     <h1>UuberSlate</h1>
-    <p class="section-note">
-      Arduino-based smart clapperboard with automated video organization
-      software for film production.
-    </p>
-    <div class="cta-row">
-      <a class="g sg-button g-chip" href="/ux/" sg-material="clear" sg-tilt sg-press>← UX Portfolio</a>
-    </div>
+    <p class="note">Arduino-based smart clapperboard with automated video
+    organization software for film production. Hardware and software, one
+    system.</p>
+    <a class="back" href="/ux/">← Case studies</a>
   </header>
 
-  <div class="title-block spec" aria-label="Project overview">
-    <div class="tb-cell"><span class="k">Role</span><span class="v">Product Designer &amp; Developer</span></div>
-    <div class="tb-cell"><span class="k">Context</span><span class="v">Student project at Webster University</span></div>
-    <div class="tb-cell"><span class="k">Focus</span><span class="v">Hardware/software system for automated film slate and video organization</span></div>
+  <div class="spec" aria-label="Project spec">
+    <div><span class="k">Role</span><span class="v">Product Designer &amp; Developer</span></div>
+    <div><span class="k">Context</span><span class="v">Student project at Webster University</span></div>
+    <div><span class="k">Focus</span><span class="v">Hardware/software system for automated film slate and video organization</span></div>
   </div>
 
-  <figure class="cs-fig">
-    <img src="/assets/ux/slate/software-side-by-side.webp" alt="UuberSlate" loading="lazy">
-  </figure>
-
-  <!-- ======================= THE CHALLENGE ======================= -->
-  <div class="dim" aria-hidden="true"></div>
-  <section id="challenge">
+  <div class="paper">
+    <figure>
+      <img src="/assets/ux/slate/software-side-by-side.webp" alt="UuberSlate" loading="lazy">
+    </figure>
     <h2>The Challenge</h2>
-    <div class="prose">
-      <p>Film and video production relies on clapperboards (slates) to sync
-      audio and video and organize footage by shot, scene, and take. However,
-      the process of manually entering this metadata into video editing
-      software is time-consuming and error-prone.</p>
+    <p>Film and video production relies on clapperboards (slates) to sync
+    audio and video and organize footage by shot, scene, and take. However,
+    the process of manually entering this metadata into video editing
+    software is time-consuming and error-prone.</p>
+    <p>I wanted to create a system that could automatically capture slate
+    information at the moment of the clapper slap and use it to organize
+    footage without manual data entry.</p>
+  </div>
 
-      <p>I wanted to create a system that could automatically capture slate
-      information at the moment of the clapper slap and use it to organize
-      footage without manual data entry.</p>
-    </div>
-  </section>
-
-  <!-- ======================= DESIGN SOLUTION ======================= -->
-  <div class="dim" aria-hidden="true"></div>
-  <section id="design-solution">
+  <div class="paper">
     <h2>Design Solution</h2>
-    <div class="prose">
-      <p>I designed and built UuberSlate, an Arduino-based smart clapperboard
-      that encodes shot/scene/take information into an audio signal played
-      through a built-in speaker when the slate is slapped. Companion software
-      analyzes video files during ingestion, detects the clapper slap sound,
-      decodes the embedded metadata, and automatically organizes clips in
-      video editing software.</p>
-    </div>
-    <figure class="cs-fig">
+    <p>I designed and built UuberSlate, an Arduino-based smart clapperboard
+    that encodes shot/scene/take information into an audio signal played
+    through a built-in speaker when the slate is slapped. Companion software
+    analyzes video files during ingestion, detects the clapper slap sound,
+    decodes the embedded metadata, and automatically organizes clips in
+    video editing software.</p>
+    <figure>
       <video src="/assets/ux/slate/uberclappin-with-waveform.webm" autoplay muted loop playsinline aria-label="UuberSlate clapperboard demo with audio waveform showing the encoded clapper signal"></video>
     </figure>
-  </section>
+  </div>
 
-  <!-- ======================= HARDWARE DESIGN ======================= -->
-  <div class="dim" aria-hidden="true"></div>
-  <section id="hardware-design">
+  <div class="paper">
     <h2>Hardware Design</h2>
-    <div class="prose">
-      <h3>Product Sketch and Specifications</h3>
-      <figure class="cs-fig cs-fig--side">
-        <img src="/assets/ux/slate/product-sketch.webp" alt="UuberSlate Product Sketch" loading="lazy">
-        <figcaption>Hand-drawn technical sketch showing hardware layout, dimensions, and component placement</figcaption>
-      </figure>
-      <p>The hardware design integrated several key components into a
-      traditional clapperboard form factor:</p>
-
-      <h3>Key Hardware Components</h3>
-      <ul>
-        <li><strong>Arduino microcontroller</strong> - Controls the system and generates encoded audio signals</li>
-        <li><strong>LCD display</strong> - Shows current shot/scene/take information</li>
-        <li><strong>Speaker</strong> - Plays encoded audio signal when slate is clapped</li>
-        <li><strong>Control buttons</strong> - Allows operators to increment/adjust shot, scene, and take numbers</li>
-        <li><strong>Physical clapper mechanism</strong> - Traditional hinged clapper bar for visual/audio sync</li>
-        <li><strong>Compact housing</strong> - Ruggedized design suitable for on-set use</li>
-      </ul>
-
-      <p>The sketch shows careful consideration of ergonomics, with controls
-      positioned for easy one-handed operation and the display placed for
-      clear visibility by both camera operators and editors reviewing
-      footage.</p>
-    </div>
-  </section>
-
-  <!-- ======================= SOFTWARE SOLUTION ======================= -->
-  <div class="dim" aria-hidden="true"></div>
-  <section id="software-solution">
-    <h2>Software Solution</h2>
-    <div class="prose">
-      <h3>Automated Video Analysis and Organization</h3>
-      <p>The companion software analyzes video files during ingestion,
-      searching for the distinctive clapper slap sound. When detected, it
-      decodes the encoded audio signal containing the shot/scene/take
-      metadata.</p>
-
-      <p>The software visualizes the audio waveform, allowing users to see
-      where the clapper slap was detected (shown by the colored markers in
-      the waveform). The decoded information is then used to automatically
-      name and organize clips in the video editing software's project
-      structure.</p>
-    </div>
-    <figure class="cs-fig">
-      <img src="/assets/ux/slate/software-side-by-side.webp" alt="UuberSlate Software Interface" loading="lazy">
+    <h3>Product Sketch and Specifications</h3>
+    <figure>
+      <img src="/assets/ux/slate/product-sketch.webp" alt="UuberSlate product sketch" loading="lazy">
+      <figcaption>Hand-drawn technical sketch showing hardware layout, dimensions, and component placement</figcaption>
     </figure>
-    <div class="prose">
-      <h3>How It Works</h3>
-      <ol>
-        <li><strong>On Set:</strong> Operator enters shot/scene/take numbers using the hardware controls</li>
-        <li><strong>Recording:</strong> When the clapper is slapped, the Arduino generates an encoded audio tone containing the metadata</li>
-        <li><strong>Ingestion:</strong> Video files are imported into the companion software</li>
-        <li><strong>Analysis:</strong> Software scans audio tracks for the clapper slap signature and encoded data</li>
-        <li><strong>Decoding:</strong> Metadata is extracted from the audio signal</li>
-        <li><strong>Organization:</strong> Clips are automatically renamed and organized based on decoded information</li>
-      </ol>
+    <p>The hardware design integrated several key components into a
+    traditional clapperboard form factor:</p>
+    <h3>Key Hardware Components</h3>
+    <ul>
+      <li><strong>Arduino microcontroller</strong>: controls the system and generates encoded audio signals</li>
+      <li><strong>LCD display</strong>: shows current shot/scene/take information</li>
+      <li><strong>Speaker</strong>: plays the encoded audio signal when the slate is clapped</li>
+      <li><strong>Control buttons</strong>: increment and adjust shot, scene, and take numbers</li>
+      <li><strong>Physical clapper mechanism</strong>: traditional hinged clapper bar for visual/audio sync</li>
+      <li><strong>Compact housing</strong>: ruggedized design suitable for on-set use</li>
+    </ul>
+    <p>The sketch shows careful consideration of ergonomics, with controls
+    positioned for easy one-handed operation and the display placed for
+    clear visibility by both camera operators and editors reviewing
+    footage.</p>
+  </div>
 
-      <h3>Key Software Features</h3>
-      <ul>
-        <li>Automatic detection of clapper slap sounds in video files</li>
-        <li>Audio signal decoding to extract shot/scene/take metadata</li>
-        <li>Visual waveform display showing detection points</li>
-        <li>Batch processing of multiple video files</li>
-        <li>Integration with video editing software project structures</li>
-        <li>Error handling for clips where slate data cannot be decoded</li>
-      </ul>
-    </div>
-  </section>
+  <div class="paper">
+    <h2>Software Solution</h2>
+    <h3>Automated Video Analysis and Organization</h3>
+    <p>The companion software analyzes video files during ingestion,
+    searching for the distinctive clapper slap sound. When detected, it
+    decodes the encoded audio signal containing the shot/scene/take
+    metadata.</p>
+    <p>The software visualizes the audio waveform, allowing users to see
+    where the clapper slap was detected (shown by the colored markers in the
+    waveform). The decoded information is then used to automatically name
+    and organize clips in the video editing software's project structure.</p>
+    <figure>
+      <img src="/assets/ux/slate/software-side-by-side.webp" alt="UuberSlate software interface" loading="lazy">
+    </figure>
+    <h3>How It Works</h3>
+    <ol>
+      <li><strong>On set:</strong> the operator enters shot/scene/take numbers using the hardware controls</li>
+      <li><strong>Recording:</strong> when the clapper is slapped, the Arduino generates an encoded audio tone containing the metadata</li>
+      <li><strong>Ingestion:</strong> video files are imported into the companion software</li>
+      <li><strong>Analysis:</strong> the software scans audio tracks for the clapper slap signature and encoded data</li>
+      <li><strong>Decoding:</strong> metadata is extracted from the audio signal</li>
+      <li><strong>Organization:</strong> clips are automatically renamed and organized from the decoded information</li>
+    </ol>
+    <h3>Key Software Features</h3>
+    <ul>
+      <li>Automatic detection of clapper slap sounds in video files</li>
+      <li>Audio signal decoding to extract shot/scene/take metadata</li>
+      <li>Visual waveform display showing detection points</li>
+      <li>Batch processing of multiple video files</li>
+      <li>Integration with video editing project structures</li>
+      <li>Error handling for clips where slate data cannot be decoded</li>
+    </ul>
+  </div>
 
-  <!-- ======================= TECHNICAL INNOVATION ======================= -->
-  <div class="dim" aria-hidden="true"></div>
-  <section id="technical-innovation">
+  <div class="paper">
     <h2>Technical Innovation</h2>
-    <div class="prose">
-      <p>The core innovation of UuberSlate was embedding metadata directly
-      into the audio track at the moment of the clapper slap. This approach
-      ensured that the metadata traveled with the video file and could be
-      reliably extracted later, even if files were copied, renamed, or moved
-      through different storage systems.</p>
+    <p>The core innovation of UuberSlate was embedding metadata directly into
+    the audio track at the moment of the clapper slap. This approach ensured
+    that the metadata traveled with the video file and could be reliably
+    extracted later, even if files were copied, renamed, or moved through
+    different storage systems.</p>
+    <p>By encoding the information as audio tones rather than relying on
+    timecode or external databases, the system remained simple, reliable,
+    and compatible with any camera or recording device.</p>
+  </div>
 
-      <p>By encoding the information as audio tones rather than relying on
-      timecode or external databases, the system remained simple, reliable,
-      and compatible with any camera or recording device.</p>
-    </div>
-  </section>
-
-  <!-- ======================= IMPACT ======================= -->
-  <div class="dim" aria-hidden="true"></div>
-  <section id="impact">
+  <div class="paper">
     <h2>Impact</h2>
-    <div class="prose">
-      <ul>
-        <li>Eliminated manual metadata entry during video ingestion</li>
-        <li>Reduced organizational errors in footage management</li>
-        <li>Saved significant time in post-production workflow</li>
-        <li>Demonstrated practical application of hardware/software integration</li>
-        <li>Showcased interdisciplinary skills in product design, electronics, and software development</li>
-        <li>Completed as a student project, demonstrating initiative in solving real production problems</li>
-      </ul>
-    </div>
-  </section>
-
-  <!-- ======================= TITLE BLOCK ======================= -->
-  <footer>
-    <div class="title-block" aria-label="Drawing title block">
-      <div class="tb-cell"><span class="k">Me</span><span class="v">Myra Krusemark</span></div>
-      <div class="tb-cell"><span class="k">Email</span><span class="v"><a href="mailto:myra@myrakrusemark.com">myra@myrakrusemark.com</a></span></div>
-      <div class="tb-cell"><span class="k">Copyright</span><span class="v">2026</span></div>
-    </div>
-  </footer>
-
+    <ul>
+      <li>Eliminated manual metadata entry during video ingestion</li>
+      <li>Reduced organizational errors in footage management</li>
+      <li>Saved significant time in the post-production workflow</li>
+      <li>Demonstrated practical hardware/software integration</li>
+      <li>Showcased interdisciplinary skills in product design, electronics, and software</li>
+      <li>Completed as a student project, solving a real production problem</li>
+    </ul>
+  </div>
 </div>
 
-<script src="/js/physics.js?v=2026-08-27"></script>
-
-<script type="importmap">
-{ "imports": {
-  "three": "https://cdn.jsdelivr.net/npm/three@0.171.0/build/three.module.js",
-  "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.171.0/examples/jsm/"
-}}
-</script>
-
-<script type="module" src="/js/glass.js?v=2026-08-27"></script>
+<footer>
+  <a href="mailto:myra@myrakrusemark.com">myra@myrakrusemark.com</a> · &copy; 2026
+</footer>
 
 </body>
 </html>

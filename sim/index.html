@@ -1,0 +1,958 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <!--
+      These used to sell "enter a location, click Start" as the product, and the
+      first pass at replacing them sold "one click turns the sound on" instead -
+      the same shape at a smaller size, four instructions in a row, in the one
+      surface a stranger reads before they ever reach the page. A link preview
+      and a search result are the first frame for most people who arrive.
+
+      So they name the thing rather than the procedure, which is what the bar
+      does: the Apple Watch Studio title is the product's name and nothing else
+      (CONTRACTS H37, BAR.md "the caption is a sentence describing what you
+      made").
+    -->
+    <title>Wind Chime Simulator</title>
+    <meta name="description" content="A six-tube wind chime hanging on a forest path, tuned and ringing. Change the tubes, hang it where you like, and send someone the link.">
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+    <meta name="theme-color" content="#2b2118">
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Julius+Sans+One&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Julius+Sans+One&family=Roboto+Flex:opsz,wght@8..144,100..1000&display=swap" rel="stylesheet">
+    <link rel="stylesheet" type="text/css" href="assets/styles.css">
+
+    <!--
+      The new stylesheets. tokens.css MUST come first: it is the only place a
+      colour, a radius, a type size, a z-index or a spacing step is authored, and
+      every sheet below it reads those variables (CONTRACTS 2.2).
+
+      assets/styles.css above is off limits to every piece this run - it is
+      shared by about.html, terms.html and privacy.html and editing it un-styles
+      three pages silently (CONTRACTS H26). All new CSS goes in these files.
+
+      Each sheet ships WITH the piece that owns them, one line each, so the page
+      never links a file that is not on disk. A 404 here is a failing
+      tools/verify.mjs run, not a warning.
+    -->
+    <link rel="stylesheet" type="text/css" href="assets/css/tokens.css">
+    <link rel="stylesheet" type="text/css" href="assets/css/slots.css">
+    <link rel="stylesheet" type="text/css" href="assets/css/landing.css">
+    <link rel="stylesheet" type="text/css" href="assets/css/places.css">
+    <link rel="stylesheet" type="text/css" href="assets/css/hang.css">
+    <link rel="stylesheet" type="text/css" href="assets/css/share.css">
+
+    <!--
+      three.js r185 is vendored in this repo. The import map lets the ES modules
+      under assets/js/ use bare specifiers with no build step and no CDN.
+      It must appear before any module script.
+    -->
+    <script type="importmap">
+    {"imports":{
+      "three":"./assets/vendor/three.module.min.js",
+      "three/addons/":"./assets/vendor/addons/"
+    }}
+    </script>
+
+    <!-- Google tag (gtag.js) -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-DJHXYEGQDS"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+
+      gtag('config', 'G-DJHXYEGQDS');
+    </script>
+</head>
+
+<body>
+
+    <!-- The picture. Fixed, full viewport, sized entirely by stage.resize(). -->
+    <div id="canvasContainer">
+        <canvas id="glCanvas"></canvas>
+        <div id="fallbackNotice" class="hidden">
+            <p>This browser could not start 3D graphics, so the picture is not showing. The chime is still swinging and the wind is still blowing underneath.</p>
+        </div>
+    </div>
+
+    <!-- Overlay chrome. pointer-events are off except on the actual controls,
+         so an orbit drag that starts on a glass card still reaches the canvas. -->
+
+    <!-- Weather icon sheet. Drawn here rather than fetched: an icon set would
+         mean a third-party asset with its own licence and its own house style,
+         and nothing off the shelf is going to match a scene whose bushes are
+         made of overlapping circles. These use the same vocabulary -- flat
+         fills, round lobes, no strokes and no gradients. currentColor
+         throughout, so one CSS colour drives the lot. -->
+    <svg width="0" height="0" style="position:absolute" aria-hidden="true" focusable="false">
+        <defs>
+            <!-- A cloud is three lobes and a flat base, exactly like a bush. -->
+            <g id="wx-cloudbody">
+                <circle cx="15" cy="22" r="7"></circle>
+                <circle cx="23" cy="20" r="8.5"></circle>
+                <circle cx="30" cy="24" r="6"></circle>
+                <rect x="15" y="24" width="15" height="6" rx="3"></rect>
+            </g>
+
+            <g id="wx-clear">
+                <circle cx="20" cy="20" r="8"></circle>
+                <g>
+                    <rect x="18.6" y="3" width="2.8" height="6" rx="1.4"></rect>
+                    <rect x="18.6" y="31" width="2.8" height="6" rx="1.4"></rect>
+                    <rect x="3" y="18.6" width="6" height="2.8" rx="1.4"></rect>
+                    <rect x="31" y="18.6" width="6" height="2.8" rx="1.4"></rect>
+                    <rect x="7.4" y="8.8" width="2.8" height="5.4" rx="1.4" transform="rotate(-45 8.8 11.5)"></rect>
+                    <rect x="29.8" y="25.8" width="2.8" height="5.4" rx="1.4" transform="rotate(-45 31.2 28.5)"></rect>
+                    <rect x="29.8" y="8.8" width="2.8" height="5.4" rx="1.4" transform="rotate(45 31.2 11.5)"></rect>
+                    <rect x="7.4" y="25.8" width="2.8" height="5.4" rx="1.4" transform="rotate(45 8.8 28.5)"></rect>
+                </g>
+            </g>
+
+            <!-- Night: a crescent cut from one disc by another, so it stays a
+                 single flat shape rather than a shape plus a hole. -->
+            <!-- The crescent is one arc out and a tighter one back. Both radii
+                 must be at least HALF the chord between the endpoints, or the
+                 arc is undefined and the whole path silently disappears -- which
+                 is what the first version did. Chord here is 19, so nothing
+                 under 9.5 is legal. -->
+            <g id="wx-clear-night">
+                <path d="M25.5 10.5 A 11 11 0 1 0 25.5 29.5 A 10 10 0 1 1 25.5 10.5 Z"></path>
+            </g>
+
+            <g id="wx-partly">
+                <circle cx="12" cy="12" r="6.2"></circle>
+                <rect x="10.8" y="1.4" width="2.4" height="4.4" rx="1.2"></rect>
+                <rect x="1.4" y="10.8" width="4.4" height="2.4" rx="1.2"></rect>
+                <rect x="3.2" y="3.6" width="2.4" height="4.2" rx="1.2" transform="rotate(-45 4.4 5.7)"></rect>
+                <rect x="18.6" y="3.6" width="2.4" height="4.2" rx="1.2" transform="rotate(45 19.8 5.7)"></rect>
+                <use href="#wx-cloudbody"></use>
+            </g>
+
+            <g id="wx-partly-night">
+                <path d="M18.8 7.5 A 7.5 7.5 0 1 0 18.8 20.5 A 7 7 0 1 1 18.8 7.5 Z"></path>
+                <use href="#wx-cloudbody"></use>
+            </g>
+
+            <g id="wx-cloudy">
+                <circle cx="12" cy="16" r="6"></circle>
+                <circle cx="19" cy="13" r="7"></circle>
+                <rect x="12" y="15" width="12" height="5" rx="2.5"></rect>
+                <use href="#wx-cloudbody" transform="translate(2 4)"></use>
+            </g>
+
+            <g id="wx-rain">
+                <use href="#wx-cloudbody" transform="translate(0 -3)"></use>
+                <rect x="13.5" y="28" width="2.6" height="7" rx="1.3" transform="rotate(12 14.8 31.5)"></rect>
+                <rect x="20.5" y="30" width="2.6" height="7" rx="1.3" transform="rotate(12 21.8 33.5)"></rect>
+                <rect x="27" y="28" width="2.6" height="7" rx="1.3" transform="rotate(12 28.3 31.5)"></rect>
+            </g>
+
+            <g id="wx-snow">
+                <use href="#wx-cloudbody" transform="translate(0 -3)"></use>
+                <circle cx="14.5" cy="31" r="2.1"></circle>
+                <circle cx="21.5" cy="34" r="2.1"></circle>
+                <circle cx="28.5" cy="31" r="2.1"></circle>
+            </g>
+
+            <g id="wx-storm">
+                <use href="#wx-cloudbody" transform="translate(0 -5)"></use>
+                <path d="M23.5 24 L15.5 24 L19.5 30.5 L16 30.5 L24.5 38.5 L21 30 L25 30 Z"></path>
+            </g>
+
+            <!-- Fog: the cloud sinking into stacked bars. -->
+            <g id="wx-fog">
+                <use href="#wx-cloudbody" transform="translate(0 -6)"></use>
+                <rect x="8" y="27" width="24" height="2.8" rx="1.4"></rect>
+                <rect x="11" y="33" width="18" height="2.8" rx="1.4"></rect>
+            </g>
+        </defs>
+    </svg>
+
+    <div id="hudOverlay">
+        <div class="hud-top">
+            <!-- The wordmark, and nothing under it.
+
+                 It used to carry "A hanging chime with a wind sail on a cord, in
+                 weather that is really blowing." Half of that stopped being true
+                 the moment the location box left the first frame: the weather
+                 chain has no caller until a visitor opens the Place panel and
+                 asks for a town by name, so what is blowing on arrival is the
+                 place's own authored wind, not anybody's weather. A strapline
+                 nobody can act on that also makes a false claim is worse than no
+                 strapline, and the caption under the object already names what
+                 is hanging there, sentence by sentence, as it changes.
+
+                 CONTRACTS 2.5 gives the file to P3 and gives P2 one container.
+                 This deletion is outside it and is taken under H37, which names
+                 P2 as the piece that owns the page's own words about the product
+                 and requires all of them to move in the same commit as the
+                 landing. The <title> and the meta description above moved with
+                 it, and so did the README. -->
+            <div class="hud-title">
+                <h1>Wind Chime Simulator</h1>
+            </div>
+
+            <!-- Top right, and visible from the first frame. It USED to be
+                 outside every .idle selector, on the reasoning that the page's
+                 one primary action should never fade away under a visitor who
+                 had stopped moving the mouse. It fades now: what is left when
+                 the pointer stops is the object in its place, and a Share
+                 button floating over a still forest is the one thing in the
+                 frame admitting there is a web page here. Any movement brings
+                 it back in 180 ms, which is faster than reaching for it.
+                 This is where the bar keeps Save.
+
+                 The button is deliberately the only other thing in the top bar:
+                 one wordmark, one primary button, and the pill row at the
+                 bottom. There is no drawer, no hamburger and no settings icon.
+
+                 The click also unlocks audio for free - main.js's capture-phase
+                 pointerdown listener takes any gesture anywhere - so pressing
+                 Share on a cold page both starts the sound and copies the link.
+                 That is the whole count: one click. -->
+            <!-- === WCS:SHARE === -->
+            <div id="wcsShare" class="wcs-share">
+                <button type="button" id="wcsShareButton" class="wcs-share-button">
+                    <svg class="wcs-share-glyph" viewBox="0 0 20 20" aria-hidden="true" focusable="false"><path d="M14.2 6.6a2.4 2.4 0 1 0-2.3-3l-4.2 2.2a2.4 2.4 0 1 0 0 4.4l4.2 2.2a2.4 2.4 0 1 0 .7-1.4L8.4 8.8a2.4 2.4 0 0 0 0-1.6l4.2-2.2c.4.4 1 .6 1.6.6z"/></svg>
+                    <span>Share</span>
+                </button>
+                <!-- The one thing a share button has to say out loud. role=status
+                     rather than role=alert: it is a confirmation, not a warning,
+                     and it must not interrupt whatever is being read. -->
+                <p id="wcsShareToast" class="wcs-share-toast" role="status" aria-live="polite"></p>
+            </div>
+            <!-- === /WCS:SHARE === -->
+        </div>
+
+        <!-- P2's first-frame chrome: the unlock affordance and the idle
+             behaviour. Unstyled children land in the middle grid row. -->
+        <!-- === WCS:LANDING === -->
+        <!--
+          The one thing on this page that asks for anything, and it asks for as
+          little as a control can.
+
+          Browsers will not start an AudioContext without a gesture, so one click
+          is the floor. What that click used to cost was a 45-character sentence
+          sitting in the middle of the frame telling a stranger to make it. The
+          sentence is still here, in #audioToast, where a screen reader can find
+          it and where main.js still latches on it - assets/css/landing.css takes
+          it off the screen and changes nothing else about it.
+
+          What is left in the picture is this: a state, not an order, and it is
+          dressed as a text link rather than as a control.
+
+          THE FIRST VERSION OF THIS WAS A SIXTH PILL. It read "Sound" next to a
+          speaker glyph, in a 999px capsule with the pill row's own fill, its own
+          hairline and its own backdrop blur, forty-six pixels above Place ·
+          Tubes · Striker · Sail · Hang - and "Sound" is a word that names a wind
+          chime's voice. Every token was the same one .wcs-pill uses, so it was
+          not merely similar to a slot, it was byte-identical to one. A critic
+          cropping the bottom band counted six parts. BAR.md's test for this
+          control is that it must not look like a step, and the bar's own control
+          in this exact slot - "Side view", directly under the object and above
+          the caption - is a plain underlined text link precisely so that it
+          cannot be mistaken for one of the three pills below it.
+
+          So: no fill, no border, no radius, no blur, no glyph, and the label is
+          the condition rather than the noun. "Muted" is a state a visitor can
+          read and ignore. "Sound" was a part of the chime.
+
+          The accessible name still leads with the state and then says what
+          pressing it does, because a screen reader user is not looking at the
+          picture and a button whose name is a bare adjective is a button that
+          does not say what it is for.
+        -->
+        <!--
+          THE LABEL IS THE INSTRUCTION NOW, not the state. "Muted" was a
+          condition a visitor could read and ignore, which is exactly what the
+          note above argued for and exactly what happened: it names a fact about
+          the page rather than an action, and the only action it implies is one
+          nobody asked for. "Click or tap to un-mute" says what to do, in both
+          idioms, and it is still not a noun and still not a part of the chime,
+          so the reasoning above about it not looking like a sixth pill holds.
+
+          The accessible name CONTAINS the visible text verbatim, and that is
+          load-bearing rather than tidy: a macOS or iOS Voice Control user says
+          "click <what they can see>", so an accessible name that does not start
+          with the visible label is a control they cannot operate by voice. The
+          rest of the sentence says what it does, for a screen reader user who
+          is not looking at the picture.
+        -->
+        <div id="wcsLanding" class="wcs-landing">
+            <button type="button" id="wcsSound" class="wcs-sound" aria-label="Click or tap to un-mute. Turns the wind chime's sound on.">Click or tap to un-mute</button>
+        </div>
+        <!-- === /WCS:LANDING === -->
+
+        <!-- === WCS:SLOTS === -->
+        <!--
+          The builder shell. Bottom of the frame, over the live scene: a caption
+          naming what has been made, one row of pills naming the PARTS of the
+          object, and one panel per part that opens over the bottom third.
+
+          Everything in here writes through window.__wcs.applyDesign and reads
+          back through window.__wcs.onDesign. No control touches params, the rig,
+          the wind or audio, and nothing in here reloads the page - the old Look
+          picker did, and threw the visitor's whole chime away (CONTRACTS H6).
+
+          The panels are static markup rather than JS-built, so the regions P4
+          and P5 own sit inside them at parse time and can be found by
+          getElementById at mount. Closed panels carry the `hidden` attribute and
+          are display:none, NOT translated off-canvas: the drawer this replaces
+          kept all sixteen of its controls focusable while shut (CONTRACTS H21).
+
+          assets/js/ui/slots.js fills in every range's min/max from design.js's
+          RANGES and every choice group's options from design.js's tables, so no
+          limit and no tube name is typed twice.
+        -->
+        <div id="wcsSlots" class="wcs-slots">
+
+            <!-- Both of these are absolutely positioned against the top edge of
+                 this column (assets/css/landing.css, assets/css/slots.css), so
+                 they stack upward over the scene and neither one can move the
+                 caption or the pill row by appearing.
+
+                 They are NOT deleted and NOT rebuilt: they are the page's only
+                 two aria-live regions (CONTRACTS 2.5) and main.js still owns
+                 both - the .done latch on the toast keys off audio.ready(), and
+                 runWeatherChain writes the status line. Only where they sit has
+                 changed. The toast used to be parked at top:72% of the viewport,
+                 which is on top of the object: at 1440 it was a 339x42 slab
+                 across the tube tips and the sail, and at 390 it sat squarely
+                 over the middle of the tube bundle. The bar's first frame
+                 contains no instruction at all, and this was the one thing in
+                 ours that read as being told what to do. -->
+            <div id="audioToast" role="status" aria-live="polite">
+                <span>Click or tap anywhere to hear the wind chime</span>
+            </div>
+
+            <p id="statusLine" role="status" aria-live="polite"></p>
+
+            <!-- The caption is gone from the frame. It said "Six-tube C major
+                 pentatonic, voiced on Theta Flower of Life, on the forest path
+                 under a high sun" - true, and a sentence explaining a picture
+                 that had got good enough to not need explaining.
+
+                 describe() stays and is still exercised by
+                 tools/verify-design.mjs, because it is what the share flow and
+                 the page's own description are written from; only the line
+                 under the object goes. slots.js looks the element up and guards
+                 on finding it, so removing the markup is the whole change.
+
+                 NOTE FOR WHOEVER MISSES IT: this was the page's fourth
+                 aria-live region, and with it goes the running commentary a
+                 screen reader user got as they built. If that matters more than
+                 the clean frame, the fix is to put it back with the visually
+                 hidden class rather than to reinstate the visible line. -->
+
+            <div id="wcsPills" class="wcs-pills" role="group" aria-label="Parts of the chime">
+                <button type="button" class="wcs-pill" data-slot="place" id="wcsPill-place" aria-expanded="false" aria-controls="wcsPanel-place">
+                    <svg class="wcs-pill-glyph" viewBox="0 0 20 20" aria-hidden="true" focusable="false"><path d="M10 2.6c-2.5 0-4.4 1.9-4.4 4.3 0 3.2 4.4 8.5 4.4 8.5s4.4-5.3 4.4-8.5c0-2.4-2-4.3-4.4-4.3zm0 6a1.8 1.8 0 1 1 0-3.6 1.8 1.8 0 0 1 0 3.6z"/></svg>
+                    <span>Place</span>
+                </button>
+                <button type="button" class="wcs-pill" data-slot="tubes" id="wcsPill-tubes" aria-expanded="false" aria-controls="wcsPanel-tubes">
+                    <svg class="wcs-pill-glyph" viewBox="0 0 20 20" aria-hidden="true" focusable="false"><rect x="3" y="3" width="2.6" height="14" rx="1.3"/><rect x="8.7" y="3" width="2.6" height="11" rx="1.3"/><rect x="14.4" y="3" width="2.6" height="8" rx="1.3"/></svg>
+                    <span>Tubes</span>
+                </button>
+                <button type="button" class="wcs-pill" data-slot="striker" id="wcsPill-striker" aria-expanded="false" aria-controls="wcsPanel-striker">
+                    <svg class="wcs-pill-glyph" viewBox="0 0 20 20" aria-hidden="true" focusable="false"><rect x="9.2" y="2" width="1.6" height="7" rx="0.8"/><circle cx="10" cy="13" r="4.4"/></svg>
+                    <span>Striker</span>
+                </button>
+                <button type="button" class="wcs-pill" data-slot="sail" id="wcsPill-sail" aria-expanded="false" aria-controls="wcsPanel-sail">
+                    <svg class="wcs-pill-glyph" viewBox="0 0 20 20" aria-hidden="true" focusable="false"><rect x="9.4" y="1.8" width="1.2" height="5" rx="0.6"/><rect x="5.4" y="6.6" width="9.2" height="11.6" rx="1.6"/></svg>
+                    <span>Sail</span>
+                </button>
+                <button type="button" class="wcs-pill" data-slot="hang" id="wcsPill-hang" aria-expanded="false" aria-controls="wcsPanel-hang">
+                    <svg class="wcs-pill-glyph" viewBox="0 0 20 20" aria-hidden="true" focusable="false"><rect x="2" y="3" width="16" height="2.2" rx="1.1"/><rect x="9.2" y="5.2" width="1.6" height="6" rx="0.8"/><circle cx="10" cy="14.4" r="3.4"/></svg>
+                    <span>Hang</span>
+                </button>
+            </div>
+
+            <!-- The byline, directly under the pill row.
+                 Last child of .wcs-slots, which is the column the pills sit at
+                 the bottom of - so it rides the same safe-area padding a phone's
+                 home indicator forces, rather than being placed against the
+                 viewport and having to be told about it separately.
+
+                 IT DOES NOT GO ALL THE WAY OUT WITH THE REST OF THE CHROME.
+                 When the pointer stops, the pill row and Share dissolve to
+                 nothing, because what is meant to be left is the object in its
+                 place. Whose page it is survives that, exactly as the wordmark
+                 does at the top of the frame: it half-fades and stays legible.
+                 Myra, 2026-08-11. slots.css carries the rule beside the
+                 wordmark's own so the two cannot drift apart.
+
+                 Not in the footer, which already carries the same name: this is
+                 the frame's own signature and that is the site's small print.
+                 They say the same thing in two registers and both are wanted. -->
+            <p class="wcs-byline"><a href="https://myrakrusemark.com" target="_blank" rel="noopener noreferrer">myrakrusemark.com</a></p>
+
+            <div id="wcsPanelHost" class="wcs-panel-host">
+
+                <!-- ---- Place ------------------------------------------- -->
+                <section class="wcs-panel" id="wcsPanel-place" data-slot="place" role="dialog" aria-modal="true" aria-labelledby="wcsTitle-place" tabindex="-1" hidden>
+                    <div class="wcs-panel-head">
+                        <h2 class="wcs-panel-title" id="wcsTitle-place">Place</h2>
+                        <button type="button" class="wcs-close" data-close>Done</button>
+                    </div>
+                    <div class="wcs-panel-body">
+
+                        <!-- === WCS:PLACE-PANEL === -->
+                        <!-- P4. The cards are built by assets/js/ui/places.js
+                             from the PLACES table, not authored here: the table
+                             is the one source of truth for what a place is, and
+                             a second copy in markup is a second thing to keep in
+                             step. Only the container is static.
+
+                             The two prose lines that used to sit under the cards
+                             are gone (Myra, 2026-08-11): each card already
+                             carries its own blurb and its own byline, so the
+                             paragraph under them said the same two facts a
+                             second time, and the panel opened on more reading
+                             than picking.
+
+                             THE CC BY LINK DID NOT GO WITH THEM. The card's
+                             byline is text only, because a <a> inside a <button>
+                             is a keyboard trap, so the licence link moved to the
+                             footer of this page and to about.html's Credits
+                             section - still on the built page, which is what
+                             CONTRACTS 5.5 and verify-place.mjs both require,
+                             rather than only in a markdown table nobody
+                             receives. -->
+                        <div class="wcs-group">
+                            <h3 class="wcs-group-title" id="wcsPlaceLabel">Where it hangs</h3>
+                            <div class="wcs-place-choice" id="wcsPlaceChoice" role="radiogroup" aria-labelledby="wcsPlaceLabel"></div>
+                        </div>
+                        <!-- === /WCS:PLACE-PANEL === -->
+
+                        <div class="wcs-group">
+                            <h3 class="wcs-group-title" id="wcsWindModeLabel">Weather here</h3>
+
+                            <!-- LOCAL OR MANUAL, and only ever one of them on
+                                 screen. The group used to show the location box
+                                 and the three wind sliders at once, which read
+                                 as four controls for one decision: a visitor who
+                                 fetched Asheville's wind was still looking at a
+                                 speed slider, and a visitor who dragged the
+                                 speed slider was still looking at a box asking
+                                 where they are. They are two answers to the same
+                                 question, so they are two positions of one
+                                 switch (Myra, 2026-08-11).
+                                 wcsWindMode is a .wcs-choice with NO data-path,
+                                 deliberately: slots.js builds and owns every
+                                 `.wcs-choice[data-path]` group from its frozen
+                                 OPTION_SETS table and clears whatever markup it
+                                 finds inside one. Without a path it skips this,
+                                 and ui/landing.js - which already owns the
+                                 weather row - wires the two buttons itself. -->
+                            <div class="wcs-choice" id="wcsWindMode" role="radiogroup" aria-labelledby="wcsWindModeLabel">
+                                <button type="button" class="wcs-choice-option" role="radio" aria-checked="false" tabindex="-1" data-wind-mode="local" aria-controls="wcsWindLocal">Local</button>
+                                <button type="button" class="wcs-choice-option" role="radio" aria-checked="false" tabindex="-1" data-wind-mode="manual" aria-controls="wcsWindManual">Manual</button>
+                            </div>
+
+                            <div class="wcs-mode-pane" id="wcsWindLocal" data-wind-pane="local" hidden>
+                            <p class="wcs-note">Name a town and the chime blows with the wind that is really there. Leave the box empty and it asks the browser where you are instead. The reading comes from weather.gov, which only covers the United States. A fresh one arrives every fifteen minutes.</p>
+
+                            <!-- The live-weather entry point.
+                                 These two ids are the ONLY callers of
+                                 runWeatherChain() in main.js. The old .dock-start
+                                 block that carried them was deleted with P3's
+                                 chrome, which left the chain with zero reachable
+                                 callers - snapshot().weather permanently null,
+                                 #statusLine never written to, and the page's
+                                 <title> still selling "real weather" (H22, H37).
+                                 Rebuilding them here restores the feature with no
+                                 change to main.js at all.
+
+                                 BOTH of them, never just the button: a Start
+                                 trigger with no text box falls into the
+                                 empty-query branch and fires an unrequested
+                                 native geolocation prompt (H23). Behind a panel a
+                                 visitor opened and a button labelled for it, the
+                                 browser prompt is something they asked for by
+                                 name. Nothing on the first frame can reach it. -->
+                            <!-- P2 finished this row (CONTRACTS 6/P2: "relocates
+                                 live weather to an option inside the Wind area
+                                 ... defaulting off"). Two things changed and the
+                                 ids did not, so main.js still finds both of them.
+
+                                 The label is written by assets/js/ui/landing.js
+                                 and it tracks the box. Empty, the button says
+                                 "Use where I am", because with an empty query
+                                 runWeatherChain falls into the branch that calls
+                                 navigator.geolocation (H23) and the browser then
+                                 puts a permission prompt on the screen. A button
+                                 that said "Use live weather" would have produced
+                                 that prompt without ever naming it. With a town
+                                 typed it says "Use live weather" and no
+                                 geolocation is touched at all.
+
+                                 landing.js also swallows Enter while the box is
+                                 empty. Enter in a text field is a reflex rather
+                                 than a decision, and it was the one path to that
+                                 prompt that nobody had asked for. -->
+                            <p class="wcs-weather-row">
+                                <label class="wcs-sr-only" for="locationInput">Town, state or country</label>
+                                <input type="text" id="locationInput" class="wcs-text" placeholder="City, State or Country" autocomplete="address-level2" spellcheck="false" maxlength="120">
+                                <button type="button" id="startButton" class="wcs-weather-go"><span data-weather-go-label>Use where I am</span></button>
+                            </p>
+                            </div>
+
+                            <div class="wcs-mode-pane" id="wcsWindManual" data-wind-pane="manual" hidden>
+                            <p class="wcs-note">Every place has its own wind, and that is what is blowing when you arrive. Move a slider and the chime keeps your numbers wherever the link is opened.</p>
+
+                            <p class="wcs-field">
+                                <span class="wcs-field-top"><label class="wcs-field-name" for="wcsWindSpeed">Wind speed</label><span class="wcs-field-value" data-value-for="wcsWindSpeed"></span></span>
+                                <input class="wcs-range" type="range" id="wcsWindSpeed" data-path="wind.mph" data-range="wind.mph" data-fmt="mph" step="1">
+                            </p>
+                            <p class="wcs-field">
+                                <span class="wcs-field-top"><label class="wcs-field-name" for="wcsWindDir">Wind direction</label><span class="wcs-field-value" data-value-for="wcsWindDir"></span></span>
+                                <input class="wcs-range" type="range" id="wcsWindDir" data-path="wind.dirDeg" data-fmt="bearing" min="0" max="359" step="1">
+                            </p>
+                            <p class="wcs-field">
+                                <span class="wcs-field-top"><label class="wcs-field-name" for="wcsTurbulence">Gustiness</label><span class="wcs-field-value" data-value-for="wcsTurbulence"></span></span>
+                                <input class="wcs-range" type="range" id="wcsTurbulence" data-path="wind.turbulence" data-range="wind.turbulence" data-fmt="ratio2" step="0.01">
+                            </p>
+                            </div>
+                        </div>
+
+                        <div class="wcs-group">
+                            <h3 class="wcs-group-title">Light</h3>
+                            <p class="wcs-field">
+                                <span class="wcs-field-top"><label class="wcs-field-name" for="wcsSun">Sun height</label><span class="wcs-field-value" data-value-for="wcsSun"></span></span>
+                                <!-- min/max come from stage.sunRange() at mount: the legal
+                                     elevation is place-dependent, 2-20 with a sky and 26-74
+                                     without, and a number typed here would be wrong for one
+                                     of them (CONTRACTS H12). -->
+                                <input class="wcs-range" type="range" id="wcsSun" data-path="view.sun" data-fmt="deg" step="1">
+                            </p>
+                        </div>
+
+                        <div class="wcs-group">
+                            <h3 class="wcs-group-title">Quality</h3>
+                            <!-- Two dials, because there are two renderers behind
+                                 this picture and they cost different things. The
+                                 tier is the chime's: shadows and post-processing
+                                 on a lit, shaded object. The percentage is the
+                                 place's: how many of the capture's gaussians get
+                                 sorted and blended every frame. A machine that
+                                 needs one turned down does not always need the
+                                 other, so they are not folded into one slider. -->
+                            <h4 class="wcs-subgroup-title" id="wcsQualityLabel">Wind chime</h4>
+                            <div class="wcs-choice" role="radiogroup" aria-labelledby="wcsQualityLabel" data-path="view.quality" data-options="quality"></div>
+                            <p class="wcs-note">Auto picks from what this device managed on the first frame. Low drops the shadows and the post-processing.</p>
+                            <h4 class="wcs-subgroup-title">Photorealistic environment</h4>
+                            <p class="wcs-field">
+                                <span class="wcs-field-top"><label class="wcs-field-name" for="wcsSplats">Detail</label><span class="wcs-field-value" data-value-for="wcsSplats"></span></span>
+                                <!-- pctmax, not pct. The stored value is still a
+                                     fraction of tanha's 998,709 and still tops
+                                     out at 0.35, because 0.35 is the whole of
+                                     the export this page ships. Printing that as
+                                     "35%" next to a thumb already at the end of
+                                     its travel read as a slider that had given
+                                     up two thirds of the way, and invited a
+                                     visitor to go looking for detail that is not
+                                     in the download (Myra, 2026-08-11).
+                                     pctmax divides by the field's own RANGES
+                                     top, so the end of the travel reads 100% and
+                                     the URL still carries sp-35. -->
+                                <input class="wcs-range" type="range" id="wcsSplats" data-path="view.splats" data-range="view.splats" data-fmt="pctmax" step="0.01">
+                            </p>
+                            <p class="wcs-note">How much of the photographed place is drawn. The whole capture is 349,548 gaussians, re-sorted by depth every frame, which is the most expensive drawing this page does. It starts at under a third of that. A place with no capture ignores this.</p>
+                        </div>
+
+                    </div>
+                </section>
+
+                <!-- ---- Tubes ------------------------------------------- -->
+                <section class="wcs-panel" id="wcsPanel-tubes" data-slot="tubes" role="dialog" aria-modal="true" aria-labelledby="wcsTitle-tubes" tabindex="-1" hidden>
+                    <div class="wcs-panel-head">
+                        <h2 class="wcs-panel-title" id="wcsTitle-tubes">Tubes</h2>
+                        <button type="button" class="wcs-close" data-close>Done</button>
+                    </div>
+                    <div class="wcs-panel-body">
+
+                        <div class="wcs-group">
+                            <h3 class="wcs-group-title" id="wcsScaleLabel">Scale</h3>
+                            <div class="wcs-choice" role="radiogroup" aria-labelledby="wcsScaleLabel" data-path="tubes.scale" data-options="scale"></div>
+                        </div>
+
+                        <div class="wcs-group">
+                            <p class="wcs-field">
+                                <span class="wcs-field-top"><label class="wcs-field-name" for="wcsNotes">How many</label><span class="wcs-field-value" data-value-for="wcsNotes"></span></span>
+                                <input class="wcs-range" type="range" id="wcsNotes" data-path="tubes.notes" data-range="tubes.notes" data-fmt="tubes" step="1">
+                            </p>
+                        </div>
+
+                        <div class="wcs-group">
+                            <h3 class="wcs-group-title" id="wcsStockLabel">Stock</h3>
+                            <div class="wcs-choice wcs-choice-wide" role="radiogroup" aria-labelledby="wcsStockLabel" data-path="tubes.stock" data-options="stock"></div>
+                            <p class="wcs-note" data-stock-note></p>
+                            <p class="wcs-note">A wider tube pulls its overtones flat and loses them to the air faster, so the same note comes out darker and its tail fades sooner. This is a sound choice: the rig hangs one section, so the tubes on screen do not change width with it.</p>
+                        </div>
+
+                        <div class="wcs-group">
+                            <h3 class="wcs-group-title">How they ring</h3>
+                            <p class="wcs-field">
+                                <span class="wcs-field-top"><label class="wcs-field-name" for="wcsAttack">Strike</label><span class="wcs-field-value" data-value-for="wcsAttack"></span></span>
+                                <input class="wcs-range" type="range" id="wcsAttack" data-path="voice.attack" data-range="voice.attack" data-fmt="ms" step="0.0005">
+                            </p>
+                            <p class="wcs-field">
+                                <span class="wcs-field-top"><label class="wcs-field-name" for="wcsDecay">Ring trim</label><span class="wcs-field-value" data-value-for="wcsDecay"></span></span>
+                                <input class="wcs-range" type="range" id="wcsDecay" data-path="voice.decay" data-range="voice.decay" data-fmt="ring" step="0.1">
+                            </p>
+                            <p class="wcs-field">
+                                <span class="wcs-field-top"><label class="wcs-field-name" for="wcsLoudness">Loudness</label><span class="wcs-field-value" data-value-for="wcsLoudness"></span></span>
+                                <input class="wcs-range" type="range" id="wcsLoudness" data-path="voice.loudness" data-range="voice.loudness" data-fmt="pct" step="0.01">
+                            </p>
+                            <p class="wcs-note">Ring time comes out of the air the tube pushes and the cord it hangs on. The trim only stretches or shortens it; at 1.00x you hear the tube as the physics builds it.</p>
+                        </div>
+
+                    </div>
+                </section>
+
+                <!-- ---- Striker ----------------------------------------- -->
+                <section class="wcs-panel" id="wcsPanel-striker" data-slot="striker" role="dialog" aria-modal="true" aria-labelledby="wcsTitle-striker" tabindex="-1" hidden>
+                    <div class="wcs-panel-head">
+                        <h2 class="wcs-panel-title" id="wcsTitle-striker">Striker</h2>
+                        <button type="button" class="wcs-close" data-close>Done</button>
+                    </div>
+                    <div class="wcs-panel-body">
+                        <p class="wcs-note">The wooden puck the tubes get hit by. It hangs on a cord and the sail drags it sideways until it reaches a tube.</p>
+                        <p class="wcs-field">
+                            <span class="wcs-field-top"><label class="wcs-field-name" for="wcsClapperWidth">Across</label><span class="wcs-field-value" data-value-for="wcsClapperWidth"></span></span>
+                            <input class="wcs-range" type="range" id="wcsClapperWidth" data-path="clapper.width" data-range="clapper.width" data-fmt="mm" step="0.001">
+                        </p>
+                        <p class="wcs-field">
+                            <span class="wcs-field-top"><label class="wcs-field-name" for="wcsClapperMass">Weight</label><span class="wcs-field-value" data-value-for="wcsClapperMass"></span></span>
+                            <input class="wcs-range" type="range" id="wcsClapperMass" data-path="clapper.mass" data-range="clapper.mass" data-fmt="g" step="0.001">
+                        </p>
+                        <p class="wcs-field">
+                            <span class="wcs-field-top"><label class="wcs-field-name" for="wcsClapperDrop">Hangs down</label><span class="wcs-field-value" data-value-for="wcsClapperDrop"></span></span>
+                            <input class="wcs-range" type="range" id="wcsClapperDrop" data-path="clapper.drop" data-range="clapper.drop" data-fmt="cm" step="0.005">
+                        </p>
+                        <p class="wcs-note">How far it hangs moves the strike point up and down the tubes, which changes which overtones speak. Near a tube's middle it sings; well off centre it clangs.</p>
+                    </div>
+                </section>
+
+                <!-- ---- Sail -------------------------------------------- -->
+                <section class="wcs-panel" id="wcsPanel-sail" data-slot="sail" role="dialog" aria-modal="true" aria-labelledby="wcsTitle-sail" tabindex="-1" hidden>
+                    <div class="wcs-panel-head">
+                        <h2 class="wcs-panel-title" id="wcsTitle-sail">Sail</h2>
+                        <button type="button" class="wcs-close" data-close>Done</button>
+                    </div>
+                    <div class="wcs-panel-body">
+                        <p class="wcs-note">The flat paddle on the long cord underneath. It is the only part the wind really works on, and everything the chime does starts here.</p>
+                        <p class="wcs-field">
+                            <span class="wcs-field-top"><label class="wcs-field-name" for="wcsSailMass">Weight</label><span class="wcs-field-value" data-value-for="wcsSailMass"></span></span>
+                            <input class="wcs-range" type="range" id="wcsSailMass" data-path="sail.mass" data-range="sail.mass" data-fmt="g" step="0.001">
+                        </p>
+                        <p class="wcs-field">
+                            <span class="wcs-field-top"><label class="wcs-field-name" for="wcsSailHeight">Height</label><span class="wcs-field-value" data-value-for="wcsSailHeight"></span></span>
+                            <input class="wcs-range" type="range" id="wcsSailHeight" data-path="sail.height" data-range="sail.height" data-fmt="mm" step="0.005">
+                        </p>
+                        <p class="wcs-note">Drag goes as the area and as the speed squared, so a taller sail in a gust throws the chime rather than nudging it.</p>
+                    </div>
+                </section>
+
+                <!-- ---- Hang -------------------------------------------- -->
+                <section class="wcs-panel" id="wcsPanel-hang" data-slot="hang" role="dialog" aria-modal="true" aria-labelledby="wcsTitle-hang" tabindex="-1" hidden>
+                    <div class="wcs-panel-head">
+                        <h2 class="wcs-panel-title" id="wcsTitle-hang">Hang</h2>
+                        <button type="button" class="wcs-close" data-close>Done</button>
+                    </div>
+                    <div class="wcs-panel-body">
+
+                        <!-- === WCS:HANG === -->
+                        <!-- P5. One line, written by assets/js/ui/hang.js and
+                             empty until it mounts, because the sentence depends
+                             on the place: the forest path can be dragged and the
+                             porch cannot, and a hint that is wrong half the time
+                             is worse than no hint.
+
+                             The gizmo itself is not here. It is drawn over the
+                             picture rather than in the panel, so hang.js creates
+                             it and appends it to #canvasContainer at mount - see
+                             the note at the top of assets/css/hang.css for why
+                             that container and not #hudOverlay. -->
+                        <p class="wcs-hang-hint" id="wcsHangHint"></p>
+                        <!-- === /WCS:HANG === -->
+
+                        <!-- The reason line is the FIRST thing in the body and
+                             the only prose in it. A second paragraph used to sit
+                             here explaining that the chime never moves and the
+                             place moves behind it - 39 words about the build,
+                             addressed to a visitor who has already noticed the
+                             chime does not move. On a phone those words were
+                             what pushed the Size slider out of a body that is
+                             `max-height: min(26vh, 222px)`: 297 px of content in
+                             240 px, with the third control below the fold and no
+                             sign it was there.
+
+                             These three ship `disabled` in the MARKUP and hang.js
+                             takes the attribute off on a place that can take a
+                             hang. That way round on purpose: driven with no plate
+                             behind them they would write real values into the
+                             design and into the share link and move nothing on
+                             screen, so if hang.js ever fails to mount the
+                             controls fail OFF rather than live-and-inert
+                             (CONTRACTS P5 criterion 5). The reason line below is
+                             rewritten per place by the same file.
+
+                             NO data-fmt ON u AND v, ON PURPOSE. Their travel is
+                             the place's reach - 0.41 to 0.59 across - so "Across
+                             the place 59%" printed a plate coordinate next to a
+                             thumb that was 100 % of the way along. Every readout
+                             contradicted the control it was printed on. The
+                             label and the thumb are the whole message; a
+                             percentage that is not the thumb's percentage is
+                             worse than none. Size keeps its percentage, because
+                             a size IS a magnitude and 130% means half again as
+                             big rather than "130 % of the way along". -->
+
+                        <!-- "Across the place" and "Down from the top" are gone.
+                             They were the plate's idea of placing a chime: two
+                             abstract percentages sliding a photograph behind an
+                             object that could not move. In a place with real
+                             geometry the gesture is to point at the spot, so
+                             clicking a splat replaced them. Only Size is left,
+                             because a size is a magnitude and nothing about
+                             pointing at a place expresses it. -->
+                        <p class="wcs-field is-disabled">
+                            <span class="wcs-field-top"><label class="wcs-field-name" for="wcsHangScale">Size</label><span class="wcs-field-value" data-value-for="wcsHangScale"></span></span>
+                            <input class="wcs-range" type="range" id="wcsHangScale" data-path="hang.scale" data-range="hang.scale" data-fmt="pct" step="0.01" disabled aria-describedby="wcsHangWhy">
+                        </p>
+                        <!-- Cord is the other half of the pointing gesture. Click
+                             picks WHICH branch; this picks how far below it the
+                             chime rides. Rule A the whole way: the hook stays
+                             welded and the capture drops by the cord's length, so
+                             a longer rope lowers the chime through the wood
+                             without the rig moving. In centimetres because a rope
+                             is a length you could cut with scissors, not a
+                             percentage of anything. -->
+                        <p class="wcs-field is-disabled">
+                            <span class="wcs-field-top"><label class="wcs-field-name" for="wcsHangCord">Cord</label><span class="wcs-field-value" data-value-for="wcsHangCord"></span></span>
+                            <input class="wcs-range" type="range" id="wcsHangCord" data-path="hang.cord" data-range="hang.cord" data-fmt="cm" step="0.01" disabled aria-describedby="wcsHangWhy">
+                        </p>
+                        <p class="wcs-note" id="wcsHangWhy">Not here: a built world has a real size, so there is nothing behind the chime to slide it across.</p>
+
+                    </div>
+                </section>
+
+            </div>
+        </div>
+        <!-- === /WCS:SLOTS === -->
+    </div>
+
+    <!-- Everything below the picture scrolls over it. -->
+    <article id="article">
+        <div id="learn">
+            <h2>The Science Behind the Simulation</h2>
+
+            <section class="learn-section">
+                <h3>A Brief History of Wind Chimes</h3>
+                <p>Wind chimes have been around for a very long time, about 5,000 years. The earliest ones were found in Southeast Asia around 3000 B.C., made from bones, wood, bamboo, and seashells. People believed they could scare away evil spirits and invite good ones.</p>
+                <p>In China, wind chimes are called <strong>"Feng Ling"</strong> and were hung in temples and homes to bring positive energy. In Japan, they're called <strong>"Fūrin"</strong> and are hung outside during hot summers, where the soft tinkling sound is thought to make you feel cooler and calmer. Today, people all over the world use wind chimes for relaxation and meditation.</p>
+            </section>
+
+            <section class="learn-section">
+                <h3>Length Is the Note</h3>
+                <p>The tubes hanging on screen are all cut to different lengths, and the length is what sets the note. These are 44.45 mm aluminium tubes with a 2.6 mm wall, the stock a real garden chime is built from, and on that tube middle C needs a length of 1.00 m. The C one octave above it needs only 0.70 m — not half as long, because the pitch goes roughly as one over the length squared.</p>
+                <p>Because the length is squared, a small change in length is a big change in pitch. Open the settings, change the scale or the number of tubes, and watch the tubes get recut to their new lengths right in front of you.</p>
+            </section>
+
+            <section class="learn-section">
+                <h3>Why the Cord Goes 22 Percent Down</h3>
+                <p>Grab a ringing tube anywhere along its middle and you choke it. But a hanging tube has two quiet spots where the metal barely moves while the rest of it swings, and the upper one sits <strong>22.42 percent</strong> of the way down from the top.</p>
+                <p>Hang the cord there and you're holding the one part that was not going anywhere, so the note rings on instead of dying in your fingers. Real chimes are drilled at that point, and so is every tube here, which is why the cords meet the tubes a little below their tops rather than at the very end.</p>
+            </section>
+
+            <section class="learn-section">
+                <h3>Chimes Are Not Harmonics</h3>
+                <p>Pluck a guitar string and its overtones land at 2×, 3× and 4× the main note. Whole numbers, which is a large part of why a string sounds sweet.</p>
+                <p>A metal tube behaves differently. Its overtones sit at ratios of 1 : 2.76 : 5.40 : 8.93 : 13.34, and none of those are whole numbers, so they never settle into a chord with the fundamental. Those clashing overtones are the metallic clang you hear in the first fraction of a second after a strike. They fade quickly and leave the long pure hum underneath. Every note you hear is built from those five ratios as it is played, not from a recording.</p>
+            </section>
+
+            <section class="learn-section">
+                <h3>Where You Hit It Changes What You Hear</h3>
+                <p>Hit a tube at its middle and you land right on a quiet spot belonging to the second and fourth overtones. They never speak, and the note comes out pure. Hit it well off-centre and they do speak, and it clangs.</p>
+                <p>The wooden striker hangs at the vertical middle of the whole <em>set</em> of tubes, so it catches the short tubes near their own middle and the long tubes well above theirs. The short ones sing and the long ones clang, with no extra code asking for that. The chime also sways, so the striker never quite hits the same height twice and the same tube sounds a little different every time it rings.</p>
+            </section>
+
+            <section class="learn-section">
+                <h3>How the Wind Actually Gets In</h3>
+                <p>Wind pushes on everything, but the part it really works on is the sail, the flat paddle hanging on the long cord underneath. The drag on a flat plate is <code>0.5 × air density × drag coefficient × area × speed²</code>. At 12 mph that comes to roughly 0.15 newtons. The striker and the sail together weigh about 0.66 newtons, so that push swings the pair about 12 degrees off vertical. The sail hangs below the striker on a cord of its own and carries only its own weight, so it swings out to roughly twice that angle.</p>
+                <p>Double the wind and the force goes up four times over, because the speed is squared. The pair swings past 25 degrees and the sail past 50. That squared term is why a gust throws the chime instead of nudging it.</p>
+                <p>The striker itself is small and feels only about 5 percent of what the sail feels. It moves because the sail is dragging it sideways on a cord, and when it has been dragged far enough it reaches a tube. The sail always goes first and the striker follows it, which is easy to watch once you know to look for it.</p>
+            </section>
+
+            <section class="learn-section">
+                <h3>Wind Is Not One Number</h3>
+                <p>A forecast gives you one wind speed, measured 10 metres up. Down where a chime hangs, the ground has been dragging on the air the whole way. At 2 metres you get about 73 percent of the reported speed, and at the height of the grass only about 41 percent. Watch the grass and the chime together during a gust. The grass moves less, and it's supposed to.</p>
+                <p>Real wind also arrives in lulls and surges. Gusts here are a slow random walk around the average, so quiet stretches and busy stretches happen on their own with nothing scheduling them. The turbulence itself is carried along downwind at the speed of the wind, an idea from the 1930s known as Taylor's frozen turbulence. A gust reaches the scene as a front that crosses it. The streaks far upwind stretch and brighten first, then the grass bends, then the ribbon under the plate snaps straight, then the sail swings out and the chime rings.</p>
+                <p>The dust and seeds in the air are not a decorative loop. Each speck is pushed by the same wind the sail feels, with its own weight and its own drag, so heavy ones lag behind a gust and light ones go with it. A streak is drawn exactly as long as the distance the air moved in the last 55 milliseconds, and under a certain speed it is not drawn at all. That's why a lull empties the sky and a gust seems to appear out of nothing.</p>
+            </section>
+
+            <section class="learn-section">
+                <h3>It Is a Real 3D Rig</h3>
+                <p>Everything on screen is measured in metres, kilograms and newtons. The plate, the tubes, the striker and the sail are masses joined by cords that cannot stretch and are free to go slack, which is why you can catch a cord bellying out and then snapping taut a moment later.</p>
+                <p>The top plate hangs on three short cords rather than one. Hang a disc from a single cord tied at its middle and nothing is holding it level, because the cord pulls through the same point the weight acts through. Real chimes use a three-cord bridle, and so does this one. The whole assembly still swings, and the disc still tilts with the swing, but it never rolls over on its side.</p>
+                <p>The physics runs at up to 240 steps a second whatever your screen is doing, so a slow phone gets the same collisions as a fast desktop, just drawn less often. Drag the sail or the striker with a mouse or a finger to play the chime by hand, or drag anywhere else to orbit the camera.</p>
+            </section>
+
+            <section class="learn-section">
+                <h3>Why It Sounds Good (Music Theory)</h3>
+                <p>The default scale is <strong>C Major Pentatonic</strong>: C, D, E, G, A. "Penta" means five, so this scale has only 5 notes instead of the usual 7 in a regular scale.</p>
+                <p>Here's the magic: these 5 notes sound good together no matter what order you play them! That's why wind chimes never sound "wrong". There are no clashing notes in a pentatonic scale. Musicians call this a "foolproof" scale because you really can't hit a bad note.</p>
+                <p>Random timing + pleasant notes = the relaxing ambient sound that makes wind chimes so soothing.</p>
+            </section>
+        </div>
+
+        <div class="ad-slot">
+            <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-6788527921390073"
+            crossorigin="anonymous"></script>
+            <!-- windchime -->
+            <ins class="adsbygoogle"
+                    style="display:block"
+                    data-ad-client="ca-pub-6788527921390073"
+                    data-ad-slot="2774506336"
+                    data-ad-format="auto"
+                    data-full-width-responsive="true"></ins>
+            <script>
+                    (adsbygoogle = window.adsbygoogle || []).push({});
+            </script>
+        </div>
+
+        <div id="footer">
+            <!-- CONTRACTS 5.5, and tools/verify-place.mjs gates on this file by
+                 name: the visitor gets the attribution, not only the repository.
+                 It used to sit under the place cards in the Place panel and came
+                 out with the rest of that prose on 2026-08-11. The footer is
+                 where the rest of the page's small print already is, it is on
+                 the same page the capture is drawn on, and it is a real link
+                 rather than a byline inside a <button> that cannot hold one. -->
+            <p class="wcs-credit-line">Forest path captured by <a href="https://superspl.at/scene/2be1a75a" rel="noopener noreferrer" target="_blank">tanha</a>, used under <a href="https://creativecommons.org/licenses/by/4.0/" rel="license noopener noreferrer" target="_blank">CC BY 4.0</a>.</p>
+            <p>Another cool project by <a target="_blank" href="https://myrakrusemark.com">Myra Krusemark</a>! (C)2024<br />
+                <a href="https://windchimesimulator.com/about.html">About Me and Contact</a> |
+                <a href="https://windchimesimulator.com/terms.html">Terms &amp; Conditions</a> |
+                <a href="https://windchimesimulator.com/privacy.html">Privacy Policy</a> |
+                <a target="_blank" href="https://github.com/myrakrusemark">GitHub</a>
+            </p>
+        </div>
+    </article>
+
+    <script type="module" src="assets/js/main.js"></script>
+
+    <!--
+      Click counter. Feeds the windchimesimulator.com rows on the KPI board at
+      home.myrakrusemark.com. The source of truth for this snippet is
+      Work/click-counter/snippets/windchimesimulator.html - edit it there and
+      copy it down, so the Worker's SITES set and the page that writes to it
+      stay in one place.
+
+      It attaches from the document rather than to each control, because the
+      panels are built by assets/js/ui/*.js after this runs and the place cards
+      later still; a querySelectorAll here would bind to half a page.
+
+      gtag above answers "how many people". This answers "what did they touch".
+      Google Analytics can hold custom events too, but reading them back needs a
+      service account and the Data API, while the Worker is a plain GET the
+      dashboard already makes for six other sites.
+    -->
+    <script>
+      (function () {
+        var url = 'https://click-counter.myrakrusemark.workers.dev/e';
+        var SITE = 'windchimesimulator.com';
+
+        // Longest-lived first: closest() walks up from the clicked node, so a
+        // click on the label inside a pill still resolves to the pill.
+        var MAP = [
+          ['#wcsShareButton', 'share'],
+          ['.wcs-pill[data-slot="place"]', 'pill-place'],
+          ['.wcs-pill[data-slot="tubes"]', 'pill-tubes'],
+          ['.wcs-pill[data-slot="striker"]', 'pill-striker'],
+          ['.wcs-pill[data-slot="sail"]', 'pill-sail'],
+          ['.wcs-pill[data-slot="hang"]', 'pill-hang']
+        ];
+
+        // Once per page load per event. Someone who opens the tubes panel eight
+        // times is one person who cared about tubes, and the board reads these
+        // rows as "how many people", not "how many pokes".
+        var sent = {};
+
+        function send(event) {
+          if (sent[event]) return;
+          sent[event] = 1;
+          // keepalive lets the request outlive the page, which is what
+          // sendBeacon is for - but sendBeacon returns true and then aborts
+          // with NS_ERROR_ABORT, so nothing arrives. no-cors keeps the default
+          // text/plain content type, which is CORS-safelisted and so skips the
+          // preflight; the Worker parses the body as JSON either way.
+          fetch(url, {
+            method: 'POST',
+            body: JSON.stringify({ site: SITE, event: event }),
+            keepalive: true,
+            mode: 'no-cors'
+          });
+        }
+
+        // This domain has no Cloudflare zone, so the edge never sees the page
+        // and the board would print a permanent dash where every other site
+        // shows its visitors. This is the number that fills that row.
+        send('pageview');
+
+        // Sound is counted off the landing latch, not off #wcsSound. THE RELAY
+        // in assets/js/ui/landing.js unlocks audio from a gesture anywhere on
+        // the page, so most visitors never press that button and counting its
+        // clicks would report a fraction of the people who heard the chime.
+        // dismiss() puts .is-done on #wcsLanding exactly once, whichever
+        // gesture got there.
+        var landing = document.getElementById('wcsLanding');
+        if (landing) {
+          var latched = function () {
+            if (!landing.classList.contains('is-done')) return false;
+            send('sound-on');
+            return true;
+          };
+          // main.js is a module and so runs after this script, but check once
+          // anyway rather than assume the ordering holds.
+          if (!latched()) {
+            new MutationObserver(function (_, obs) {
+              if (latched()) obs.disconnect();
+            }).observe(landing, { attributes: true, attributeFilter: ['class'] });
+          }
+        }
+
+        // Capture phase, so a handler that stops propagation cannot take the
+        // count with it.
+        document.addEventListener('click', function (e) {
+          var node = e.target;
+          if (!node || !node.closest) return;
+          for (var i = 0; i < MAP.length; i++) {
+            if (node.closest(MAP[i][0])) {
+              send(MAP[i][1]);
+              return;
+            }
+          }
+          // Inside a panel, anything interactive that is not the Done button is
+          // a change to the chime. The choice rows are <button>s rather than
+          // radio inputs, so they never reach the change handler below.
+          var hit = node.closest('button, [role="radio"], input');
+          if (hit && hit.closest('.wcs-panel') && !hit.hasAttribute('data-close')) {
+            send('adjust');
+          }
+        }, true);
+
+        // Sliders are the other half of "changed something". One event covers
+        // all of them: the question worth asking is what share of visitors move
+        // anything at all, and a row per slider would be twenty dashes.
+        document.addEventListener('change', function (e) {
+          var node = e.target;
+          if (node && node.closest && node.closest('.wcs-panel')) send('adjust');
+        }, true);
+      })();
+    </script>
+</body>
+</html>

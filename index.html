@@ -3,407 +3,936 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Myra Krusemark — builds, enterprise UX, and one filed invention</title>
-<meta name="description" content="I build software that shouldn't run in a browser — a whole worm's nervous system, a wind chime that rings with the weather outside your window — and I've done enterprise UX for tens of millions of members. Designer who directs AI coding agents.">
-<meta property="og:title" content="Myra Krusemark — builds, enterprise UX, and one filed invention">
-<meta property="og:description" content="Software that shouldn't run in a browser, twenty years of enterprise UX for tens of millions of members, and a patent-pending invention. I design the product and direct the AI harnesses that build it.">
+<title>Myra Krusemark — Designer · Builder · AI Engineer</title>
+<meta name="description" content="I build what I love. Thirteen years of UX and development: a living wind chime that rings with real St. Louis weather, a worm's nervous system in a bookmarklet, Fathom, and enterprise design for tens of millions.">
+<meta property="og:title" content="Myra Krusemark — Designer · Builder · AI Engineer">
+<meta property="og:description" content="I build what I love. The homepage is a living wind chime simulation ringing with real St. Louis weather.">
 <meta property="og:type" content="website">
 <meta property="og:url" content="https://myrakrusemark.com/">
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='M12 2l2.4 7.6L22 12l-7.6 2.4L12 22l-2.4-7.6L2 12l7.6-2.4z' fill='%23e2725b'/%3E%3C/svg%3E">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Jost:wght@200;300;400;500&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="/css/site.css?v=2026-08-27">
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+  body {
+    font-family: 'IBM Plex Sans', system-ui, sans-serif;
+    color: #f2f0ea;
+    background: #101410;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  /* ============ THE SCENE — fixed behind the whole site ============ */
+  /* The simulator is the site's background. It never scrolls; the page
+     scrolls over it, and scroll drives the camera down toward the
+     forest floor. A living picture, not a control surface: no pointer
+     ever reaches it, so wheel scrolls and pinch zooms the page. */
+  .sim-wrap { position: fixed; inset: 0; z-index: 0; overflow: hidden; pointer-events: none; }
+
+  /* every scrolling section rides above the fixed scene */
+  .hero, .drift, .field, .patents, .notes, .record, footer { position: relative; z-index: 1; }
+
+  .hero {
+    min-height: 100dvh;
+    overflow: hidden;
+  }
+  /* full-bleed: the framing now comes from the simulator's own camera,
+     set to Myra's placed shot, not from cropping the iframe. The scene
+     stays curtained (opacity 0) until the camera is on the mark and
+     frames are rendering; then it fades up with the orbit running. */
+  #sim {
+    position: absolute;
+    width: 100%; height: 100%;
+    left: 0; top: 0;
+    border: 0;
+    opacity: 0;
+    transition: opacity 1.1s cubic-bezier(0.22, 1, 0.36, 1);
+  }
+  .sim-wrap.ready #sim { opacity: 1; }
+  @media (prefers-reduced-motion: reduce) {
+    #sim { transition: none; }
+  }
+  /* shade grading over the scene: darken the left reading zone. The mask
+     bleeds the whole scrim to nothing before the hero's bottom edge, so
+     it dissolves into the scene instead of ending in a line. */
+  .hero::before {
+    content: '';
+    position: absolute; inset: 0;
+    background:
+      linear-gradient(100deg, rgba(8,12,8,0.78) 0%, rgba(8,12,8,0.45) 42%, rgba(8,12,8,0.06) 68%),
+      radial-gradient(120% 90% at 78% 30%, transparent 42%, rgba(6,10,6,0.32) 100%);
+    -webkit-mask-image: linear-gradient(180deg, #000 0%, #000 45%, transparent 100%);
+    mask-image: linear-gradient(180deg, #000 0%, #000 45%, transparent 100%);
+    z-index: 2;
+    pointer-events: none;
+  }
+  /* text floats above but only its controls take the pointer, so the
+     rest of the hero is the live simulator */
+  .hero-copy { pointer-events: none; }
+  .hero-copy .ring-chip { pointer-events: auto; }
+  .hero-copy {
+    position: relative; z-index: 3;
+    padding: clamp(24px, 6vh, 72px) clamp(22px, 5vw, 60px);
+    display: flex; flex-direction: column;
+    min-height: 100dvh;
+    justify-content: center;
+    width: min(1240px, 100%);
+    margin: 0 auto;
+  }
+  /* the copy owns the left half; the chime owns the right */
+  .hero-copy > * { max-width: min(48%, 560px); }
+  @media (max-width: 760px) {
+    .hero-copy > * { max-width: 92%; }
+  }
+  .eyebrow {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 12px; letter-spacing: 0.16em; text-transform: uppercase;
+    color: rgba(242,240,234,0.66);
+    margin-bottom: 18px;
+  }
+  .eyebrow em { font-style: normal; color: #ff9d84; }
+  h1 {
+    font-family: 'Jost', sans-serif;
+    font-weight: 200;
+    font-size: clamp(3rem, 7.5vw, 6.5rem);
+    line-height: 0.98; letter-spacing: -0.02em;
+    color: #fbfaf6;
+    margin-bottom: 26px;
+    max-width: 11ch;
+    text-shadow: 0 2px 30px rgba(0,0,0,0.35);
+  }
+  .lede {
+    font-family: 'Jost', sans-serif;
+    font-weight: 300;
+    font-size: clamp(1.4rem, 2.2vw, 1.9rem);
+    line-height: 1.4; max-width: 44ch;
+    color: rgba(251,250,246,0.95);
+    margin-bottom: 12px;
+  }
+  .lede-sub {
+    font-size: 0.95rem; line-height: 1.6; max-width: 46ch;
+    color: rgba(242,240,234,0.62);
+    margin-bottom: 34px;
+  }
+  .wind-row {
+    display: flex; align-items: center; gap: 18px; flex-wrap: wrap;
+  }
+  .ring-chip {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 12px; letter-spacing: 0.12em; text-transform: uppercase;
+    color: #fbfaf6;
+    background: rgba(255,157,132,0.14);
+    border: 1px solid rgba(255,157,132,0.65);
+    padding: 13px 26px; border-radius: 999px;
+    cursor: pointer;
+    backdrop-filter: blur(8px);
+    transition: background 0.25s cubic-bezier(0.22,1,0.36,1), border-color 0.25s cubic-bezier(0.22,1,0.36,1);
+    display: inline-flex; align-items: center; gap: 12px;
+  }
+  /* live spectrum: one bin per tube at its true frequency, fed by the
+     simulator's real strike events. The chime's tuning IS the x-axis. */
+  .meter-fft { width: 48px; height: 16px; display: block; }
+  .ring-chip:hover { background: rgba(255,157,132,0.26); border-color: #ff9d84; }
+  .wind-note {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 11px; letter-spacing: 0.12em; text-transform: uppercase;
+    color: rgba(242,240,234,0.55);
+  }
+  .wind-note b { color: #ff9d84; font-weight: 500; }
+
+  /* ============ THE DRIFT — the forest deepens as you descend ============ */
+  /* Pulled up to overlap the hero's lower half: its darkening rises while
+     the hero scrim fades, one long crossfade with no unveiled strip. */
+  .drift {
+    height: 85vh;
+    margin-top: -55vh;
+    background: linear-gradient(180deg,
+      transparent 0%,
+      rgba(6, 9, 6, 0.26) 55%,
+      rgba(6, 9, 6, 0.55) 100%);
+    pointer-events: none;
+  }
+
+  /* ============ ORGANIC GALLERY — cards floating over the forest ============ */
+  .field {
+    background: linear-gradient(180deg, rgba(6, 9, 6, 0.55) 0%, rgba(6, 9, 6, 0.72) 100%);
+    color: #23261f;
+    padding: 0 clamp(20px, 5vw, 64px) 90px;
+  }
+  .field-head {
+    max-width: 1100px; margin: 0 auto;
+    transform: translateY(-9vh); /* rises up into the drift: no hard seam */
+  }
+  .field-head h2 {
+    font-family: 'Jost', sans-serif; font-weight: 300;
+    font-size: clamp(1.9rem, 3.6vw, 2.9rem);
+    color: #fbfaf6; /* sits on the dark part of the drift */
+    text-shadow: 0 2px 24px rgba(10,14,10,0.4);
+  }
+  .field-head p {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 11.5px; letter-spacing: 0.14em; text-transform: uppercase;
+    color: rgba(251,250,246,0.7); margin-top: 8px;
+  }
+  .flow {
+    max-width: 1100px; margin: -2vh auto 0;
+    columns: 3; column-gap: 26px;
+  }
+  @media (max-width: 900px) { .flow { columns: 2; } }
+  @media (max-width: 560px) { .flow { columns: 1; } }
+  .card {
+    break-inside: avoid;
+    margin: 0 0 26px;
+    border-radius: 14px;
+    overflow: hidden;
+    background: #fffdf6;
+    box-shadow: 0 2px 6px rgba(46,42,30,0.10), 0 18px 44px -18px rgba(46,42,30,0.28);
+    transition: transform 0.35s cubic-bezier(0.22,1,0.36,1), box-shadow 0.35s cubic-bezier(0.22,1,0.36,1);
+  }
+  .card:hover { transform: translateY(-4px) rotate(0deg) !important; box-shadow: 0 4px 10px rgba(46,42,30,0.12), 0 26px 60px -20px rgba(46,42,30,0.34); }
+  .tilt-l { transform: rotate(-1.3deg); }
+  .tilt-r { transform: rotate(1.2deg); }
+  .card img { display: block; width: 100%; height: auto; }
+  .card.photo img { aspect-ratio: 4/3; object-fit: cover; }
+  .card.photo video { display: block; width: 100%; aspect-ratio: 4/3; object-fit: cover; }
+  .card .pad { padding: 16px 18px 18px; }
+  .card h3 {
+    font-family: 'Jost', sans-serif; font-weight: 400;
+    font-size: 1.25rem; color: #23261f; margin-bottom: 6px;
+  }
+  .card h3 a { color: inherit; text-decoration: none; }
+  .card h3 a:hover { color: #d4573c; }
+  .card p { font-size: 0.86rem; line-height: 1.55; color: rgba(35,38,31,0.72); }
+  .card .cap {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 10px; letter-spacing: 0.12em; text-transform: uppercase;
+    color: rgba(35,38,31,0.5);
+    padding: 10px 14px;
+  }
+  .card.proj .thumb-row { display: flex; align-items: center; gap: 14px; padding: 16px 18px 0; }
+  .card.proj .thumb-row img { width: 56px; height: 56px; border-radius: 10px; object-fit: cover; }
+  .card .ptag {
+    display: inline-block; margin-top: 12px;
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 9.5px; letter-spacing: 0.14em; text-transform: uppercase;
+    color: #b8402a; border: 1px solid rgba(212,87,60,0.5);
+    border-radius: 4px; padding: 3px 8px;
+  }
+
+  /* ============ PATENT PENDING — inventions cluster ============ */
+  .patents {
+    background: rgba(6, 9, 6, 0.72);
+    padding: 30px clamp(20px, 5vw, 64px) 110px;
+  }
+  .patents-inner { max-width: 1100px; margin: 0 auto; }
+  .patents h2 {
+    font-family: 'Jost', sans-serif; font-weight: 300;
+    font-size: clamp(1.6rem, 3vw, 2.3rem); color: #efe9db;
+    margin-bottom: 6px;
+  }
+  .patents .sub {
+    font-size: 0.95rem; color: rgba(239, 233, 219, 0.72); max-width: 56ch; margin-bottom: 34px;
+  }
+  .pat-row { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 24px; }
+  .pat {
+    background: #23261f; color: #efe9db;
+    border-radius: 16px; overflow: hidden;
+    display: flex; flex-direction: column;
+  }
+  .pat img { width: 100%; aspect-ratio: 16/10; object-fit: cover; }
+  .pat .pad { padding: 18px 20px 20px; display: flex; flex-direction: column; gap: 8px; flex: 1; }
+  .pat h3 { font-family: 'Jost', sans-serif; font-weight: 400; font-size: 1.15rem; }
+  .pat h3 a { color: inherit; text-decoration: none; border-bottom: 1px solid rgba(239,233,219,0.3); }
+  .pat h3 a:hover { color: #ff9d84; border-bottom-color: #ff9d84; }
+  .pat p { font-size: 0.84rem; line-height: 1.55; color: rgba(239,233,219,0.7); flex: 1; }
+  .pat .tag {
+    align-self: flex-start;
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 9.5px; letter-spacing: 0.14em; text-transform: uppercase;
+    color: #ff9d84; border: 1px solid rgba(255,157,132,0.5);
+    border-radius: 4px; padding: 3px 8px;
+  }
+  .shop-strip { display: flex; gap: 12px; justify-content: center; flex-wrap: wrap; margin: 34px 0 22px; }
+  .shop-strip img {
+    height: 92px; width: auto; max-width: 180px; object-fit: cover;
+    border-radius: 10px; border: 1px solid rgba(239,233,219,0.15);
+  }
+  .shop-chips { display: flex; gap: 12px; justify-content: center; flex-wrap: wrap; }
+  .shop-chips a {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 11.5px; letter-spacing: 0.1em; text-transform: uppercase;
+    color: #efe9db; text-decoration: none;
+    border: 1px solid rgba(239,233,219,0.35); border-radius: 999px;
+    padding: 10px 22px;
+    transition: border-color 0.25s cubic-bezier(0.22,1,0.36,1), background 0.25s cubic-bezier(0.22,1,0.36,1);
+  }
+  .shop-chips a:hover { border-color: #ff9d84; background: rgba(255,157,132,0.12); }
+
+  /* the Frederico release button — the card's live wire */
+  .spawn-cta {
+    display: inline-block; margin-top: 12px;
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 10.5px; letter-spacing: 0.1em; text-transform: uppercase;
+    color: #b8402a; text-decoration: none;
+    border: 1px solid rgba(212,87,60,0.55); border-radius: 999px;
+    padding: 8px 16px;
+    transition: background 0.25s cubic-bezier(0.22,1,0.36,1), color 0.25s cubic-bezier(0.22,1,0.36,1);
+  }
+  .spawn-cta:hover { background: #d4573c; color: #fffdf6; }
+
+  /* ============ NOTES — the blog's landing zone ============ */
+  .notes { background: rgba(6, 9, 6, 0.72); padding: 10px clamp(20px, 5vw, 64px) 90px; }
+  .notes-inner { max-width: 1100px; margin: 0 auto; }
+  .notes h2 {
+    font-family: 'Jost', sans-serif; font-weight: 300;
+    font-size: clamp(1.6rem, 3vw, 2.3rem); color: #efe9db; margin-bottom: 6px;
+  }
+  .notes .sub { font-size: 0.95rem; color: rgba(239,233,219,0.72); max-width: 60ch; }
+  .rec-link { color: #d4573c; text-decoration: none; border-bottom: 1px solid rgba(212,87,60,0.4); }
+  .rec-link:hover { color: #b8402a; border-bottom-color: #b8402a; }
+  .record .rec-link { color: #ff9d84; border-bottom-color: rgba(255,157,132,0.4); }
+  .record .rec-link:hover { color: #ffb9a6; }
+
+  /* ============ LIGHTBOX — full photos on demand ============ */
+  .card.photo { cursor: zoom-in; }
+  .lb {
+    position: fixed; inset: 0; z-index: 60;
+    background: rgba(4, 7, 4, 0.93);
+    display: flex; flex-direction: column;
+    align-items: center; justify-content: center; gap: 14px;
+    padding: 30px; cursor: zoom-out;
+  }
+  .lb[hidden] { display: none; }
+  .lb img, .lb video {
+    max-width: min(1300px, 92vw); max-height: 82vh;
+    border-radius: 8px; border: 1px solid rgba(239,233,219,0.2);
+    cursor: default;
+  }
+  .lb figcaption {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 11px; letter-spacing: 0.1em; text-transform: uppercase;
+    color: rgba(239,233,219,0.7);
+  }
+  .lb button {
+    position: absolute; background: none; border: none;
+    color: rgba(239,233,219,0.6);
+    font: 300 34px/1 'Jost', sans-serif;
+    padding: 14px; cursor: pointer;
+  }
+  .lb button:hover { color: #fffdf6; }
+  .lb .lb-x { top: 12px; right: 16px; }
+  .lb .lb-p { left: 8px; top: 50%; transform: translateY(-50%); }
+  .lb .lb-n { right: 8px; top: 50%; transform: translateY(-50%); }
+
+  /* ============ EXPERIENCE — after the wow, near the forest floor ============ */
+  .record {
+    background: linear-gradient(180deg, rgba(6, 9, 6, 0.72) 0%, rgba(8, 10, 7, 0.85) 100%);
+    color: #efe9db;
+    padding: 40px clamp(20px, 5vw, 64px) 110px;
+  }
+  .record-inner { max-width: 900px; margin: 0 auto; }
+  .record h2 { font-family: 'Jost', sans-serif; font-weight: 300; font-size: clamp(1.6rem, 3vw, 2.3rem); margin-bottom: 6px; }
+  .record .sub { font-size: 0.95rem; color: rgba(239, 233, 219, 0.66); margin-bottom: 30px; max-width: 60ch; }
+  .role { display: grid; grid-template-columns: 110px 1fr; gap: 18px; padding: 14px 0; border-top: 1px solid rgba(239, 233, 219, 0.18); }
+  .role .when { font-family: 'IBM Plex Mono', monospace; font-size: 11px; letter-spacing: 0.06em; color: rgba(239, 233, 219, 0.55); padding-top: 3px; }
+  .role h3 { font-family: 'Jost', sans-serif; font-weight: 400; font-size: 1.05rem; margin-bottom: 3px; }
+  .role p { font-size: 0.85rem; line-height: 1.55; color: rgba(239, 233, 219, 0.7); }
+  .resume-btn {
+    display: inline-block; margin-top: 28px;
+    font-family: 'Jost', sans-serif; font-size: 1.1rem; font-weight: 400;
+    color: #fbfaf6; background: #d4573c;
+    padding: 14px 36px; border-radius: 999px; text-decoration: none;
+    transition: transform 0.3s cubic-bezier(0.22,1,0.36,1), background 0.3s cubic-bezier(0.22,1,0.36,1);
+  }
+  .resume-btn:hover { background: #c04a30; transform: translateY(-2px); }
+  footer {
+    background: #1a1d16; color: rgba(239,233,219,0.6);
+    font-family: 'IBM Plex Mono', monospace; font-size: 11px; letter-spacing: 0.1em;
+    padding: 26px clamp(20px, 5vw, 64px); text-align: center;
+  }
+  footer a { color: rgba(239,233,219,0.85); }
+  footer .cc-line { margin-top: 10px; font-size: 10px; color: rgba(239,233,219,0.45); }
+  footer .cc-line a { color: rgba(239,233,219,0.6); }
+  @media (prefers-reduced-motion: reduce) {
+    .card, .resume-btn { transition: none; }
+  }
+</style>
 </head>
 <body>
 
-<div class="page" id="app">
-
-  <!-- ======================= HERO ======================= -->
-  <header class="hero" style="padding-top: 42px;">
-    <div class="eyebrow">St. Louis, MO · <em>Designer</em> · AI Engineer</div>
+<!-- ================= HERO ================= -->
+<header class="hero">
+  <div class="sim-wrap">
+    <iframe id="sim" src="/sim/index.html?c=v1_hs-86_hc-0_sp-35" title="Wind Chime Simulator, live"></iframe>
+  </div>
+  <div class="hero-copy">
+    <div class="eyebrow">St. Louis, MO · <em>Designer</em> · Builder · AI Engineer</div>
     <h1>Myra Krusemark</h1>
-    <!-- freshly measured: the dimension line under the name -->
-    <div class="dimline" aria-hidden="true"><span class="dimline-label">Fig. 00 / Designer · Builder</span></div>
-
-    <div class="hero-lead">
-      <p class="lede">
-        I build software that shouldn't run in a browser:
-        <strong>a whole worm's nervous system</strong>, <strong>a wind
-        chime that rings with the weather outside your window</strong>.
-      </p>
-      <p class="lede-sub">
-        For almost two decades I've also done enterprise UX, most of it
-        for tens of millions of Medicaid and Medicare members. I design
-        the product and direct the AI harnesses that build it.
-      </p>
-      <!-- The specimen dish — bench.js wires the click to the sacred
-           #frederico-spawn path and adds the release line -->
-      <div class="specimen">
-        <button class="dish" id="specimen-dish" type="button" aria-label="Release the worm onto this page">
-          <svg class="worm" viewBox="0 0 92 36" width="92" height="36" aria-hidden="true">
-            <g class="worm-g">
-              <circle cx="10" cy="18" r="4.4"/>
-              <circle cx="22" cy="18" r="5.2"/>
-              <circle cx="34" cy="18" r="5.6"/>
-              <circle cx="46" cy="18" r="5.8"/>
-              <circle cx="58" cy="18" r="5.6"/>
-              <circle cx="70" cy="18" r="5.2"/>
-              <circle cx="82" cy="18" r="4.4"/>
-            </g>
-          </svg>
-        </button>
-        <div class="dish-note" id="dish-note" aria-hidden="true">
-          <span>Specimen: C. elegans · 302 neurons</span>
-        </div>
-      </div>
-    </div>
-
-    <!-- Project index — the parts list on the drawing. Flagship builds
-         first, teasing the full section below; thumbnails are shared. -->
-    <aside class="rail" aria-labelledby="rail-k">
-      <div class="rail-head">
-        <span class="rail-k" id="rail-k">What I've built</span>
-        <a class="rail-all" href="#projects">See all ↓</a>
-      </div>
-      <ol class="rail-list" role="list">
-        <li>
-          <a class="g rail-item" href="/frederico/">
-            <img class="rail-thumb" src="assets/projects/frederico.webp" alt="" loading="lazy">
-            <span>
-              <span class="rail-name">Frederico</span>
-              <span class="rail-hook">Every neuron of a real worm, alive in a bookmarklet.</span>
-            </span>
-          </a>
-        </li>
-        <li>
-          <a class="g rail-item" href="https://windchimesimulator.com/">
-            <img class="rail-thumb" src="assets/projects/windchime.webp" alt="" loading="lazy">
-            <span>
-              <span class="rail-name">Wind Chime Simulator</span>
-              <span class="rail-hook">Synthesized live from real tube overtones; rings with your local wind.</span>
-            </span>
-          </a>
-        </li>
-        <li>
-          <a class="g rail-item" href="https://fathomdx.io/">
-            <img class="rail-thumb" src="assets/work/fathom.webp" alt="" loading="lazy">
-            <span>
-              <span class="rail-name">Fathom</span>
-              <span class="rail-hook">Self-hosted memory for persistent AI agents.</span>
-            </span>
-          </a>
-        </li>
-        <li>
-          <a class="g rail-item" href="https://superspreeder.com/">
-            <img class="rail-thumb" src="assets/projects/superspreeder.webp" alt="" loading="lazy">
-            <span>
-              <span class="rail-name">Super Spreeder</span>
-              <span class="rail-hook">One word at a time, so your eyes never scan.</span>
-            </span>
-          </a>
-        </li>
-        <li>
-          <a class="g rail-item" href="https://txt2speech.org/">
-            <img class="rail-thumb" src="assets/projects/txt2speech.webp" alt="" loading="lazy">
-            <span>
-              <span class="rail-name">txt2speech.org</span>
-              <span class="rail-hook">Text to speech that never leaves your browser.</span>
-            </span>
-          </a>
-        </li>
-        <li>
-          <a class="g rail-item" href="https://birdquiz.myrakrusemark.com/">
-            <img class="rail-thumb" src="assets/projects/birdquiz.webp" alt="" loading="lazy">
-            <span>
-              <span class="rail-name">Bird Quiz</span>
-              <span class="rail-hook">Learn birds by sight and by song.</span>
-            </span>
-          </a>
-        </li>
-      </ol>
-    </aside>
-
-    <div class="stats" role="list" aria-label="Track record">
-      <div class="stat" role="listitem"><span class="n"><span data-count="17">17</span>&nbsp;yrs</span><span class="l">shipping products since 2009</span></div>
-      <div class="stat" role="listitem"><span class="n"><span data-count="10">10</span>M+</span><span class="l">users and members served</span></div>
-      <div class="stat" role="listitem"><span class="n"><span data-count="8">8</span></span><span class="l">products live on the web right now</span></div>
-      <div class="stat" role="listitem"><span class="n">all&nbsp;lanes</span><span class="l">research · design · a11y · code · infra</span></div>
-    </div>
-
-    <div class="cta-row flush">
-      <a class="g sg-button g-cta" href="Myra%20Krusemark%20-%20Resume.pdf" sg-material="clear" sg-tilt sg-press>Résumé</a>
-      <a class="g sg-button g-chip seam-left" href="https://github.com/myrakrusemark" sg-material="clear" sg-tilt sg-press>GitHub</a>
-      <a class="g sg-button g-chip seam-left" href="https://www.linkedin.com/in/myrasmithkrusemark/" sg-material="clear" sg-tilt sg-press>LinkedIn</a>
-    </div>
-  </header>
-
-  <!-- ======================= WHAT I'VE BUILT ======================= -->
-  <!-- The lede, delivered. Three flagships first, each with one plain
-       line naming the hard part, then the rest. -->
-  <div class="dim" aria-hidden="true"></div>
-  <section id="projects">
-    <div data-reveal>
-      <h2><span class="hx">01 /</span>What I've built</h2>
-      <div class="dimline" aria-hidden="true"></div>
-      <p class="section-note">
-        Independent builds, live and used and maintained. The first three
-        are the ones I'd point a stranger at.
-      </p>
-    </div>
-    <ol class="xp proj">
-      <li class="flagship" data-reveal>
-        <span class="xp-when"><span class="fig-no">Fig. 01</span><img class="proj-thumb" src="assets/projects/frederico.webp" alt="" loading="lazy"></span>
-        <div class="xp-body">
-          <h3><a href="/frederico/">Frederico &rarr;</a></h3>
-          <p>A real <em>C.&nbsp;elegans</em>, its whole locomotion connectome
-          simulated neuron by neuron in WebAssembly, living in a bookmarklet.
-          Click it on any page and the worm crawls out and eats the words.
-          Sprinkle the page's own letters to feed it, and keep it fed or it
-          dies. Drag the link to your bookmarks bar to take him anywhere, or
-          <a class="plain-link" id="frederico-spawn" href="/frederico/">🪱&nbsp;Birth Frederico right now!</a></p>
-        </div>
-      </li>
-      <li class="flagship" data-reveal>
-        <span class="xp-when"><span class="fig-no">Fig. 02</span><img class="proj-thumb" src="assets/projects/windchime.webp" alt="" loading="lazy"></span>
-        <div class="xp-body">
-          <h3><a href="https://windchimesimulator.com/">Wind Chime Simulator →</a></h3>
-          <span class="live-wind" id="live-wind" hidden></span>
-          <p>Every note is synthesized live from the real inharmonic overtone
-          ratios of a struck aluminum tube. No samples. A 240Hz physics rig
-          moves the clapper, and local National Weather Service wind data
-          feeds it, so the chimes ring with the weather outside your window.</p>
-        </div>
-      </li>
-      <li class="flagship" data-reveal>
-        <span class="xp-when"><span class="fig-no">Fig. 03</span><img class="proj-thumb" src="assets/work/fathom.webp" alt="" loading="lazy"></span>
-        <div class="xp-body">
-          <h3><a href="https://fathomdx.io/">Fathom →</a></h3>
-          <p>A self-hosted memory and identity platform for persistent AI
-          agents: dashboard, CLI, design system, and a Postgres/pgvector
-          store underneath. I designed every part and directed the agents
-          that wrote it.</p>
-        </div>
-      </li>
-      <li data-reveal>
-        <span class="xp-when"><span class="fig-no">Fig. 04</span><img class="proj-thumb" src="assets/projects/superspreeder.webp" alt="" loading="lazy"></span>
-        <div class="xp-body">
-          <h3><a href="https://superspreeder.com/">Super Spreeder →</a></h3>
-          <p>Speed reading for eBooks, PDFs, and plain text, built on
-          enhanced RSVP. Words arrive one at a time at your eye's fixation
-          point, so there's no scanning, only reading. A throttle control
-          keeps the pace where your attention is.</p>
-        </div>
-      </li>
-      <li data-reveal>
-        <span class="xp-when"><span class="fig-no">Fig. 05</span><img class="proj-thumb" src="assets/projects/daisy.webp" alt="" loading="lazy"></span>
-        <div class="xp-body">
-          <h3><a href="https://github.com/myrakrusemark/daisy2-chat">Daisy AI Platform →</a></h3>
-          <p>A 2023 exploration of how LLMs use tools, follow instructions,
-          keep memories, and plan multi-step work. Agentic AI before the word
-          was common.</p>
-        </div>
-      </li>
-      <li data-reveal>
-        <span class="xp-when"><span class="fig-no">Fig. 06</span><img class="proj-thumb" src="assets/projects/txt2speech.webp" alt="" loading="lazy"></span>
-        <div class="xp-body">
-          <h3><a href="https://txt2speech.org/">txt2speech.org →</a></h3>
-          <p>Text to speech that runs entirely in your browser. Local and
-          private, with no word limit; your words never leave the machine.</p>
-        </div>
-      </li>
-      <li data-reveal>
-        <span class="xp-when"><span class="fig-no">Fig. 07</span><img class="proj-thumb" src="assets/projects/birdquiz.webp" alt="" loading="lazy"></span>
-        <div class="xp-body">
-          <h3><a href="https://birdquiz.myrakrusemark.com/">Bird Quiz →</a></h3>
-          <p>Learn birds by sight and by song. You don't win it; accuracy
-          just climbs over time, across three regional bird sets.</p>
-        </div>
-      </li>
-      <li data-reveal>
-        <span class="xp-when"><span class="fig-no">Fig. 08</span><img class="proj-thumb" src="assets/projects/futures.webp" alt="" loading="lazy"></span>
-        <div class="xp-body">
-          <h3><a href="https://myrakrusemark.com/futures/">Choose Your Future →</a></h3>
-          <p>A sobering choose-your-own-adventure story about democracy's
-          past and its possible futures.</p>
-        </div>
-      </li>
-      <li data-reveal>
-        <span class="xp-when"><span class="fig-no">Fig. 09</span><img class="proj-thumb" src="assets/projects/github.webp" alt="" loading="lazy"></span>
-        <div class="xp-body">
-          <h3><a href="https://github.com/myrakrusemark">All of GitHub →</a></h3>
-          <p>Everything else, source included.</p>
-        </div>
-      </li>
-    </ol>
-  </section>
-
-  <!-- ======================= SELECTED ENTERPRISE WORK ======================= -->
-  <!-- Proof of rigor under the wonder above. Two that carry the weight;
-       the full history lives on its own page. The section runs as a
-       full-bleed tone band; the grid reads through it. -->
-  <div class="dim" aria-hidden="true"></div>
-  <section id="work">
-    <div data-reveal>
-      <div class="eyebrow">Enterprise record</div>
-      <h2><span class="hx">02 /</span>Selected enterprise work</h2>
-      <div class="dimline" aria-hidden="true"></div>
-      <p class="section-note">
-        Twenty years of enterprise UX stand behind the builds above. The two
-        that carry the most weight, both at a Fortune 25 health insurer:
-      </p>
-    </div>
-
-    <a class="g g-card" href="/ux/fap/" data-reveal>
-      <div class="card-body">
-        <div class="card-meta">2025 · Centene (Fortune 25) · UX Team Lead</div>
-        <h3>Find A Provider</h3>
-        <p>Ground-up redesign of a decade-old provider search used by tens of
-        millions of Medicaid, Medicare, and Commercial members. Led research,
-        content, and design across a three-phase delivery.</p>
-      </div>
-      <img class="card-img" src="assets/work/fap.webp" alt="Find A Provider search results interface" loading="lazy">
-      <div class="card-foot">
-        <span class="card-stat">+<span data-count="40">40</span>% USER SATISFACTION</span>
-        <span class="card-go">Read the case study →</span>
-      </div>
-    </a>
-
-    <a class="g g-card mirror" href="/ux/design-explorations/" data-reveal>
-      <div class="card-body">
-        <div class="card-meta">2023 · Centene</div>
-        <h3>Design Explorations</h3>
-        <p>Concept work across member experience: dashboards, digital
-        delivery, ID cards, progressive display patterns, recent claims,
-        and secure messaging.</p>
-      </div>
-      <img class="card-img" src="assets/work/design-explorations.webp" alt="Member experience design concepts" loading="lazy">
-      <div class="card-foot">
-        <span class="card-stat">PATTERNS ADOPTED INTO PRODUCTION</span>
-        <span class="card-go">Read the case study →</span>
-      </div>
-    </a>
-
-    <p class="section-note" style="margin-top: 22px;" data-reveal>
-      <a class="plain-link" href="/experience/">Full work history →</a>
-      &nbsp;·&nbsp;
-      <a class="plain-link" href="/ux/">More case studies →</a>
+    <p class="lede">
+      I build what I love.
     </p>
-  </section>
-
-  <!-- ======================= TOPOCO / PHYSICAL LANE ======================= -->
-  <div class="dim" aria-hidden="true"></div>
-  <section id="topoco">
-    <div data-reveal>
-      <h2><span class="hx">03 /</span>TopoCo Art</h2>
-      <div class="dimline" aria-hidden="true"></div>
-      <p class="section-note">
-        Physical products, designed and printed in St. Louis. Real customers
-        and real reviews, on my own site plus eBay and Etsy. Proof the craft
-        leaves the screen. One of them, an adjustable bracket for angled walls,
-        is <a class="plain-link" href="https://adjustableangledshelfbrackets.com/">patent-pending hardware</a>.
-      </p>
-    </div>
-    <!-- Product gallery — centered strip of shop photos; each one is a
-         plain link to the shop. Not a .ribbon, so the lightbox skips it. -->
-    <div data-reveal>
-      <div class="topoco-gallery">
-        <a href="https://topoco.art/"><img src="assets/media/topoco-shelf-bracket.webp" alt="Tilted shelf bracket for slanted attic walls, with hanging rod" loading="lazy"></a>
-        <a href="https://topoco.art/"><img src="assets/media/topoco-scrunchie-webcam.webp" alt="Scrunchie webcam covers in assorted colors" loading="lazy"></a>
-        <a href="https://topoco.art/"><img src="assets/media/topoco-sewing-tilt.webp" alt="Tilted ergonomic sewing machine platform" loading="lazy"></a>
-        <a href="https://topoco.art/"><img src="assets/media/topoco-hex-holders.webp" alt="Catan 5–6 player stretchy hex holders" loading="lazy"></a>
-        <a href="https://topoco.art/"><img src="assets/media/topoco-card-box.webp" alt="Playing card protector boxes" loading="lazy"></a>
-        <a href="https://topoco.art/"><img src="assets/media/topoco-remote-holder.webp" alt="Remote control holder" loading="lazy"></a>
-      </div>
-      <div class="strip-caption">Printed in St. Louis · Real customers</div>
-    </div>
-    <div class="chip-row flush" data-reveal>
-      <a class="g sg-button g-chip" href="https://topoco.art/" sg-material="clear" sg-tilt sg-press>topoco.art</a>
-      <a class="g sg-button g-chip seam-left" href="https://www.ebay.com/str/topocoart" sg-material="clear" sg-tilt sg-press>eBay</a>
-      <a class="g sg-button g-chip seam-left" href="https://www.etsy.com/shop/TopoCoArt" sg-material="clear" sg-tilt sg-press>Etsy</a>
-    </div>
-  </section>
-
-  <!-- ======================= INVENTION LANE ======================= -->
-  <!-- Legible, not revealing. What it does and that it's filed; the how
-       stays under wraps. Text only, no demo yet. -->
-  <div class="dim" aria-hidden="true"></div>
-  <section id="invention" data-reveal>
-    <h2><span class="hx">04 /</span>An invention, filed</h2>
-    <div class="dimline" aria-hidden="true"></div>
-    <p class="section-note">
-      A system that lays durable, full-color images directly onto
-      three-dimensional objects after they're made. I filed a provisional
-      patent on it, aimed at licensing to the desktop laser and engraving
-      makers. The mechanism stays under wraps until it's placed.
+    <p class="lede-sub">
+      Thirteen years of UX and development. I dream up, design, build,
+      and deliver finished products.
     </p>
-    <div class="invention-row">
-      <div class="title-block spec" aria-label="Invention status">
-        <div class="tb-cell"><span class="k">Status</span><span class="v">Provisional patent filed</span></div>
-        <div class="tb-cell"><span class="k">Target</span><span class="v">Desktop laser &amp; engraving makers</span></div>
-        <div class="tb-cell"><span class="k">Mechanism</span><span class="v"><span class="redacted" role="img" aria-label="withheld">Under wraps</span></span></div>
+    <div class="wind-row">
+      <button class="ring-chip" id="ring">
+        <canvas class="meter-fft" id="meter-fft" width="96" height="32" aria-hidden="true"></canvas>
+        <span id="ring-label">Hear the chimes</span>
+      </button>
+      <span class="wind-note" id="wind-note"><b>live St. Louis wind</b></span>
+    </div>
+  </div>
+</header>
+
+<!-- ================= DRIFT (shade dissolves into light) ================= -->
+<div class="drift"></div>
+
+<!-- ================= ORGANIC GALLERY ================= -->
+<section class="field">
+  <div class="field-head">
+    <h2>What I've built, what I've seen</h2>
+    <p>projects and photographs</p>
+  </div>
+  <div class="flow">
+    <div class="card proj tilt-l">
+      <div class="thumb-row"><img src="/assets/projects/frederico.webp" alt=""><h3><a href="https://myrakrusemark.com/frederico/" target="_blank" rel="noopener">Frederico</a></h3></div>
+      <div class="pad"><p>A real C. elegans, its whole locomotion connectome simulated neuron by neuron in WebAssembly, living in a bookmarklet. Keep him fed or he dies.</p><a class="spawn-cta" id="frederico-spawn" href="https://myrakrusemark.com/frederico/" draggable="true">Release him on this page</a></div>
+    </div>
+    <div class="card photo tilt-r">
+      <img src="/assets/media/radio-film.webp" alt="Raccoon caught at the cat door, by Lego Mindstorms" loading="lazy">
+      <div class="cap">Raccoon caught at the cat door, by Lego Mindstorms</div>
+    </div>
+    <div class="card proj tilt-l">
+      <div class="thumb-row"><img src="/assets/projects/windchime.webp" alt=""><h3><a href="https://windchimesimulator.com/" target="_blank" rel="noopener">Wind Chime Simulator</a></h3></div>
+      <div class="pad"><p>Every note synthesized live from the real inharmonic overtone ratios of a struck aluminum tube. No samples. You just heard it.</p></div>
+    </div>
+    <div class="card photo tilt-r">
+      <img src="/assets/media/balloons.webp" alt="Forest Park balloon race · photo contest winner" loading="lazy">
+      <div class="cap">Forest Park balloon race · photo contest winner</div>
+    </div>
+    <div class="card proj tilt-l">
+      <div class="thumb-row"><img src="/assets/work/fathom.webp" alt=""><h3><a href="https://fathomdx.io/" target="_blank" rel="noopener">Fathom</a></h3></div>
+      <div class="pad"><p>A self-hosted memory and identity platform for persistent AI agents. I designed every part and directed the agents that wrote it.</p>
+      <span class="ptag">Patent pending</span></div>
+    </div>
+    <div class="card photo ">
+      <img src="/assets/media/spark-swirl.webp" alt="Fireworks · long exposure" loading="lazy">
+      <div class="cap">Fireworks · long exposure</div>
+    </div>
+    <div class="card photo tilt-r">
+      <img src="/assets/media/ember-burst.webp" alt="Fireworks · long exposure" loading="lazy">
+      <div class="cap">Fireworks · long exposure</div>
+    </div>
+    <div class="card photo tilt-l">
+      <video src="/assets/media/manfam.mp4" muted loop playsinline autoplay preload="metadata" aria-label="Manufactured Families · audio documentary, 2008"></video>
+      <div class="cap">Manufactured Families · audio documentary, 2008</div>
+    </div>
+    <div class="card photo tilt-r">
+      <img src="/assets/media/sparkler.webp" alt="Fireworks · long exposure" loading="lazy">
+      <div class="cap">Fireworks · long exposure</div>
+    </div>
+    <div class="card proj tilt-l">
+      <div class="thumb-row"><img src="/assets/projects/superspreeder.webp" alt=""><h3><a href="https://superspreeder.com/" target="_blank" rel="noopener">Super Spreeder</a></h3></div>
+      <div class="pad"><p>Speed reading built on enhanced RSVP. Words arrive at your eye's fixation point, so there's no scanning, only reading.</p></div>
+    </div>
+    <div class="card photo tilt-r">
+      <video src="/assets/media/gtv.mp4" muted loop playsinline autoplay preload="metadata" aria-label="GTV · nature montage"></video>
+      <div class="cap">GTV · nature montage</div>
+    </div>
+    <div class="card photo ">
+      <video src="/assets/media/whydowesee.mp4" muted loop playsinline autoplay preload="metadata" aria-label="Why Do We See? · student documentary"></video>
+      <div class="cap">Why Do We See? · student documentary</div>
+    </div>
+    <div class="card photo tilt-l">
+      <video src="/assets/media/resume-dvd.mp4" muted loop playsinline autoplay preload="metadata" aria-label="Resume DVD, 2010 · motion menus, rebuilt for the web"></video>
+      <div class="cap">Resume DVD, 2010 · motion menus, rebuilt for the web</div>
+    </div>
+    <div class="card photo tilt-r">
+      <video src="/assets/media/dws-spring.mp4" muted loop playsinline autoplay preload="metadata" aria-label="DWS 2011 spring showcase"></video>
+      <div class="cap">DWS 2011 spring showcase</div>
+    </div>
+    <div class="card proj tilt-l">
+      <div class="thumb-row"><img src="/assets/projects/txt2speech.webp" alt=""><h3><a href="https://txt2speech.org/" target="_blank" rel="noopener">txt2speech.org</a></h3></div>
+      <div class="pad"><p>Text to speech that runs entirely in your browser. Local and private, with no word limit; your words never leave the machine.</p></div>
+    </div>
+    <div class="card photo ">
+      <video src="/assets/media/dws-fall-doc.mp4" muted loop playsinline autoplay preload="metadata" aria-label="DWS 2011 fall documentary"></video>
+      <div class="cap">DWS 2011 fall documentary</div>
+    </div>
+    <div class="card photo tilt-r">
+      <video src="/assets/media/costume-showcase.mp4" muted loop playsinline autoplay preload="metadata" aria-label="2012 costume showcase"></video>
+      <div class="cap">2012 costume showcase</div>
+    </div>
+    <div class="card proj tilt-l">
+      <div class="thumb-row"><img src="/assets/projects/birdquiz.webp" alt=""><h3><a href="https://birdquiz.myrakrusemark.com/" target="_blank" rel="noopener">Bird Quiz</a></h3></div>
+      <div class="pad"><p>Learn birds by sight and by song. You don't win it; accuracy just climbs over time.</p></div>
+    </div>
+    <div class="card photo ">
+      <img src="/assets/media/cat-bonnet.webp" alt="Maebe, in her bonnet" loading="lazy">
+      <div class="cap">Maebe, in her bonnet</div>
+    </div>
+    <div class="card photo ">
+      <video src="/assets/media/uberclappin.mp4" muted loop playsinline autoplay preload="metadata" aria-label="Uberclappin · high-tech film clapper"></video>
+      <div class="cap">Uberclappin · high-tech film clapper</div>
+    </div>
+    <div class="card photo tilt-l">
+      <video src="/assets/media/mulaney-kino.mp4" muted loop playsinline autoplay preload="metadata" aria-label="John Mulaney · kinetic typography"></video>
+      <div class="cap">John Mulaney · kinetic typography</div>
+    </div>
+    <div class="card photo tilt-r">
+      <video src="/assets/media/confused-food.mp4" muted loop playsinline autoplay preload="metadata" aria-label="Confused Food · sketch cooking show"></video>
+      <div class="cap">Confused Food · sketch cooking show</div>
+    </div>
+    <div class="card proj tilt-l">
+      <div class="thumb-row"><img src="/assets/projects/futures.webp" alt=""><h3><a href="https://myrakrusemark.com/futures/" target="_blank" rel="noopener">Choose Your Future</a></h3></div>
+      <div class="pad"><p>A sobering choose-your-own-adventure story about democracy's past and its possible futures.</p></div>
+    </div>
+    <div class="card photo ">
+      <video src="/assets/media/masergy-security.mp4" muted loop playsinline autoplay preload="metadata" aria-label="Masergy unified enterprise security"></video>
+      <div class="cap">Masergy unified enterprise security</div>
+    </div>
+    <div class="card photo tilt-r">
+      <img src="/assets/media/clay-clock.webp" alt="3D printed clock with brass hands" loading="lazy">
+      <div class="cap">3D printed clock with brass hands</div>
+    </div>
+    <div class="card photo ">
+      <img src="/assets/media/phone-case.webp" alt="Himalayan relief phone case · Mt. Everest" loading="lazy">
+      <div class="cap">Himalayan relief phone case · Mt. Everest</div>
+    </div>
+    <div class="card proj tilt-l">
+      <div class="thumb-row"><img src="/assets/projects/daisy.webp" alt=""><h3><a href="https://github.com/myrakrusemark/daisy2-chat" target="_blank" rel="noopener">Daisy AI Platform</a></h3></div>
+      <div class="pad"><p>A 2023 exploration of how LLMs use tools, follow instructions, keep memories, and plan multi-step work.</p></div>
+    </div>
+    <div class="card photo ">
+      <img src="/assets/media/watermelon-gg.webp" alt="Watermelon and the Golden Gate Bridge" loading="lazy">
+      <div class="cap">Watermelon and the Golden Gate Bridge</div>
+    </div>
+    <div class="card photo tilt-l">
+      <img src="/assets/media/apple-painting.webp" alt="Still life of apples" loading="lazy">
+      <div class="cap">Still life of apples</div>
+    </div>
+    <div class="card photo tilt-r">
+      <img src="/assets/media/moth-antennae.webp" alt="Silk moth antennae · macro" loading="lazy">
+      <div class="cap">Silk moth antennae · macro</div>
+    </div>
+    <div class="card proj tilt-l">
+      <div class="thumb-row"><img src="/assets/projects/github.webp" alt=""><h3><a href="https://github.com/myrakrusemark" target="_blank" rel="noopener">All of GitHub</a></h3></div>
+      <div class="pad"><p>Everything else, source included.</p></div>
+    </div>
+    <div class="card photo ">
+      <img src="/assets/media/milky-way.webp" alt="Milky Way over Missouri" loading="lazy">
+      <div class="cap">Milky Way over Missouri</div>
+    </div>
+    <div class="card photo tilt-l">
+      <img src="/assets/media/acorn.webp" alt="Green acorn on an oak leaf · macro" loading="lazy">
+      <div class="cap">Green acorn on an oak leaf · macro</div>
+    </div>
+    <div class="card photo tilt-l">
+      <img src="/assets/media/jam-jars.webp" alt="Mulberry jam · from the yard" loading="lazy">
+      <div class="cap">Mulberry jam · from the yard</div>
+    </div>
+  </div>
+</section>
+
+<!-- ================= PATENT PENDING ================= -->
+<section class="patents">
+  <div class="patents-inner">
+    <h2>TopoCo Art</h2>
+    <p class="sub">Physical products designed, printed, and shipped from St. Louis.</p>
+    <div class="pat-row">
+      <div class="pat">
+        <img src="/assets/media/topoco-shelf-bracket.webp" alt="Tilted shelf bracket for slanted attic walls">
+        <div class="pad">
+          <h3><a href="https://adjustableangledshelfbrackets.com/" target="_blank" rel="noopener">Adjustable Angled Shelf Brackets</a></h3>
+          <p>Shelving for angled attic walls. Designed, printed, and sold;
+          real customers and real reviews.</p>
+          <span class="tag">Patent pending</span>
+        </div>
       </div>
-      <span class="stamp" aria-hidden="true">Provisional · Filed 2026</span>
+      <div class="pat">
+        <div class="pad" style="padding-top:24px">
+          <h3>3D-CMYK</h3>
+          <p>A system that lays durable, full-color images directly onto
+          three-dimensional objects after they're made. Aimed at licensing
+          to the desktop laser and engraving makers.</p>
+          <span class="tag">Provisional filed · 2026</span>
+        </div>
+      </div>
+      <div class="pat">
+        <img src="/assets/media/couch-spacer.jpg" alt="Couch spacer holding a sofa off the wall, pothos cascading beside it" style="object-position: center 42%;">
+        <div class="pad">
+          <h3><a href="https://topoco.art/products/couch-spacer-set-of-2-wall-protector-behind-sofa-furniture-bumper-guard-hidden-mount-wall-saver-adjustable-vertical-horizontal" target="_blank" rel="noopener">Couch Spacer</a></h3>
+          <p>Holds the couch off the wall so the wall stays clean and the
+          seams stay put. Designed, printed, and sold from St. Louis.</p>
+          <span class="tag">Patent pending</span>
+        </div>
+      </div>
     </div>
-  </section>
+    <!-- the rest of the shop: a strip of products, then the doors in -->
+    <div class="shop-strip">
+      <img src="/assets/media/topoco-sewing-tilt.webp" alt="Tilted ergonomic sewing machine platform">
+      <img src="/assets/media/topoco-card-box.webp" alt="Playing card protector boxes">
+      <img src="/assets/media/topoco-remote-holder.webp" alt="Remote control holder">
+      <img src="/assets/media/topoco-shelf-bracket.webp" alt="Tilted shelf bracket with hanging rod">
+    </div>
+    <div class="shop-chips">
+      <a href="https://topoco.art/" target="_blank" rel="noopener">topoco.art</a>
+      <a href="https://www.ebay.com/str/topocoart" target="_blank" rel="noopener">eBay</a>
+      <a href="https://www.etsy.com/shop/TopoCoArt" target="_blank" rel="noopener">Etsy</a>
+    </div>
+  </div>
+</section>
 
-  <!-- ======================= FIELD NOTES ======================= -->
-  <!-- A taste of the gallery; the full wall lives on its own page so it
-       stops shoving the work below the fold. -->
-  <div class="dim" aria-hidden="true"></div>
-  <section id="field-notes">
-    <div data-reveal>
-      <h2><span class="hx">05 /</span>Field notes</h2>
-      <div class="dimline" aria-hidden="true"></div>
-      <p class="section-note">
-        Film photography, 3D prints, long exposures, and video going back to
-        2005. <a class="plain-link" href="/field-notes/">The full gallery →</a>
-      </p>
-    </div>
-    <div class="topoco-gallery">
-      <a href="/field-notes/" data-reveal><img src="assets/media/balloons.webp" alt="Hot-air balloons at the Great Forest Park Balloon Race" loading="lazy"></a>
-      <a href="/field-notes/" data-reveal><img src="assets/media/milky-way.webp" alt="Milky Way over Missouri" loading="lazy"></a>
-      <a href="/field-notes/" data-reveal><img src="assets/media/moth-antennae.webp" alt="Feathered antennae of a giant silk moth, macro" loading="lazy"></a>
-      <a href="/field-notes/" data-reveal><img src="assets/media/spark-swirl.webp" alt="Fireworks, long exposure" loading="lazy"></a>
-      <a href="/field-notes/" data-reveal><img src="assets/media/frost-moss.webp" alt="Frost crystals on moss, macro" loading="lazy"></a>
-      <a href="/field-notes/" data-reveal><img src="assets/media/cat-bonnet.webp" alt="Maebe in her lace bonnet" loading="lazy"></a>
-    </div>
-  </section>
+<!-- ================= NOTES (the blog's landing zone) =================
+     Hidden until the first post exists. Restore by removing this comment.
+<section class="notes">
+  <div class="notes-inner">
+    <h2>Notes</h2>
+    <p class="sub">Writing gets its own register here: teardowns of how these
+    builds work, starting with the chime you just heard. Nothing published
+    yet; the register lives at <a class="rec-link" href="/blog/">/blog/</a>.</p>
+  </div>
+</section>
+-->
 
-  <!-- ======================= TITLE BLOCK ======================= -->
-  <!-- The drawing signs itself. No reveal animation; it is simply there. -->
-  <footer>
-    <div class="title-block" aria-label="Drawing title block">
-      <div class="tb-cell"><span class="k">Me</span><span class="v">Myra Krusemark</span></div>
-      <div class="tb-cell"><span class="k">Email</span><span class="v"><a href="mailto:myra@myrakrusemark.com">myra@myrakrusemark.com</a></span></div>
-      <div class="tb-cell"><span class="k">Notes</span><span class="v"><a href="/blog/">/blog/</a></span></div>
-      <div class="tb-cell"><span class="k">Feed</span><span class="v"><a href="/feed.xml">/feed.xml</a></span></div>
-      <div class="tb-cell"><span class="k">Copyright</span><span class="v">2026</span></div>
-      <div class="tb-cell tb-sheet"><span class="v">Sheet 1 of 1</span></div>
-    </div>
-  </footer>
 
+<!-- ================= EXPERIENCE ================= -->
+<section class="record">
+  <div class="record-inner">
+    <h2>My Experience</h2>
+    <p class="sub">Thirteen years of UX and development stand behind the play
+    above, ten of them at Centene for tens of millions of Medicaid and
+    Medicare members. I design the product and direct the AI harnesses
+    that write the code. The full write-ups live in the
+    <a class="rec-link" href="/ux/">case studies</a>.</p>
+    <div class="role"><span class="when">2016 — 2026</span><div><h3>Senior Product Designer · Centene</h3>
+      <p>Led end-to-end design for member, provider, and internal products across
+      Medicaid, Medicare, and Commercial plans. Find A Provider raised user
+      satisfaction 40% on a custom AA-accessible design system. GNAT let project
+      managers build plan portals without code, cutting setup 60%; live for four
+      years. Built an accessibility auditor that caught WCAG gaps the industry
+      tools missed. Mentored five designers; three advanced to senior.
+      <a class="rec-link" href="/ux/fap/">Case study</a></p></div></div>
+    <div class="role"><span class="when">2015 — 16</span><div><h3>Web, Interactive, UI/UX Designer · Masergy</h3>
+      <p>Customer portals and lead-generation tools for an enterprise SD-WAN and
+      cybersecurity provider. WebRTC tools let visitors call any employee
+      straight from the browser through Masergy's security infrastructure.</p></div></div>
+    <div class="role"><span class="when">2014 — 15</span><div><h3>PHP/MySQL Developer · University of North Texas</h3>
+      <p>Owned the Faculty Profile System migration from MySQL to Oracle end to
+      end, UI redesign through sanitized data transfer. Won the Texas
+      Association for Institutional Research award for best data visualization.</p></div></div>
+    <div class="role"><span class="when">2013 — 14</span><div><h3>Web, UX Developer · Associated Network Partners</h3>
+      <p>Designed a customer admin portal that halved the clicks to manage phone
+      accounts and turned support calls into self-serve.</p></div></div>
+    <div class="role"><span class="when">2009 — 11</span><div><h3>BA, Video Production · Webster University</h3></div></div>
+    <a class="resume-btn" href="/Myra%20Krusemark%20-%20Resume.pdf">Résumé</a>
+  </div>
+</section>
+
+<footer>
+  <div><a href="mailto:myra@myrakrusemark.com">myra@myrakrusemark.com</a></div>
+  <div class="cc-line">forest path splat capture by
+    <a href="https://superspl.at/scene/2be1a75a" target="_blank" rel="noopener">tanha</a> ·
+    <a href="https://creativecommons.org/licenses/by/4.0/" rel="license noopener" target="_blank">CC BY 4.0</a> · modified</div>
+</footer>
+
+<!-- lightbox: full-resolution photos on demand -->
+<div class="lb" id="lb" hidden role="dialog" aria-modal="true" aria-label="Photo viewer">
+  <button class="lb-x" aria-label="Close">×</button>
+  <button class="lb-p" aria-label="Previous">‹</button>
+  <button class="lb-n" aria-label="Next">›</button>
+  <figure style="display: contents;"><img id="lb-img" alt=""><figcaption id="lb-cap"></figcaption></figure>
 </div>
 
-<script src="/js/physics.js?v=2026-08-27"></script>
-
-<script src="/js/frederico.js?v=2026-08-27"></script>
-
-<script src="/js/reveal.js?v=2026-08-27"></script>
-
-<script src="/js/bench.js?v=2026-08-27"></script>
-
-<script type="importmap">
-{ "imports": {
-  "three": "https://cdn.jsdelivr.net/npm/three@0.171.0/build/three.module.js",
-  "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.171.0/examples/jsm/"
-}}
+<script src="/js/frederico.js"></script>
+<script>
+/* ---------- lightbox for the gallery photos ---------- */
+(function () {
+  const lb = document.getElementById('lb');
+  const img = document.getElementById('lb-img');
+  const cap = document.getElementById('lb-cap');
+  const cards = [...document.querySelectorAll('.card.photo')];
+  if (!cards.length) return;
+  const items = cards.map(c => {
+    const t = c.querySelector('img, video');
+    // thumbs live under /assets/, full versions in /assets/media/full/
+    const name = t.getAttribute('src').split('/').pop();
+    return { full: '/assets/media/full/' + name, thumb: t.getAttribute('src'),
+             video: t.tagName === 'VIDEO',
+             text: (c.querySelector('.cap') || {}).textContent ||
+                   t.getAttribute('alt') || t.getAttribute('aria-label') || '' };
+  });
+  let cur = -1, liveEl = img;
+  function mount(el) {
+    liveEl.replaceWith(el);
+    liveEl = el;
+  }
+  function show(i) {
+    cur = (i + items.length) % items.length;
+    const it = items[cur];
+    if (it.video) {
+      const v = document.createElement('video');
+      v.controls = true; v.autoplay = true; v.loop = true; v.playsInline = true;
+      v.src = it.full;
+      v.onerror = () => { v.onerror = null; v.src = it.thumb; };
+      mount(v);
+    } else {
+      const im = document.createElement('img');
+      im.src = it.full;
+      im.onerror = () => { im.onerror = null; im.src = it.thumb; };
+      im.alt = it.text;
+      mount(im);
+    }
+    cap.textContent = it.text.trim();
+    lb.hidden = false;
+    document.body.style.overflow = 'hidden';
+  }
+  function close() {
+    lb.hidden = true;
+    if (liveEl.tagName === 'VIDEO') { try { liveEl.pause(); } catch (e) {} }
+    liveEl.removeAttribute('src');
+    document.body.style.overflow = '';
+  }
+  cards.forEach((c, i) => c.addEventListener('click', () => show(i)));
+  lb.querySelector('.lb-x').addEventListener('click', close);
+  lb.querySelector('.lb-p').addEventListener('click', e => { e.stopPropagation(); show(cur - 1); });
+  lb.querySelector('.lb-n').addEventListener('click', e => { e.stopPropagation(); show(cur + 1); });
+  lb.addEventListener('click', e => { if (e.target === lb) close(); });
+  document.addEventListener('keydown', e => {
+    if (lb.hidden) return;
+    if (e.key === 'Escape') close();
+    else if (e.key === 'ArrowLeft') show(cur - 1);
+    else if (e.key === 'ArrowRight') show(cur + 1);
+  });
+})();
 </script>
 
-<script type="module" src="/js/glass.js?v=2026-08-27"></script>
+<script>
+/* ---------- the real simulator, dressed for the hero ---------- */
+const sim = document.getElementById('sim');
+const ring = document.getElementById('ring');
 
-<script src="/js/group-glaze.js?v=2026-08-27"></script>
+// Same-origin: hide the simulator's own chrome so only the scene shows.
+// The landing's un-mute button still exists (display:none) and our chip
+// clicks it, so sound starts through the simulator's real path.
+function dressSim() {
+  const doc = sim.contentDocument;
+  if (!doc || !doc.body) return;
+  const style = doc.createElement('style');
+  style.textContent = `
+    #hudOverlay, #wcsSlots, #wcsLanding, #audioToast { display: none !important; }
+    html, body { overflow: hidden !important; scrollbar-width: none !important; }
+    ::-webkit-scrollbar { display: none !important; }
+  `;
+  doc.head.appendChild(style);
+}
+// Myra's placed shot, taken live from her hand-placed framing in the
+// embed on 2026-08-27. Splats ride the design URL (sp-35), so the scene
+// boots dense; only the camera needs asserting here.
+const SHOT = { position: [-3.8148, 1.8271, 8.555], target: [0, 1.5, 0], fov: 12, zoom: 1.35 };
+// The orbit camera centers its target, so the chime would sit mid-frame.
+// A view offset pans the projection: the scene renders shifted so the
+// chime anchors in the right half while the orbit math stays untouched.
+let anchorNow = 0.72; // chime center lands at 72% of the viewport width
+function applyFraming(stage) {
+  const w = sim.contentWindow.innerWidth, h = sim.contentWindow.innerHeight;
+  stage.camera.setViewOffset(w, h, (0.5 - anchorNow) * w, 0, w, h);
+  stage.camera.updateProjectionMatrix();
+}
+function placeCamera() {
+  try {
+    const stage = sim.contentWindow.__wcs && sim.contentWindow.__wcs.stage;
+    if (!stage || !stage.camera || !stage.controls) return false;
+    stage.camera.position.set(...SHOT.position);
+    stage.controls.target.set(...SHOT.target);
+    stage.camera.fov = SHOT.fov;
+    stage.camera.zoom = SHOT.zoom;
+    applyFraming(stage);
+    stage.controls.update();
+    return true;
+  } catch (e) { return false; }
+}
+// keep the right-anchor when the window resizes, without yanking the orbit
+addEventListener('resize', () => {
+  try {
+    const stage = sim.contentWindow.__wcs && sim.contentWindow.__wcs.stage;
+    if (stage && stage.camera) applyFraming(stage);
+  } catch (e) {}
+});
 
-<script src="/js/click-counter.js?v=2026-08-27"></script>
+/* ---------- the descent: scroll cranes the camera straight DOWN.
+   Camera and orbit target drop by the same delta each frame - a rigid
+   vertical translation, so the aim direction never changes and the
+   world simply rises past the lens. Drift keeps owning the azimuth. */
+if (!matchMedia('(prefers-reduced-motion: reduce)').matches) {
+  const DROP = 0.9; // metres of descent from hero to page bottom
+  const TOP_TY = 1.5;
+  (function descend() {
+    requestAnimationFrame(descend);
+    try {
+      const wrap = document.querySelector('.sim-wrap');
+      if (!wrap.classList.contains('ready')) return;
+      const stage = sim.contentWindow.__wcs && sim.contentWindow.__wcs.stage;
+      if (!stage || !stage.camera || !stage.controls) return;
+      const max = document.documentElement.scrollHeight - innerHeight;
+      const p = max > 0 ? Math.min(1, Math.max(0, scrollY / max)) : 0;
+      const wantY = TOP_TY - DROP * p;
+      const t = stage.controls.target;
+      const dy = (wantY - t.y) * 0.09;           // eased scrub, no jumps
+      t.y += dy;
+      stage.camera.position.y += dy;             // rigid: aim never changes
+      stage.controls.update();
+    } catch (e) {}
+  })();
+}
+sim.addEventListener('load', () => {
+  dressSim();
+  // late-mounted UI: dress again once things settle
+  setTimeout(dressSim, 1500);
+  setTimeout(dressSim, 4000);
+  // Place, then reveal, then orbit: the chime is never seen anywhere but
+  // on Myra's mark. Once the stage exists and frames are rendering, one
+  // final assert, curtain up, and the automatic orbit starts immediately.
+  const tryPlace = setInterval(() => {
+    if (!placeCamera()) return;
+    clearInterval(tryPlace);
+    const t0 = Date.now();
+    let framesAtLoad = null; // frame count when the gaussians finished arriving
+    const settle = setInterval(() => {
+      // reveal only once the gaussians have fully arrived AND the renderer
+      // has drawn a full second WITH them — loaded() flips when the bytes
+      // land, a beat before the splats actually cover the frame, and
+      // revealing on arrival flashes a splatless chime. Timeout guards a
+      // failed fetch so the page still reveals whatever it has.
+      let frames = 0, splatSettled = false;
+      try {
+        const w = sim.contentWindow.__wcs;
+        frames = w.snapshot().frames || 0;
+        const plate = w.stage && w.stage.plate;
+        const splatIn = !!(plate && typeof plate.loaded === 'function' ? plate.loaded() : true);
+        if (splatIn && framesAtLoad === null) framesAtLoad = frames;
+        splatSettled = framesAtLoad !== null && frames - framesAtLoad > 60;
+      } catch (e) {}
+      if ((frames > 30 && splatSettled) || Date.now() - t0 > 15000) {
+        clearInterval(settle);
+        placeCamera(); // final assert on the mark
+        document.querySelector('.sim-wrap').classList.add('ready');
+        try {
+          if (!matchMedia('(prefers-reduced-motion: reduce)').matches) {
+            const stage = sim.contentWindow.__wcs.stage;
+            if (stage && stage.setDrift) stage.setDrift(true); // orbit from frame one
+          }
+        } catch (e) {}
+      }
+    }, 200);
+  }, 300);
+  setTimeout(() => clearInterval(tryPlace), 20000);
+});
+
+ring.addEventListener('click', () => {
+  try {
+    const doc = sim.contentDocument;
+    const btn = doc && doc.getElementById('wcsSound');
+    if (btn) { btn.click(); document.getElementById('ring-label').textContent = 'Ringing'; }
+  } catch (e) { /* leave the chip as-is if the frame is not ready */ }
+});
+
+/* ---------- the live spectrum: the chimes shape the graph ----------
+   One bin per tube, positioned by that tube's true frequency (log scale,
+   so the tuning's intervals set the spacing). Energy comes from the
+   simulator's own strike dispatch: every clapper hit calls
+   stage.flashTube(tubeIndex, intensity), and we wrap that one call to
+   read WHICH tube rang and HOW hard. Each bin then decays at the
+   physical rate: lower tubes ring longer (tau scales with 1/f).
+   Retune the chime and the graph's shape changes with it. */
+(function () {
+  const cv = document.getElementById('meter-fft');
+  const ctx2d = cv.getContext('2d');
+  let freqs = [];       // per-tube fundamentals, from the sim
+  let energy = [];      // per-tube ringing energy, fed by real strikes
+  let tapped = false;
+
+  function tap() {
+    try {
+      const wcs = sim.contentWindow.__wcs;
+      const stage = wcs && wcs.stage;
+      if (!stage || typeof stage.flashTube !== 'function') return;
+      freqs = (wcs.snapshot().tubeFreqs || []).slice();
+      energy = freqs.map(() => 0);
+      const orig = stage.flashTube.bind(stage);
+      stage.flashTube = (tube, k) => {
+        const kick = 0.45 + 0.55 * (k || 0);
+        if (energy[tube] !== undefined)
+          energy[tube] = Math.min(1, energy[tube] + kick);
+        // sympathetic lift: a strike stirs the neighbors, at a third
+        for (const nb of [tube - 1, tube + 1]) {
+          if (energy[nb] !== undefined)
+            energy[nb] = Math.min(1, energy[nb] + kick * 0.33);
+        }
+        return orig(tube, k);
+      };
+      tapped = true;
+      // tuning can change (design edits): refresh the axis now and then
+      setInterval(() => {
+        try {
+          const f = sim.contentWindow.__wcs.snapshot().tubeFreqs || [];
+          if (f.length !== freqs.length) { freqs = f.slice(); energy = f.map(() => 0); }
+          else freqs = f.slice();
+        } catch (e) {}
+      }, 3000);
+    } catch (e) {}
+  }
+  const tapTry = setInterval(() => { if (tapped) clearInterval(tapTry); else tap(); }, 600);
+  setTimeout(() => clearInterval(tapTry), 20000);
+
+  let last = performance.now();
+  (function draw(now) {
+    requestAnimationFrame(draw);
+    const dt = Math.min(0.1, (now - last) / 1000); last = now;
+    const W = cv.width, H = cv.height;
+    ctx2d.clearRect(0, 0, W, H);
+    if (!freqs.length) return;
+    for (let i = 0; i < freqs.length; i++) {
+      // real ring-down: tau ~ 2.2s at 261 Hz, shorter as pitch rises
+      const tau = 2.2 * (261.6 / freqs[i]);
+      energy[i] *= Math.exp(-dt / tau);
+      // equidistant bins, ordered low to high like a graphic EQ
+      const x = (freqs.length > 1 ? i / (freqs.length - 1) : 0.5) * (W - 10) + 5;
+      const h = Math.max(2, energy[i] * (H - 4));
+      ctx2d.fillStyle = 'rgba(255,157,132,' + (0.35 + 0.65 * energy[i]).toFixed(2) + ')';
+      ctx2d.fillRect(x - 3, H - h, 6, h);
+    }
+  })(last);
+})();
+
+/* live St. Louis wind annotation (the simulator reads weather on its own;
+   this note is the page speaking about it) */
+fetch('https://api.weather.gov/stations/KSTL/observations/latest', { signal: AbortSignal.timeout(5000) })
+  .then(r => r.json())
+  .then(d => {
+    const kmh = d?.properties?.windSpeed?.value;
+    if (kmh == null) return;
+    const mph = Math.round(kmh * 0.621371);
+    const deg = d?.properties?.windDirection?.value;
+    const dirs = ['N','NE','E','SE','S','SW','W','NW'];
+    const dir = deg == null ? '' : ' ' + dirs[Math.round(deg / 45) % 8];
+    document.getElementById('wind-note').innerHTML =
+      `<b>live st. louis wind \u00b7 ${mph} mph${dir}</b>`;
+    // Feed the real observation into the simulator's own wind system, so
+    // the claim above is physically true: the chime's sway and strikes
+    // run on this reading (the sim eases into it over 8 seconds).
+    const feed = setInterval(() => {
+      try {
+        const wcs = sim.contentWindow.__wcs;
+        if (!wcs || !wcs.setWind) return;
+        wcs.setWind(mph, deg == null ? undefined : deg);
+        clearInterval(feed);
+      } catch (e) {}
+    }, 500);
+    setTimeout(() => clearInterval(feed), 20000);
+  }).catch(() => {});
+</script>
 </body>
 </html>

@@ -1,0 +1,978 @@
+/* ---------------------------------------------------------------------------
+   Wind Chime Simulator
+
+   Layering, stated once so it is not guessed at further down:
+     0  #canvasContainer   fixed, full viewport, the 3D picture
+     2  #hudOverlay        fixed hero chrome, pointer-events: none except controls
+     3  #article           scrolls up over the picture and over the hero chrome
+     6  #sliderMenu        settings drawer, above everything
+
+   The article deliberately outranks the overlay. The overlay is fixed at inset 0,
+   so if the article sat underneath it the hero controls would float over the
+   text you were trying to read, and would swallow clicks meant for links.
+   --------------------------------------------------------------------------- */
+
+html {
+    scroll-behavior: smooth;
+}
+
+body {
+    font-family: "Roboto Flex", sans-serif;
+    color: #ffffff;
+    margin: 0;
+    background: #2b2118;
+}
+
+h1, h2, h3 {
+    font-family: "Julius Sans One", sans-serif;
+    font-weight: 400;
+    font-style: normal;
+    margin-top: 8px;
+}
+
+h1 {
+    font-size: 1.6rem;
+    letter-spacing: 0.08em;
+    /* Two shadows, not one. The default view now looks toward the sun, so the
+       title can land on a near-white sky glow; a single soft 12px shadow washed
+       out completely against it. The tight dark halo carries the contrast and
+       the wide one keeps it from looking stamped on. */
+    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.85), 0 2px 16px rgba(0, 0, 0, 0.7);
+}
+
+p, span, button, input, label, select {
+    font-optical-sizing: auto;
+    font-style: normal;
+}
+
+a {
+    color: #ffffff99;
+}
+
+img.svg {
+    filter: brightness(0) invert(1);
+}
+
+input::-webkit-input-placeholder {
+    color: #ffffff88;
+}
+
+input::placeholder {
+    color: #ffffff88;
+}
+
+
+/* ---------------------------------------------------------------------------
+   Content pages (about.html, terms.html, privacy.html) share this stylesheet
+   and still want the old animated gradient. It is scoped to .contentPage so the
+   simulator page keeps a warm flat backdrop behind the canvas.
+   --------------------------------------------------------------------------- */
+
+body.contentPage {
+    padding: 50px;
+    max-width: 800px;
+}
+
+.contentPage .background {
+    background: url('transparent_bg.png') left top/50% no-repeat,
+                linear-gradient(-45deg, #8f510e 0%, #53b5a2 100%) center/auto no-repeat;
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    animation: hue-rotation 30s infinite linear;
+    z-index: -1;
+}
+
+@keyframes hue-rotation {
+    from { filter: hue-rotate(0deg); }
+    to { filter: hue-rotate(360deg); }
+}
+
+.content {
+    position: relative;
+}
+
+
+/* ---------------------------------------------------------------------------
+   The picture
+   --------------------------------------------------------------------------- */
+
+#canvasContainer {
+    position: fixed;
+    inset: 0;
+    z-index: 0;
+    /* Warm dark, so the frame before first paint is not a white flash. */
+    background: #2b2118;
+    overflow: hidden;
+}
+
+#glCanvas {
+    display: block;
+    width: 100%;
+    height: 100%;
+    /* Without this, mobile browsers claim the drag for scrolling and the
+       camera never orbits. */
+    touch-action: none;
+}
+
+/* Vignette. A CSS gradient costs nothing; a post-processing pass would cost a
+   full-screen draw every frame for the same look. */
+#canvasContainer::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    background: radial-gradient(ellipse at 50% 45%,
+                rgba(0, 0, 0, 0) 42%,
+                rgba(0, 0, 0, 0.28) 78%,
+                rgba(0, 0, 0, 0.55) 100%);
+}
+
+#fallbackNotice {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 32px;
+    text-align: center;
+    color: #ffffffcc;
+    font-size: 1rem;
+    line-height: 1.6;
+}
+
+#fallbackNotice p {
+    max-width: 30ch;
+    margin: 0;
+}
+
+.hidden {
+    display: none;
+}
+
+/* An id selector outranks a class, so the display: flex above would keep the
+   notice on screen while .hidden was still applied. main.js toggles the class,
+   so the class needs a selector that can win. */
+#fallbackNotice.hidden {
+    display: none;
+}
+
+
+/* ---------------------------------------------------------------------------
+   Glass. One recipe, used by every floating panel.
+   --------------------------------------------------------------------------- */
+
+#windCard,
+#menuToggle,
+.read-on,
+#hudDock,
+#sliderMenu {
+    background: rgba(24, 20, 16, 0.42);
+    -webkit-backdrop-filter: blur(14px) saturate(1.2);
+    backdrop-filter: blur(14px) saturate(1.2);
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    border-radius: 16px;
+}
+
+/* Where the blur is unavailable the panel has to carry its own contrast,
+   because a bright sky behind it would otherwise eat the text. */
+@supports not ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) {
+    #hudDock,
+    #menuToggle,
+    .read-on,
+    #sliderMenu {
+        background: rgba(24, 20, 16, 0.72);
+    }
+}
+
+
+/* ---------------------------------------------------------------------------
+   HUD overlay
+   --------------------------------------------------------------------------- */
+
+#hudOverlay {
+    position: fixed;
+    inset: 0;
+    z-index: 2;
+    pointer-events: none;
+    display: grid;
+    /* Three rows with only two children, so both are placed explicitly. The
+       middle band used to hold the location control and is now empty space the
+       chime hangs in. */
+    grid-template-rows: auto 1fr auto;
+    padding: 20px;
+    box-sizing: border-box;
+    height: 100vh;
+    height: 100dvh;
+    height: 100svh;
+    transition: opacity 900ms ease;
+}
+
+/* main.js adds .idle after 8 seconds without pointer movement, once the visitor
+   has actually started. Everything goes; only the title stays, ghosted in the
+   corner, so the page still says what it is while you watch it.
+
+   This CANNOT be done by fading #hudOverlay itself. Opacity composites the whole
+   subtree, so a child can never be less transparent than its parent, and the
+   title could not stay up while the rest of it went to nothing. Each group
+   fades on its own, which is also why the transition lives on the groups. */
+/* Asymmetric on purpose. The transition that governs is whichever rule applies
+   AFTER the class changes, so the base state times the wake and the .idle rules
+   below time the fade. Coming back has to be quick -- you moved the mouse
+   because you want the controls -- while going is a long dissolve you are not
+   meant to notice starting. */
+.hud-title h1,
+.hud-title p,
+#hudDock,
+.hud-bottom,
+#menuToggle {
+    transition: opacity 180ms ease-out;
+}
+
+#hudOverlay.idle .hud-title p,
+#hudOverlay.idle .hud-bottom,
+#hudOverlay.idle #audioToast,
+#hudOverlay.idle #menuToggle {
+    opacity: 0;
+    transition: opacity 2200ms ease-in;
+}
+
+#hudOverlay.idle .hud-title h1 {
+    opacity: 0.2;
+    transition: opacity 2200ms ease-in;
+}
+
+/* Nothing invisible stays clickable. A click then lands on the canvas, which
+   wakes the HUD, and the controls are back and legible before anything can be
+   pressed by accident. */
+#hudOverlay.idle #locationInput,
+#hudOverlay.idle #startButton,
+#hudOverlay.idle #menuToggle,
+#hudOverlay.idle #hudDock,
+#hudOverlay.idle .read-on {
+    pointer-events: none;
+}
+
+#locationInput,
+#startButton,
+#menuToggle,
+#hudDock,
+.read-on {
+    pointer-events: auto;
+}
+
+.hud-top {
+    grid-row: 1;
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 16px;
+}
+
+.hud-title h1 {
+    margin: 0;
+    /* Same halo the subtitle and status line already carry. The title sits
+       directly over the sun's aureole, which is the brightest part of the sky,
+       and white on that is close to invisible without it. */
+    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.8), 0 2px 14px rgba(0, 0, 0, 0.7);
+}
+
+.hud-title p {
+    margin: 6px 0 0 0;
+    font-size: 0.9rem;
+    opacity: 0.88;
+    max-width: 34ch;
+    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.8), 0 1px 10px rgba(0, 0, 0, 0.7);
+}
+
+/* Tucked under the title in the top-left corner, NOT centred and NOT along the
+   bottom. The chime hangs down the middle of the frame and the wind sail -- the
+   one part the wind actually pushes, and the start of the whole causal chain --
+   hangs lowest of all, at roughly 85 percent of the frame height. A centred pill
+   covers the tubes and a bottom-aligned one covers the sail, which was measured
+   on both. The corner is the only place that leaves the subject alone at every
+   window size. */
+
+.hud-bottom {
+    grid-row: 3;
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-between;
+    gap: 16px;
+}
+
+/* Audio toast --------------------------------------------------------------
+   Absolutely placed rather than put in the grid: the middle band is the start
+   block in the top-left corner, and this has to sit centred UNDER the chime,
+   which hangs down the middle of the frame. 72 percent clears the sail and
+   stays above the wind card.
+
+   Never clickable. The whole point is that the gesture can be anywhere, so
+   swallowing the one aimed at the toast itself would be the one way to make it
+   not work. */
+#audioToast {
+    position: absolute;
+    left: 50%;
+    top: 72%;
+    transform: translate(-50%, -50%);
+    pointer-events: none;
+    padding: 11px 20px;
+    border-radius: 22px;
+    font-size: 0.92rem;
+    letter-spacing: 0.01em;
+    white-space: nowrap;
+    background: rgba(24, 20, 16, 0.42);
+    -webkit-backdrop-filter: blur(14px) saturate(1.2);
+    backdrop-filter: blur(14px) saturate(1.2);
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.8);
+    animation: toast-breathe 2.6s ease-in-out infinite;
+    transition: opacity 500ms ease, transform 500ms ease;
+}
+
+/* main.js adds .done the moment audio is actually running. */
+#audioToast.done {
+    opacity: 0;
+    transform: translate(-50%, -50%) scale(0.96);
+    animation: none;
+}
+
+@keyframes toast-breathe {
+    0%, 100% { opacity: 0.72; }
+    50% { opacity: 1; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    #audioToast { animation: none; opacity: 0.92; }
+}
+
+@media (max-width: 560px) {
+    #audioToast {
+        font-size: 0.84rem;
+        white-space: normal;
+        max-width: 62vw;
+        text-align: center;
+    }
+}
+
+
+/* Start pill ---------------------------------------------------------------- */
+
+
+
+
+#startButton {
+    flex: 0 0 auto;
+    min-height: 44px;
+    padding: 0 18px;
+    border: none;
+    border-radius: 20px;
+    background: #d9903c;
+    color: #241a10;
+    font-size: 0.95rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background-color 300ms ease;
+}
+
+#startButton:hover {
+    background: #eda44e;
+}
+
+
+/* No min-height any more. It used to reserve a blank line whether or not there
+   was anything to report, which is what left a strip of dead panel under the
+   input. The row it lives in is hidden outright until a reading lands, so the
+   dock is exactly as tall as it has content for. */
+#statusLine {
+    margin: 0;
+    /* Empty until a reading arrives, and an empty paragraph with no min-height
+       adds nothing to the panel's height, so no rule is needed to hide it. */
+    font-size: 0.82rem;
+    line-height: 1.25;
+    opacity: 0.9;
+    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.8), 0 1px 10px rgba(0, 0, 0, 0.7);
+}
+
+/* The sky icon lives in the top row, in the corner the wind readout leaves
+   empty, rather than on a line of its own. currentColor throughout the sheet,
+   so the icon is one colour away from matching the panel's text.
+   `hidden` is display:none, which is what keeps it out of the layout until a
+   reading lands -- visibility would still hold the space. */
+.wx-icon {
+    width: 34px;
+    height: 34px;
+    flex: 0 0 auto;
+    margin-left: auto;
+    align-self: center;
+    fill: currentColor;
+    color: rgba(255, 255, 255, 0.9);
+    filter: drop-shadow(0 1px 2px rgba(0, 0, 0, 0.55));
+}
+
+.wx-icon.hidden {
+    display: none;
+}
+
+
+/* Wind card ---------------------------------------------------------------- */
+
+/* The dock: wind readout and weather control as one panel. The dial says what
+   the wind IS, the box says where to get it from -- one idea, so one box. */
+/* The start subtext is hidden in the dock rather than deleted. It was written
+   for a wide block in the top-left corner; here it is three lines of a small
+   panel, and the toast under the chime already says the part about turning the
+   sound on. The markup stays so the wording is one CSS line away from coming
+   back. */
+#hudDock .start-sub {
+    display: none;
+}
+
+#hudDock {
+    display: flex;
+    flex-direction: column;
+    gap: 9px;
+    padding: 12px 14px 12px 14px;
+    border-radius: 20px;
+    box-sizing: border-box;
+    width: 352px;
+    max-width: calc(100vw - 40px);
+    /* Flex items default to min-width:auto, which is their CONTENT width -- the
+       compass, the button and the input together, so the dock refused to shrink
+       and ran 404 px wide on a 390 px phone. */
+    min-width: 0;
+    pointer-events: auto;
+}
+
+/* Inside the dock now, so it carries no chrome of its own -- a panel drawn
+   inside a panel reads as a mistake. */
+#windCard {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    background: none;
+    border: none;
+    padding: 0;
+    -webkit-backdrop-filter: none;
+    backdrop-filter: none;
+    box-sizing: border-box;
+}
+
+.dock-start {
+    display: flex;
+    align-items: stretch;
+    gap: 6px;
+    min-width: 0;
+    /* Where even a shrunken input would be unusable, the button drops onto its
+       own line rather than squeezing it to nothing. */
+    flex-wrap: wrap;
+}
+
+.dock-start #locationInput {
+    flex: 1 1 120px;
+    min-width: 0;
+    min-height: 38px;
+    background: rgba(255, 255, 255, 0.10);
+    border: none;
+    border-radius: 14px;
+    color: #ffffff;
+    font-size: 0.92rem;
+    padding: 0 12px;
+}
+
+.dock-start #locationInput:focus {
+    outline: 2px solid rgba(217, 144, 60, 0.8);
+    outline-offset: -2px;
+}
+
+.dock-start #startButton {
+    flex: 0 0 auto;
+    min-height: 38px;
+    padding: 0 12px;
+    border: none;
+    border-radius: 14px;
+    background: #d9903c;
+    color: #2a1c0c;
+    font-size: 0.86rem;
+    font-weight: 600;
+    cursor: pointer;
+    white-space: nowrap;
+}
+
+.dock-start #startButton:hover { background: #e8a352; }
+
+#windCard .compass {
+    width: 60px;
+    height: 60px;
+    flex: 0 0 auto;
+}
+
+.compass-ring {
+    fill: none;
+    stroke: rgba(255, 255, 255, 0.22);
+    stroke-width: 1;
+}
+
+.compass-tick {
+    stroke: rgba(255, 255, 255, 0.35);
+    stroke-width: 1;
+}
+
+.compass-label {
+    fill: rgba(255, 255, 255, 0.5);
+    font-family: "Roboto Flex", sans-serif;
+    font-size: 8px;
+    letter-spacing: 0.06em;
+}
+
+#windCompassNeedle {
+    fill: #ffd9a0;
+}
+
+.wind-readout {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    min-width: 0;
+}
+
+#windSpeedText {
+    font-family: "Julius Sans One", sans-serif;
+    font-size: 0.95rem;
+    letter-spacing: 0.04em;
+    white-space: nowrap;
+}
+
+.wind-readout .spark {
+    width: 120px;
+    height: 28px;
+    display: block;
+}
+
+#gustSpark {
+    fill: none;
+    stroke: rgba(255, 225, 190, 0.85);
+    stroke-width: 1.5;
+    stroke-linejoin: round;
+    stroke-linecap: round;
+}
+
+
+/* Read-on affordance -------------------------------------------------------- */
+
+.read-on {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 8px 14px;
+    border-radius: 20px;
+    color: #ffffffcc;
+    text-decoration: none;
+    font-size: 0.82rem;
+    letter-spacing: 0.04em;
+}
+
+.read-on svg {
+    width: 16px;
+    height: 16px;
+    stroke: currentColor;
+    stroke-width: 2;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+}
+
+.read-on:hover {
+    color: #ffffff;
+}
+
+
+/* ---------------------------------------------------------------------------
+   Settings drawer
+   --------------------------------------------------------------------------- */
+
+#menuToggle {
+    flex: 0 0 auto;
+    width: 44px;
+    height: 44px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0;
+    cursor: pointer;
+}
+
+#menuToggle img {
+    width: 20px;
+    height: 20px;
+}
+
+#sliderMenu {
+    position: fixed;
+    /* Starts below the toggle so the toggle is never buried by the drawer and
+       can always close it again. */
+    top: 76px;
+    right: 0;
+    width: 300px;
+    height: calc(100% - 76px);
+    z-index: 6;
+    box-sizing: border-box;
+    padding: 24px;
+    overflow-y: auto;
+    overscroll-behavior: contain;
+    border-radius: 16px 0 0 0;
+    border-right: none;
+    transform: translateX(100%);
+    transition: transform 500ms ease;
+    pointer-events: auto;
+}
+
+#sliderMenu.visible {
+    transform: translateX(0);
+}
+
+#sliderMenu section {
+    margin-bottom: 36px;
+}
+
+#sliderMenu h2 {
+    font-size: 1.1rem;
+    letter-spacing: 0.08em;
+    opacity: 0.9;
+    margin-bottom: 12px;
+}
+
+#sliderMenu label {
+    font-size: 0.9rem;
+    opacity: 0.85;
+}
+
+#sliderMenu p > span {
+    opacity: 0.68;
+    font-size: 90%;
+}
+
+#sliderMenu input,
+#sliderMenu select {
+    width: 100%;
+}
+
+#sliderMenu .menu-note {
+    font-size: 0.8rem;
+    opacity: 0.6;
+    line-height: 1.5;
+}
+
+select {
+    background: #ffffff26;
+    border: none;
+    border-radius: 15px;
+    padding: 8px;
+    color: white;
+    font-weight: 600;
+    margin: 8px 0;
+    min-height: 40px;
+}
+
+select option {
+    color: black;
+    font-weight: 400;
+}
+
+/* The filled-track trick from the original: a zero-width thumb dragging a very
+   large box-shadow behind it paints the track fill with no extra elements.
+   The shadow is the fill, so its width is the LONGEST TRACK IT CAN EVER PAINT.
+   It was -20rem/20rem, which is 640px of fill on a 16px root, and the panel is
+   760px wide: measured on the Place panel, the Detail slider sat at its maximum
+   with the first 80px of its track still unfilled, and Sun height the same. It
+   read as a slider too short for its box. 100rem is 1600px, past the 800px cap
+   the panel host will ever reach, and it costs nothing because overflow:hidden
+   below clips whatever falls outside the track. */
+input[type="range"] {
+    background-color: #ffffff33;
+    margin: 8px 0;
+    padding: 0;
+    height: 2em;
+    border-radius: 1rem;
+    overflow: hidden;
+    -webkit-appearance: none;
+    appearance: none;
+}
+
+input[type="range"]::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    width: 0;
+    height: 2em;
+    box-shadow: -100rem 0 0 100rem #ffffffdd;
+}
+
+input[type="range"]::-moz-range-thumb {
+    border: none;
+    width: 0;
+    height: 2em;
+    box-shadow: -100rem 0 0 100rem #ffffffdd;
+}
+
+input[type="text"] {
+    background-color: #ffffff44;
+    color: white;
+    border: none;
+    padding: 10px;
+    border-radius: 12px;
+    box-sizing: border-box;
+    font-size: 1em;
+}
+
+
+/* ---------------------------------------------------------------------------
+   The article, scrolling over the picture
+   --------------------------------------------------------------------------- */
+
+#article {
+    position: relative;
+    z-index: 3;
+    margin-top: 100vh;
+    margin-top: 100dvh;
+    margin-top: 100svh;
+    background: rgba(20, 17, 14, 0.92);
+    -webkit-backdrop-filter: blur(14px) saturate(1.2);
+    backdrop-filter: blur(14px) saturate(1.2);
+    border-top: 1px solid rgba(255, 255, 255, 0.10);
+    padding-top: 40px;
+}
+
+@supports not ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) {
+    #article {
+        background: rgba(20, 17, 14, 0.98);
+    }
+}
+
+#learn {
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 0 24px 50px 24px;
+}
+
+#learn h2 {
+    text-align: center;
+    margin-bottom: 32px;
+    font-size: 2em;
+}
+
+.learn-section {
+    background: rgba(255, 255, 255, 0.06);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    padding: 30px 40px;
+    border-radius: 30px;
+    margin-bottom: 24px;
+}
+
+.learn-section h3 {
+    margin-top: 0;
+}
+
+.learn-section p {
+    line-height: 1.65;
+}
+
+.learn-section ul {
+    padding-left: 20px;
+}
+
+.learn-section li {
+    margin-bottom: 8px;
+}
+
+.learn-section code {
+    background: rgba(0, 0, 0, 0.3);
+    padding: 2px 6px;
+    border-radius: 4px;
+    font-family: monospace;
+    font-size: 0.9em;
+}
+
+.ad-slot {
+    max-width: 800px;
+    margin: 0 auto 24px auto;
+    padding: 0 24px;
+}
+
+/* The old rule pinned ads absolutely to the bottom of the page, which with a
+   fixed full-viewport canvas would park them behind the picture: loaded, billed
+   as an impression, never actually seen. They stay in the article flow now. */
+.adsbygoogle {
+    display: block;
+    position: static;
+}
+
+#footer {
+    text-align: center;
+    color: #ffffff77;
+    min-width: 300px;
+    width: 100%;
+    padding-bottom: 32px;
+    box-sizing: border-box;
+}
+
+
+/* Blog pages that share this stylesheet ------------------------------------- */
+
+.blog .content {
+    max-width: 800px;
+    margin: 0 auto;
+}
+
+.blog article {
+    margin-bottom: 64px;
+    background: rgba(255, 255, 255, 0.2);
+    padding: 50px;
+    border-radius: 50px;
+}
+
+
+/* Font helpers used elsewhere on the site ----------------------------------- */
+
+.julius-sans-one-regular {
+    font-family: "Julius Sans One", sans-serif;
+    font-weight: 400;
+    font-style: normal;
+}
+
+.roboto-flex {
+    font-family: "Roboto Flex", sans-serif;
+    font-optical-sizing: auto;
+    font-style: normal;
+    font-variation-settings:
+        "slnt" 0,
+        "wdth" 100,
+        "GRAD" 0,
+        "XOPQ" 96,
+        "XTRA" 468,
+        "YOPQ" 79,
+        "YTAS" 750,
+        "YTDE" -203,
+        "YTFI" 738,
+        "YTLC" 514,
+        "YTUC" 712;
+}
+
+
+/* ---------------------------------------------------------------------------
+   Motion preferences. The simulation itself is the content, so it keeps
+   running; only the interface animation stops.
+   --------------------------------------------------------------------------- */
+
+@media (prefers-reduced-motion: reduce) {
+    html {
+        scroll-behavior: auto;
+    }
+
+    #hudOverlay,
+    #sliderMenu {
+        transition: none;
+    }
+
+    .contentPage .background {
+        animation: none;
+    }
+}
+
+
+/* ---------------------------------------------------------------------------
+   Phones
+   --------------------------------------------------------------------------- */
+
+@media (max-width: 700px) {
+    #hudOverlay {
+        padding: 14px;
+    }
+
+    h1 {
+        font-size: 1.35rem;
+    }
+
+    .hud-title p {
+        display: none;
+    }
+
+    /* The dock takes the full width it can get, and the subtext goes: on a
+       short screen it would push the panel up over the sail. */
+    #hudDock {
+        width: 100%;
+        max-width: 100%;
+    }
+
+    /* The dock reaches roughly three quarters of the way up a phone screen, so
+       the toast has to sit above it rather than on top of it. */
+    #audioToast {
+        top: 58%;
+    }
+
+    .start-sub {
+        display: none;
+    }
+
+    .hud-bottom {
+        flex-direction: column;
+        align-items: stretch;
+        gap: 8px;
+    }
+
+    /* The wind card collapses to a compass and one line of text. */
+    #windCard {
+        min-width: 0;
+        gap: 8px;
+    }
+
+    #windCard .compass {
+        width: 40px;
+        height: 40px;
+    }
+
+    .wind-readout .spark {
+        display: none;
+    }
+
+    .read-on {
+        align-self: flex-end;
+    }
+
+    /* The drawer becomes a bottom sheet. Sliding up from the thumb beats
+       sliding in from an edge no thumb reaches. */
+    #sliderMenu {
+        top: auto;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        width: 100%;
+        height: 60vh;
+        height: 60dvh;
+        height: 60svh;
+        border-radius: 16px 16px 0 0;
+        border-right: 1px solid rgba(255, 255, 255, 0.12);
+        transform: translateY(100%);
+    }
+
+    #sliderMenu.visible {
+        transform: translateY(0);
+    }
+
+    .learn-section {
+        padding: 20px 24px;
+    }
+
+    #learn {
+        padding: 0 16px 40px 16px;
+    }
+
+    .ad-slot {
+        padding: 0 16px;
+    }
+}
+
+@media (max-width: 800px) {
+    body.contentPage {
+        padding: 24px;
+    }
+}

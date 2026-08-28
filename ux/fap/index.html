@@ -8,200 +8,167 @@
 <meta property="og:title" content="Find A Provider — Myra Krusemark">
 <meta property="og:description" content="Ground-up redesign of Centene's decade-old provider search — browse-first, filter-second, for tens of millions of health insurance members.">
 <meta property="og:type" content="article">
-<meta property="og:url" content="https://myrakrusemark.com/ux/fap/">
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='M12 2l2.4 7.6L22 12l-7.6 2.4L12 22l-2.4-7.6L2 12l7.6-2.4z' fill='%23e2725b'/%3E%3C/svg%3E">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Jost:wght@200;300;400;500&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="/css/site.css?v=2026-08-27">
+<link rel="stylesheet" href="/subpage.css">
 </head>
 <body>
 
-<div class="page" id="app">
-
-  <!-- ======================= HERO ======================= -->
-  <header style="padding-top: 42px;">
+<div class="wrap">
+  <header>
     <div class="eyebrow">2025 · Centene (Fortune 25) · <em>UX Team Lead</em></div>
     <h1>Find A Provider</h1>
-    <p class="section-note">
-      Rethinking a decade-old provider search from the ground up —
-      browse-first, filter-second, so members reach results instead of
-      dead ends.
-    </p>
-    <div class="cta-row">
-      <a class="g sg-button g-chip" href="/ux/" sg-material="clear" sg-tilt sg-press>← UX Portfolio</a>
-    </div>
+    <p class="note">Rethinking a decade-old provider search from the ground up:
+    browse-first, filter-second, so members reach results instead of dead
+    ends.</p>
+    <a class="back" href="/ux/">← Case studies</a>
   </header>
 
-  <!-- ======================= PROJECT OVERVIEW ======================= -->
-  <div class="title-block spec" aria-label="Project overview">
-    <div class="tb-cell"><span class="k">Role</span><span class="v">UX Team Lead</span></div>
-    <div class="tb-cell"><span class="k">Team</span><span class="v">Content Designers, Researchers, Designers, and Accessibility</span></div>
-    <div class="tb-cell"><span class="k">Focus</span><span class="v">Complete redesign of provider search tool for Medicaid, Medicare, and Commercial health insurance members</span></div>
-    <div class="tb-cell"><span class="k">Duration</span><span class="v">Multi-phase project with structured weekly cadence</span></div>
+  <div class="spec" aria-label="Project overview">
+    <div><span class="k">Role</span><span class="v">UX Team Lead</span></div>
+    <div><span class="k">Team</span><span class="v">Content Designers, Researchers, Designers, and Accessibility</span></div>
+    <div><span class="k">Focus</span><span class="v">Complete redesign of provider search for Medicaid, Medicare, and Commercial members</span></div>
+    <div><span class="k">Duration</span><span class="v">Multi-phase project with structured weekly cadence</span></div>
   </div>
 
-  <div class="dim" aria-hidden="true"></div>
-
-  <!-- ======================= CONTENT ======================= -->
-
-  <figure class="cs-fig">
-    <img src="/assets/ux/fap/search-results.webp" alt="Find A Provider Search Results" loading="lazy">
-  </figure>
-
-  <section>
+  <div class="paper">
+    <figure>
+      <img src="/assets/ux/fap/search-results.webp" alt="Find A Provider search results" loading="lazy">
+    </figure>
     <h2>The Challenge</h2>
-    <div class="prose">
-      <p>Find a Provider was over a decade old. While the tool had evolved incrementally over time, many design choices and conventions had become outdated. Regulatory and contractual limitations had imposed significant constraints on what could be changed. After years of small improvements, we finally had the opportunity to rethink the Provider Search concept from the ground up.</p>
+    <p>Find a Provider was over a decade old. While the tool had evolved
+    incrementally over time, many design choices and conventions had become
+    outdated. Regulatory and contractual limitations had imposed significant
+    constraints on what could be changed. After years of small improvements,
+    we finally had the opportunity to rethink the Provider Search concept from
+    the ground up.</p>
+    <p>The legacy version suffered from a critical flaw: users were required
+    to create their entire search, including setting all filters, before
+    seeing any results. This often produced zero results, forcing members to
+    abandon their search and start over with limited ability to adjust their
+    parameters on the results page.</p>
+  </div>
 
-      <p>The legacy version suffered from a critical flaw: users were required to create their entire search—including setting all filters—before seeing any results. This often resulted in zero results, forcing members to abandon their search and start over with limited ability to adjust their parameters on the results page.</p>
-    </div>
-  </section>
-
-  <section>
+  <div class="paper">
     <h2>Team Leadership &amp; Process</h2>
-    <div class="prose">
-      <figure class="cs-fig cs-fig--side">
-        <img src="/assets/ux/fap/weekly-review-cycle.webp" alt="Weekly Review Cycle" loading="lazy">
-      </figure>
-      <p>I headed a cross-functional team consisting of Content Designers, Researchers, and Designers. We established a regular cadence that we maintained throughout the entire project:</p>
-      <ul>
-        <li>Internal UX team meetings: 3 times per week</li>
-        <li>External team collaboration: Once per week</li>
-        <li>Regular meetings with Accessibility and Design System stakeholders</li>
-        <li>Meticulous tracking of each requirement and its status</li>
-      </ul>
+    <p>I headed a cross-functional team of Content Designers, Researchers,
+    and Designers. We established a regular cadence that held through the
+    entire project:</p>
+    <ul>
+      <li>Internal UX team meetings, 3 times per week</li>
+      <li>External team collaboration, once per week</li>
+      <li>Regular meetings with Accessibility and Design System stakeholders</li>
+      <li>Meticulous tracking of each requirement and its status</li>
+    </ul>
+    <p>The regular touchpoints with Accessibility and Design System
+    stakeholders were crucial. They kept us aligned and never working too far
+    ahead without critical stakeholder input, which prevented costly rework
+    and kept accessibility at the forefront of design decisions.</p>
+    <figure>
+      <img src="/assets/ux/fap/weekly-review-cycle.webp" alt="Weekly review cycle" loading="lazy">
+    </figure>
+  </div>
 
-      <p>The regular touchpoints with Accessibility and Design System stakeholders were crucial—they ensured we stayed aligned with these groups and never worked too far ahead without critical stakeholder input. This collaborative approach prevented costly rework and kept accessibility at the forefront of our design decisions.</p>
-    </div>
-  </section>
-
-  <section>
+  <div class="paper">
     <h2>Three-Phase Approach</h2>
-
-    <figure class="cs-fig">
-      <img src="/assets/ux/fap/three-phase-approach.webp" alt="Three-Phase Approach" loading="lazy">
+    <figure>
+      <img src="/assets/ux/fap/three-phase-approach.webp" alt="Three-phase approach" loading="lazy">
     </figure>
+    <h3>Phase 1: Lift and Shift</h3>
+    <p>The first phase identified which parts of the design could be quickly
+    ported to our proprietary design system, letting the developer team start
+    implementation immediately while design and research continued in
+    parallel. Our researchers gathered discovery assets from other Centene
+    products and competitive analyses, building a bank of ideas for the next
+    phase.</p>
+    <h3>Phase 2: Validation and Exploration</h3>
+    <p>We validated the lift-and-shift designs through user research, made
+    quick tweaks in response to findings, and handed implementation to the
+    developers. With the foundation in progress, designers explored new
+    directions for the more complex portions of the application. This is
+    where we made our most significant discovery.</p>
+    <h3>Phase 3: Implementation and Refinement</h3>
+    <p>The final phase brought the learnings and explorations together into a
+    cohesive, user-centered experience, with regular meeting points with
+    external stakeholders and leadership for final touches and launch
+    approvals.</p>
+  </div>
 
-    <div class="prose">
-      <h3>Phase 1: Lift and Shift</h3>
-      <p>The first phase focused on identifying which parts of the design could be quickly ported to our proprietary design system. This strategic approach allowed our developer team to get started immediately on implementation while design and research work continued in parallel.</p>
-
-      <p>Simultaneously, our researchers worked tirelessly to gather discovery assets from various other Centene products and competitive analyses. We built a comprehensive bank of ideas that would inform our work in the next phase.</p>
-
-      <h3>Phase 2: Validation and Exploration</h3>
-      <p>In phase two, we validated the "lift and shift" designs from Phase 1 through user research. After quick tweaks in response to the research findings, our developer team got to work on implementation.</p>
-
-      <p>With the foundational work in progress, designers now had free reign to explore new designs and design variations for the more complex portions of the application. This is where we made our most significant discovery.</p>
-
-      <h3>Phase 3: Implementation and Refinement</h3>
-      <p>The final phase brought together all our learnings and design explorations into a cohesive, user-centered experience. This phase included regular meeting points with external stakeholders and leadership, where we added final touches and gathered necessary approvals to move forward with launch.</p>
-    </div>
-  </section>
-
-  <section>
+  <div class="paper">
     <h2>Key Research Insight</h2>
-    <div class="prose">
-      <p>Through extensive user interviews, we uncovered a critical insight that fundamentally changed our approach:</p>
+    <p>Extensive user interviews uncovered the insight that changed our
+    approach:</p>
+    <blockquote>Members want to get to the "ocean of data" first, and then
+    dig down to the data or providers that are most important to them.</blockquote>
+    <p>This was the opposite of how the legacy system worked. The old tool
+    made users build a complete, fully-filtered search before showing
+    anything, which frequently returned zero results, and the results page
+    offered too few controls to adjust course. Members abandoned everything
+    and started over.</p>
+  </div>
 
-      <blockquote>Members want to get to the "ocean of data" first, and then dig down to the data or providers that are most important to them.</blockquote>
-
-      <p>This was the opposite of how the legacy system worked. The old Find a Provider encouraged users to create their entire search, including setting all filters, before getting to the search results page. This approach frequently resulted in zero results. When users wanted to change their search, there weren't enough controls on the search results page to modify parameters, forcing them to abandon everything and start over.</p>
-    </div>
-  </section>
-
-  <section>
+  <div class="paper">
     <h2>Design Solution</h2>
-    <div class="prose">
-      <p>Based on our research findings, we redesigned the search experience around a browse-first, filter-second approach:</p>
-
-      <h3>Simplified Initial Search</h3>
-      <p>We only ask for the broadest of search terms upfront, such as "Urgent Care" or a specialty. This ensures users immediately reach results—often hundreds of them—giving them confidence that providers exist and are available.</p>
-    </div>
-
-    <div class="cs-pair">
-      <figure class="cs-fig">
-        <img src="/assets/ux/fap/flow-comparison.webp" alt="Flow Comparison" loading="lazy">
+    <p>We redesigned the search experience around a browse-first,
+    filter-second approach.</p>
+    <h3>Simplified Initial Search</h3>
+    <p>We only ask for the broadest of search terms upfront, such as "Urgent
+    Care" or a specialty. Users immediately reach results, often hundreds of
+    them, and gain confidence that providers exist and are available.</p>
+    <div class="pair">
+      <figure>
+        <img src="/assets/ux/fap/flow-comparison.webp" alt="Flow comparison" loading="lazy">
       </figure>
-      <figure class="cs-fig">
-        <img src="/assets/ux/fap/search-bar.webp" alt="Simple Search Interface" loading="lazy">
-        <figcaption>Simple search interface asking only for broad terms—specialty, facility, or condition</figcaption>
+      <figure>
+        <img src="/assets/ux/fap/search-bar.webp" alt="Simple search interface" loading="lazy">
+        <figcaption>The search asks only for broad terms: specialty, facility, or condition</figcaption>
       </figure>
     </div>
-
-    <div class="prose">
-      <h3>Progressive Filtering</h3>
-      <p>On the search results page, members can set filters as needed. They can easily reset filters if they end up with zero results, without losing their entire search context. This flexibility dramatically reduces frustration and improves search success rates.</p>
-    </div>
-
-    <figure class="cs-fig">
-      <img src="/assets/ux/fap/filters.webp" alt="Search Results with Filtering" loading="lazy">
+    <h3>Progressive Filtering</h3>
+    <p>On the results page, members set filters as needed and can reset them
+    without losing their search context, which dramatically reduces
+    frustration and improves search success rates.</p>
+    <figure>
+      <img src="/assets/ux/fap/filters.webp" alt="Search results with filtering" loading="lazy">
     </figure>
-
-    <div class="prose">
-      <h3>Clear Guidance and Recovery</h3>
-      <p>We discovered that members want clear and concise directions to use the tool. We found opportunities to present step-by-step instructions, particularly when searches result in zero results. These instructions help members either start a new search or adjust their filters to get results—transforming a dead end into a guided path forward.</p>
-    </div>
-
-    <figure class="cs-fig">
-      <img src="/assets/ux/fap/no-results-cropped.webp" alt="Zero Results with Helpful Guidance" loading="lazy">
-      <figcaption>Zero results page with step-by-step instructions to help users recover and find providers</figcaption>
+    <h3>Clear Guidance and Recovery</h3>
+    <p>Members want clear, concise direction. We present step-by-step
+    instructions at the moments that need them, particularly on zero-result
+    pages, helping members start a new search or adjust filters. A dead end
+    becomes a guided path forward.</p>
+    <figure>
+      <img src="/assets/ux/fap/no-results-cropped.webp" alt="Zero results with helpful guidance" loading="lazy">
+      <figcaption>Zero-results page with step-by-step recovery instructions</figcaption>
     </figure>
-
-    <div class="prose">
-      <h3>Dedicated Provider Details Page</h3>
-      <p>Earlier versions of Find a Provider required all provider information to be constrained to the individual search result card. This severe limitation made it difficult to display comprehensive provider information and forced users to make decisions with incomplete data.</p>
-
-      <p>In our redesign, we introduced a new Provider Details page, greatly increasing the screen real estate available for all kinds of provider information. This allowed us to present comprehensive details about providers—including credentials, specialties, locations, accepted insurance plans, patient reviews, and more—in a clear, organized format that supports informed decision-making.</p>
-    </div>
-
-    <figure class="cs-fig">
-      <img src="/assets/ux/fap/provider-details.webp" alt="Comprehensive Provider Details Page" loading="lazy">
+    <h3>Dedicated Provider Details Page</h3>
+    <p>Earlier versions constrained all provider information to the search
+    result card, forcing decisions on incomplete data. The redesign
+    introduced a Provider Details page with room for credentials,
+    specialties, locations, accepted plans, patient reviews, and more, in a
+    clear, organized format that supports informed decisions.</p>
+    <figure>
+      <img src="/assets/ux/fap/provider-details.webp" alt="Provider details page" loading="lazy">
     </figure>
-  </section>
+  </div>
 
-  <section>
-    <h2>Responsive Design</h2>
-    <div class="prose">
-      <p>The redesigned Find a Provider tool works seamlessly across all devices, ensuring members can search for healthcare providers on desktop, tablet, or mobile phone.</p>
-    </div>
-  </section>
-
-  <section>
+  <div class="paper">
     <h2>Impact</h2>
-    <div class="prose">
-      <ul>
-        <li>Reduced zero-result scenarios by empowering users to start broad and refine incrementally</li>
-        <li>Eliminated the need for users to abandon and restart searches</li>
-        <li>Provided clear recovery paths when searches need adjustment</li>
-        <li>Expanded provider information presentation through dedicated details pages</li>
-        <li>Successfully modernized a decade-old tool while navigating regulatory and contractual constraints</li>
-        <li>Delivered a fully responsive experience across all devices</li>
-      </ul>
-    </div>
-  </section>
-
-  <!-- ======================= TITLE BLOCK ======================= -->
-  <footer>
-    <div class="title-block" aria-label="Drawing title block">
-      <div class="tb-cell"><span class="k">Me</span><span class="v">Myra Krusemark</span></div>
-      <div class="tb-cell"><span class="k">Email</span><span class="v"><a href="mailto:myra@myrakrusemark.com">myra@myrakrusemark.com</a></span></div>
-      <div class="tb-cell"><span class="k">Copyright</span><span class="v">2026</span></div>
-    </div>
-  </footer>
-
+    <ul>
+      <li>Reduced zero-result scenarios by letting users start broad and refine incrementally</li>
+      <li>Eliminated the need to abandon and restart searches</li>
+      <li>Provided clear recovery paths when searches need adjustment</li>
+      <li>Expanded provider information through dedicated details pages</li>
+      <li>Modernized a decade-old tool while navigating regulatory and contractual constraints</li>
+      <li>Delivered a fully responsive experience across all devices</li>
+    </ul>
+  </div>
 </div>
 
-<script src="/js/physics.js?v=2026-08-27"></script>
-
-<script type="importmap">
-{ "imports": {
-  "three": "https://cdn.jsdelivr.net/npm/three@0.171.0/build/three.module.js",
-  "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.171.0/examples/jsm/"
-}}
-</script>
-
-<script type="module" src="/js/glass.js?v=2026-08-27"></script>
+<footer>
+  <a href="mailto:myra@myrakrusemark.com">myra@myrakrusemark.com</a> · &copy; 2026
+</footer>
 
 </body>
 </html>

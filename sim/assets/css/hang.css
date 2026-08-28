@@ -1,0 +1,153 @@
+/* ---------------------------------------------------------------------------
+   hang.css - the two marks the hang gizmo draws, and the cursor that says the
+   chime can be picked up.
+
+   Everything else the Hang slot needs is already in slots.css: the three
+   sliders are ordinary .wcs-field rows and the disabled state they fall back to
+   on the porch is .wcs-field.is-disabled, which is the rule P3 wrote for
+   exactly this control (CONTRACTS P5 criterion 5).
+
+   TWO MARKS, AND THEY SAY TWO DIFFERENT THINGS
+
+     .wcs-hang-hold    an outline AROUND THE CHIME, on hover and while dragging.
+                       "This is what you have hold of." It does not move,
+                       because the chime does not move (CONTRACTS Rule A) - and
+                       because it is drawn on the object, not floating over the
+                       photograph, that reads as an object being held rather
+                       than as a broken position readout. The mark it replaced
+                       was a crosshair at the crop's centre, which is the middle
+                       of the frame by construction: measured at the same pixel
+                       in every state, on the tube ends, on nothing.
+
+     .wcs-hang-field   the reach, drawn in PLATE space. hang.u/v are a fraction
+                       of the PHOTOGRAPH and the photograph is what moves, so
+                       this rectangle slides while the chime stays nailed to the
+                       middle of the frame. Watching its edge arrive at the
+                       chime is what "stops hard at the range" looks like.
+
+   WHERE THE GIZMO LIVES, AND WHY IT IS NOT IN #hudOverlay
+
+   It is appended to #canvasContainer, not to the HUD. Two reasons, and the
+   second is the one that decided it:
+
+     1. It is part of the picture, not part of the chrome, so it has to sit
+        UNDER the caption and the pill row the same way the forest does. In
+        #hudOverlay it would have floated over them.
+     2. #hudOverlay is a three-row grid with pointer-events: none and an .idle
+        fade that dissolves its children after 850 ms of stillness. A gizmo that
+        is on screen precisely because the visitor is dragging must not be
+        inside the thing that fades when they stop.
+
+   z-index 1 rather than auto: #canvasContainer::after is the vignette, and a
+   generated ::after paints after every real child. Without this the marks would
+   be read through a radial gradient that is 28 % black exactly where they sit.
+   --------------------------------------------------------------------------- */
+
+.wcs-hang-gizmo {
+	position: absolute;
+	inset: 0;
+	z-index: 1;
+	/* Never in the way of the drag it is describing. */
+	pointer-events: none;
+}
+
+.wcs-hang-field,
+.wcs-hang-hold {
+	position: absolute;
+	top: 0;
+	left: 0;
+	box-sizing: border-box;
+	opacity: 0;
+	transition: opacity var(--wcs-t-slow) var(--wcs-ease);
+}
+
+.wcs-hang-gizmo.is-reach .wcs-hang-field {
+	opacity: 1;
+}
+
+.wcs-hang-gizmo.is-held .wcs-hang-hold {
+	opacity: 1;
+}
+
+/* The reachable region, in the place's own coordinates. */
+.wcs-hang-field {
+	border: 1px dashed var(--wcs-hairline-strong);
+	border-radius: var(--wcs-r-sm);
+	/* A wash rather than a fill: the forest has to stay readable through it.
+	   color-mix off an existing token rather than a new rgba(), because
+	   CONTRACTS 2.2 says a piece consumes tokens and does not author colour, and
+	   a 4 %-of-white wash is not a colour anybody needs to be able to retheme
+	   separately from the ink it is made of. */
+	background: color-mix(in srgb, var(--wcs-ink) 4%, transparent);
+	transition: opacity var(--wcs-t-slow) var(--wcs-ease),
+		border-color var(--wcs-t-fast) var(--wcs-ease),
+		background-color var(--wcs-t-fast) var(--wcs-ease);
+}
+
+/* Pinned against an edge. The one moment the control has to say something, and
+   it says it in the page's only ring colour rather than in a new one. */
+.wcs-hang-field.is-pinned {
+	border-color: var(--wcs-focus);
+	border-style: solid;
+	background: color-mix(in srgb, var(--wcs-focus) 7%, transparent);
+}
+
+/* The object in hand. A soft rounded outline, no fill, no dashes - the dashes
+   belong to the region and this is not a region. It has to read over a sunlit
+   tube AND over deep canopy shade at one pixel wide, and the halo is what makes
+   a hairline survive both. */
+.wcs-hang-hold {
+	border: 1px solid var(--wcs-hairline-strong);
+	border-radius: var(--wcs-r-md);
+	filter: drop-shadow(0 1px 2px color-mix(in srgb, var(--wcs-ink-on-accent) 70%, transparent));
+}
+
+.wcs-hang-gizmo.is-held .wcs-hang-hold {
+	border-color: var(--wcs-ink);
+}
+
+/* .wcs-hang-dot is gone, and it went the right way. The mark that says which
+   branch the chime would hang from was a div positioned by projecting the hit
+   point to pixels, which made it a fixed fourteen pixels whether the branch was
+   two metres away or thirty - so the one question a visitor asks of a forest
+   path, how far down it is that, had no answer on screen. It is a real object in
+   the scene now (splat.js, ensureDot), fixed in metres rather than in pixels, so
+   it shrinks with distance and a near leaf covers it. Myra's call, 2026-08-11.
+   Nothing about it is styleable from here any more, which is the honest outcome:
+   it is part of the picture rather than part of the chrome. */
+
+/* The invitation, and it is only over the chime. The first cut put `grab` on
+   the whole canvas from the first frame, which promised that pressing anywhere
+   would move something and gave the sail - which is a different gesture owned
+   by a different file - the same cursor twenty pixels away. */
+#glCanvas.wcs-over-chime {
+	cursor: grab;
+}
+
+#glCanvas.wcs-hanging {
+	cursor: grabbing;
+}
+
+/* The one line in the panel that says the chime can be picked up. It sits above
+   the sliders because a hint read after the drag is not a hint. */
+.wcs-hang-hint {
+	margin: 0 0 var(--wcs-s3);
+	font-size: var(--wcs-fs-note);
+	color: var(--wcs-ink-faint);
+}
+
+.wcs-hang-hint:empty {
+	display: none;
+}
+
+/* A visitor who has asked for less motion gets the marks without the fade, and
+   they still say where the edges are. */
+@media (prefers-reduced-motion: reduce) {
+
+	.wcs-hang-gizmo,
+	.wcs-hang-field,
+	.wcs-hang-hold {
+		transition: none;
+	}
+
+}

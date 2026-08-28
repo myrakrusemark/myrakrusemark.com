@@ -1,0 +1,62 @@
+Wind Chime Simulator
+Copyright (c) 2024-2026 Myra Krusemark
+
+This project carries two licences, one for the code and one for the creative
+assets. Which one applies depends on the file.
+
+
+CODE, under the MIT Licence
+---------------------------
+
+Full text in LICENSE.
+
+Covers every source file in the repository: JavaScript, HTML, CSS, Python, the
+build and verification tooling, and the configuration. Reuse requires keeping
+the copyright notice and the licence text.
+
+
+CREATIVE ASSETS, under CC BY 4.0
+--------------------------------
+
+Full text in LICENSE-ASSETS. Deed at https://creativecommons.org/licenses/by/4.0/
+
+Covers the authored creative work:
+
+  - Scene and environment assets under assets/, including geometry, textures,
+    materials and lightmaps
+  - Impulse responses and any authored audio
+  - The modal synthesis material library, meaning the tuned coefficient sets
+    that define how each material sounds
+
+Reuse requires credit to Myra Krusemark and a link to the licence.
+
+The material library is the part worth attributing. The synthesis code is
+ordinary; the tuned coefficients are the work.
+
+
+THIRD-PARTY MATERIAL
+--------------------
+
+Neither licence above applies to third-party files. Those carry their own
+terms, recorded per file in ASSETS.md.
+
+  three.js r185, under the MIT Licence
+  Copyright (c) 2010-2025 three.js authors
+  https://github.com/mrdoob/three.js
+  Vendored under assets/vendor/ so the page needs no build step and no CDN.
+
+  "Forest path" by tanha, under the Creative Commons Attribution 4.0
+  International Licence (CC BY 4.0)
+  https://superspl.at/scene/2be1a75a
+  Licence deed: https://creativecommons.org/licenses/by/4.0/
+  assets/places/forest-path/plate.webp is a derivative of that gaussian splat
+  capture: one still, rendered offline from a single fixed camera. Changes made
+  are the levelling of the capture, the choice of camera, and a contrast and
+  saturation grade, all recorded in assets/places/forest-path/render.json.
+  The credit is also shown to the visitor, in the Place panel on the page
+  itself, because a notice file is not attribution to someone who only ever
+  receives the built page.
+
+Weather data comes from api.weather.gov, a United States government service
+whose output is in the public domain. The simulator is not endorsed by the
+National Weather Service.
