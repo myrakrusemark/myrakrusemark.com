@@ -1,0 +1,226 @@
+// Live ranked-token generation with a user-selected temperature.
+
+const clamp = (v, a, b) => Math.max(a, Math.min(b, v));
+const wait = ms => new Promise(r => setTimeout(r, ms));
+const prefersReduced = () => matchMedia("(prefers-reduced-motion: reduce)").matches;
+const TOKENS = 24;
+const PACE = { list: 800, hold: 550, fly: 450, after: 250 };   // ms per word: about two seconds
+const TEMP = 0.75;   // the station's temperature when it has no slider: warm enough to wander, not enough to babble
+
+export class RankedChoice {
+  constructor(root, { engine, picker, consent }) {
+    Object.assign(this, { root, engine, picker, consent });
+    this.q = s => root.querySelector(s);
+    this.prompt = "It was late in the harbor when the last boat came in, and";
+    this.steps = [];
+    this.i = 0;            // words landed in the sentence
+    this.shown = null;     // the step whose list is on the right
+    this.chosen = false;   // whether that list has its pick lit
+    this.source = "";
+    this.busy = false;
+    this.running = false;
+    this.visible = false;
+    this.waiters = [];
+    // one box: the opening is typed here, the words land here, and it opens
+    // for editing again when the run is over
+    const box = this.q("[data-sentence]"), btn = this.q("[data-start]");
+    box.textContent = this.prompt;   // filled once, on page load
+    box.addEventListener("paste", e => {
+      e.preventDefault();
+      document.execCommand("insertText", false, e.clipboardData.getData("text/plain"));
+    });
+    if (engine) {
+      this.ready(false, "Loading the model");   // app.js enables it when the model is in
+    } else {
+      box.contentEditable = "false";
+      btn.textContent = "Live generation unavailable";
+      btn.disabled = true;
+    }
+    root.querySelectorAll("[name=ranked-temperature]").forEach(el => el.addEventListener("change", () => { if (!this.steps.length) this.renderList(); }));
+    btn.addEventListener("click", () => (this.running ? this.stop() : this.start()));
+    this.renderList();
+    // out of view, the landing waits before the next word
+    new IntersectionObserver(([e]) => {
+      this.visible = e.isIntersecting;
+      if (this.visible) { const w = this.waiters; this.waiters = []; for (const r of w) r(); }
+    }, { threshold: 0.25 }).observe(root);
+  }
+
+  temp() { const el = this.q("[name=ranked-temperature]:checked") || this.q("[data-temp]"); return el ? Number(el.value) : TEMP; }
+
+  // the start button follows the model: off while it loads or after a cancel
+  ready(on, label) {
+    const btn = this.q("[data-start]");
+    btn.disabled = !on || this.running;
+    btn.textContent = label || (this.steps.length ? "Write it again" : `Write the next ${TOKENS} tokens`);
+  }
+
+  whenVisible() { return this.visible ? Promise.resolve() : new Promise(r => this.waiters.push(r)); }
+
+  // stop now: cancel the engine's job, drop the words still queued to land,
+  // and wake a landing that is waiting for the station to scroll into view
+  stop() {
+    if (!this.running || this.stopping) return;
+    this.stopping = true;
+    this.q("[data-start]").disabled = true;
+    if (this.engine) this.engine.cancel();
+    const w = this.waiters; this.waiters = []; for (const r of w) r();
+  }
+
+  // odds of each candidate at the chosen temperature, from the live scores
+  odds(top, t) {
+    if (t <= 0) return top.map((_, k) => (k === 0 ? 1 : 0));
+    const m = Math.max(...top.map(c => c.logit));
+    const w = top.map(c => Math.exp((c.logit - m) / t));
+    const s = w.reduce((a, b) => a + b, 0);
+    return w.map(x => x / s);
+  }
+
+  renderSource() { this.q("[data-source]").textContent = this.source; }
+
+  renderSentence(caret = true) {
+    const done = this.steps.slice(0, this.i).map(s => s.piece).join("");
+    this.q("[data-sentence]").innerHTML = `<span class="muted">${escapeHtml(this.prompt)}</span><span data-done>${escapeHtml(done)}</span>${caret ? '<span class="caret"></span>' : ""}`;
+  }
+
+  showList(k, chosen) { this.shown = k; this.chosen = chosen; this.renderList(); }
+
+  renderList() {
+    const t = this.runTemperature ?? this.temp();
+    const out = this.q("[data-temp-out]"); if (out) out.textContent = t.toFixed(1);
+    const list = this.q("[data-list]"), head = this.q("[data-list-head]");
+    const step = this.steps[this.shown];
+    if (!step) {
+      // before the first word: the list's shape, empty
+      const widths = [52, 40, 46, 34, 44, 38, 30, 42];
+      list.innerHTML = widths.map((w, k) => `
+      <li class="ghost" aria-hidden="true">
+        <span class="rank">#${k + 1}</span>
+        <span class="piece"><i style="width: ${w}px"></i></span>
+        <span class="bar"></span>
+        <span class="pct"></span>
+      </li>`).join("");
+      list.classList.remove("chosen");
+      head.textContent = "the model's top 8 for the next token";
+      return;
+    }
+    const p = this.odds(step.top, t);
+    head.textContent = `token ${this.shown + 1}: relative probabilities among these ${step.top.length}`;
+    if (this.chosen && step.rank >= step.top.length) {
+      head.textContent += ` · picked #${step.rank + 1}: ${step.piece.replace(/^ /, "␣")} (outside this list)`;
+    }
+    list.classList.toggle("chosen", this.chosen);
+    list.innerHTML = step.top.map((c, k) => `
+      <li class="${this.chosen && k === step.rank ? "took" : ""}">
+        <span class="rank">#${k + 1}</span>
+        <span class="piece">${escapeHtml(c.piece.replace(/^ /, "␣"))}</span>
+        <span class="bar"><i style="transform: scaleX(${clamp(p[k], 0, 1)})"></i></span>
+        <span class="pct">${Math.round(p[k] * 100)}%</span>
+      </li>`).join("");
+  }
+
+  // land word k at a pace the eye can follow: the list appears, the pick lights
+  // up, it holds, the word flies into the sentence, a breath, the next list
+  async choose(k) {
+    const step = this.steps[k];
+    if (!step) return;
+    await this.whenVisible();
+    if (this.stopping) return;
+    this.busy = true;
+    try {
+      if (this.shown !== k || this.chosen) this.showList(k, false);
+      await wait(PACE.list);
+      if (this.stopping) return;
+      this.showList(k, true);
+      await wait(PACE.hold);
+      if (this.stopping) return;
+      await this.fly(k, PACE.fly);
+      if (this.stopping) return;
+      this.i = k + 1;
+      this.renderSentence();
+      await wait(PACE.after);
+      if (this.steps[k + 1]) this.showList(k + 1, false);
+    } finally {
+      this.busy = false;
+    }
+  }
+
+  fly(k, ms) {
+    return new Promise(resolve => {
+      const row = this.q("[data-list]").children[this.steps[k].rank];
+      const from = row?.querySelector(".piece"), to = this.q("[data-sentence] .caret");
+      if (!from || !to || prefersReduced()) return resolve();
+      const a = from.getBoundingClientRect(), b = to.getBoundingClientRect();
+      if (!a.width || !b.height) return resolve();
+      const el = document.createElement("span");
+      el.className = "fly-word";
+      el.textContent = this.steps[k].piece.trim() || this.steps[k].piece;
+      el.style.left = `${a.left}px`;
+      el.style.top = `${a.top}px`;
+      document.body.appendChild(el);
+      const dx = b.left - a.left, dy = (b.top + b.height / 2) - (a.top + a.height / 2);
+      const anim = el.animate(
+        [{ transform: "translate(0,0)", opacity: 1 }, { transform: `translate(${dx}px, ${dy}px)`, opacity: 0.85 }],
+        { duration: ms, easing: "cubic-bezier(0.16, 1, 0.3, 1)", fill: "forwards" },
+      );
+      anim.onfinish = () => { el.remove(); resolve(); };
+    });
+  }
+
+  async start() {
+    if (this.running || !this.engine) return;
+    this.prompt = this.q("[data-sentence]").textContent.trim() || this.prompt;
+    this.runTemperature = this.temp();
+    this.running = true;
+    this.stopping = false;
+    const btn = this.q("[data-start]"), box = this.q("[data-sentence]");
+    btn.textContent = "Stop";
+    btn.classList.add("stop");
+    this.steps = [];
+    this.i = 0;
+    box.contentEditable = "false";   // locked while it writes
+    box.blur();
+    try {
+      await this.live(btn);
+    } catch (err) {
+      this.source = `Could not generate: ${err.message}`;
+    } finally {
+      this.running = false;
+      this.stopping = false;
+      btn.classList.remove("stop");
+      this.renderSentence(false);
+      if (this.engine) { box.contentEditable = "true"; this.ready(true); }
+      this.renderSource();
+    }
+  }
+
+  // the page's model writes the next words from the opening at the slider's
+  // temperature; each word lands as the engine picks it
+  async live(btn) {
+    const rung = this.picker.rung;
+    if (!(await this.consent(rung))) return;
+    const name = rung.id.replace(/-Q.*$/, "");
+    // whatever is in the box is the opening; a second run continues from the text as it stands
+    this.prompt = this.q("[data-sentence]").textContent.replace(/\s+$/, "") || this.prompt;
+    this.renderSentence();
+    this.showList(0, false);
+    this.source = `${name}, writing on this computer`;
+    this.renderSource();
+    // the engine runs ahead; the words land one at a time at the animation's pace
+    let queue = Promise.resolve();
+    const land = k => { queue = queue.then(() => (this.stopping ? null : this.choose(k))); };
+    await this.engine.run("sample", { rung, opts: { prompt: this.prompt, maxNew: TOKENS, temperature: this.runTemperature } }, {
+      onEvent: e => {
+        if (e.type !== "token") return;
+        this.steps.push({ piece: e.piece, rank: e.rank, entropy: e.entropy, top: e.top });
+        land(this.steps.length - 1);
+      },
+    });
+    await queue;
+    if (this.stopping) { this.steps.length = this.i; this.showList(this.i ? this.i - 1 : null, true); }   // keep only the words that landed
+    this.source = this.steps.length ? `${name} wrote this on your computer` : "";
+  }
+
+}
+
+function escapeHtml(s) { return s.replace(/[&<>]/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;" }[c])); }

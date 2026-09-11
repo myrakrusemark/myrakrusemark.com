@@ -1,0 +1,244 @@
+// Read: one box. Paste marked text into it; reading annotates the same words
+// in place while their bits are pulled into the strip, until a frame locks or
+// the text ends without one. Click the words to edit them; break-it edits the
+// text for you and reads again.
+
+import { parseMarkCard } from "../engine/mark.js";
+import { decodeHexMessage, encodeMessage } from "../engine/textcode.js";
+import { layoutOf } from "../engine/framing.js";
+import { echoLayout } from "../engine/echo.js";
+
+export class ReadPanel {
+  constructor(root, { engine, picker, callouts, strip, view }) {
+    Object.assign(this, { root, engine, picker, callouts, strip, view });
+    this.q = s => root.querySelector(s);
+    this.ta = this.q("[data-paste]");
+    this.original = null;   // the text before any break-it edit
+    this.running = false;
+    // one button: it starts the read, and while the model reads it reads Stop.
+    // The evidence station keeps it hidden between reads (its edits start them).
+    const run = this.q("[data-run]");
+    run.dataset.label = run.textContent;
+    this.runHidden = run.hidden;
+    run.addEventListener("click", () => {
+      if (this.running || this.batchRunning) { this.batchCancelled = true; this.engine.cancel(); }
+      else this.run();
+    });
+    const reader = this.q('[data-reader]');
+    if (reader) {
+      const current = new Option('', 'current');
+      const updateCurrent = () => { current.textContent = `Current model (${picker.rung.id.replace(/-Q.*$/, '')})`; };
+      updateCurrent();
+      reader.add(current);
+      for (const rung of picker.registry.rungs) {
+        const option = new Option(rung.id.replace(/-Q.*$/, ''), rung.id);
+        option.disabled = !picker.probe.rungs.some(p => p.id === rung.id && p.ok);
+        reader.add(option);
+      }
+      reader.add(new Option('All supported models', 'all'));
+      picker.select.addEventListener('change', updateCurrent);
+    }
+    this.q("[data-edit]")?.addEventListener("click", () => this.edit());
+    this.view.root.addEventListener("click", e => { if (!this.running && !e.target.closest("a")) this.edit(); });
+    for (const b of root.querySelectorAll("[data-break]")) b.addEventListener("click", () => this.breakIt(b.dataset.break));
+    this.q("[data-lineup]")?.addEventListener("click", () => this.lineup());
+    this.ta.addEventListener("input", () => { this.original = null; });
+    this.strip.growMode(this.expectedLayout());
+    // the guess follows the message as typed in the write station, until a read has pulled bits
+    document.querySelector("#st-tag")?.addEventListener("input", () => { if (!this.running && !this.strip.cells.length) this.strip.growMode(this.expectedLayout()); });
+  }
+
+  // the frame the reader expects before it finds one: the layout for the
+  // message as typed in the write station, in the copies profile
+  expectedLayout() {
+    const text = document.querySelector("#st-tag")?.value.trim() || "hello";
+    return layoutOf(Math.max(1, encodeMessage(text).length), 3);
+  }
+
+  load(card) {
+    this.ta.value = card;
+    this.original = card;
+    this.edit();
+  }
+
+  // the text as it is still being written elsewhere on the page, footer to come
+  preview(text) {
+    if (this.running) return;
+    this.ta.value = text;
+    this.original = null;
+    this.edit();
+  }
+
+  // show the textarea with the current text
+  edit() {
+    this.ta.hidden = false;
+    this.view.root.hidden = true;
+    const ed = this.q("[data-edit]"); if (ed) ed.hidden = true;
+    const ft = this.q("[data-foot]"); if (ft) ft.hidden = true;
+  }
+  // show the annotated words in place of the textarea
+  annotate(card) {
+    this.ta.hidden = true;
+    this.view.root.hidden = false;
+    const ed = this.q("[data-edit]"); if (ed) ed.hidden = false;
+    const foot = this.q("[data-foot]");
+    if (!foot) return;
+    if (card) { foot.textContent = `footer: rankmark: ${card.rungId} f=${card.fp}${card.textHash ? " t=" + card.textHash : ""}`; foot.hidden = false; }
+    else foot.hidden = true;
+  }
+
+  // the go button follows the model: off with a note while it loads (or when
+  // none is loaded), back to its own label once the model is in
+  modelReady(on, label) {
+    this.offLabel = on ? null : label;
+    if (!this.running) this.setBusy(false);
+  }
+
+  setBusy(on) {
+    on = on || !!this.batchRunning;
+    this.running = on;
+    this.root.querySelectorAll("[data-reader], [data-key]").forEach(el => { el.disabled = on; });
+    const run = this.q("[data-run]");
+    run.textContent = on ? "Stop" : (this.offLabel ?? run.dataset.label);
+    run.disabled = !on && !!this.offLabel;
+    run.classList.toggle("stop", on);
+    run.hidden = on ? false : this.runHidden;
+    const ed = this.q("[data-edit]"); if (ed) ed.disabled = on;
+    this.root.querySelectorAll("[data-break], [data-lineup]").forEach(el => { el.disabled = on || !!this.offLabel; });
+  }
+
+  verdict(kind, html) {
+    const v = this.q("[data-verdict]");
+    v.className = `verdict ${kind}`;
+    v.innerHTML = html;
+    v.hidden = false;
+  }
+
+  async run({ rung = null, quiet = false } = {}) {
+    if (!rung) {
+      const selection = this.q('[data-reader]')?.value;
+      if (selection === 'all') return this.lineup();
+      rung = this.picker.registry.rungs.find(r => r.id === selection) || this.picker.rung;
+      const results = this.q('[data-lineup-out]');
+      if (results) results.hidden = true;
+    }
+    const raw = this.ta.value;
+    if (!raw.trim()) { this.edit(); this.ta.focus(); return null; }
+    if (!(await this.picker.consent(rung))) return null;
+    if (this.original === null) this.original = raw;
+    const card = parseMarkCard(raw);
+    this.setBusy(true);
+    this.view.clear();
+    this.annotate(card);
+    this.strip.growMode(this.expectedLayout());
+    this.q("[data-verdict]").hidden = true;
+    const head = this.q("[data-head]");
+    head.textContent = "";
+    let carriers = 0, sawPull = false, locked = false;
+    try {
+      const res = await this.engine.run("decode", { rung, text: raw, opts: { passphrase: this.q("[data-key]")?.value || "" } }, {
+        onProgress: p => { head.textContent = `downloading ${Math.round(100 * p.loaded / p.total)}%`; },
+        onReady: () => { head.textContent = `${rung.id.replace(/-Q.*$/, "")} is reading`; },
+        onEvent: e => {
+          if (e.type === "notice" && !quiet) {
+            if (e.altered) this.verdict("warn", "This text differs from what was written: the footer's hash does not match. Whatever follows is about the edited text.");
+            else if (e.fpMismatch) this.verdict("warn", `Written with <b>${e.cardLens}</b>, read with <b>${rung.id}</b>. Only the writer's model can see its own bits.`);
+          }
+          if (e.type === "seed") this.view.append({ ...e, carrier: false, rank: null, seed: true });
+          if (e.type === "token") {
+            const el = this.view.append(e);
+            if (e.carrier) {
+              carriers++;
+              this.strip.pull(e.bit, el);
+              if (!sawPull && !quiet) { sawPull = true; this.callouts.once("pulled", el); }
+            }
+          }
+          if (e.type === "partial") this.strip.paintSpans(e.spans);
+          if (e.type === "frame" && !locked) {
+            locked = true;
+            if (e.echo) this.strip.lockEcho(echoLayout(e.payload.length / 2), e.echo.slots, hexToText(e.payload));
+            else this.strip.lockSpans(e.spans, hexToText(e.payload));
+            if (!quiet) this.callouts.once("locked", this.strip.root);
+          }
+        },
+      });
+      if (res.cancelled) { head.textContent = "stopped"; return null; }
+      head.textContent = `${this.view.tokens.length} tokens, ${carriers} carry bits${res.reuse && res.reuse.cached ? ` · ${res.reuse.computed} re-read, ${res.reuse.cached} known` : ""}`;
+      if (res.valid) {
+        if (res.echo) this.strip.lockEcho(echoLayout(res.payload.length / 2), res.echo.slots, hexToText(res.payload));
+        else this.strip.lockSpans(res.spans || [], hexToText(res.payload));
+        this.verdict("ok", `A frame planted with <b>${rung.id.replace(/-Q.*$/, "")}</b> validates in this text.<span class="tag">${hexToText(res.payload)}</span>`);
+      } else if (this.q("[data-verdict]").hidden) {
+        this.verdict("no", `No frame validates under <b>${rung.id.replace(/-Q.*$/, "")}</b>. Possible reasons include unmarked or edited text, insufficient surviving data, or a different model, engine, or context configuration. This does not establish who wrote it.`);
+      }
+      return res;
+    } catch (err) {
+      head.textContent = `could not read: ${err.message}`;
+      return null;
+    } finally {
+      this.setBusy(false);
+    }
+  }
+
+  // edit the text in place, then read again
+  async breakIt(kind) {
+    if (this.running) await this.engine.cancel();
+    const card = parseMarkCard(this.ta.value);
+    let text = card ? card.text : this.ta.value;
+    const foot = card ? this.ta.value.slice(text.length) : "";
+    if (kind === "undo") { if (this.original !== null) this.ta.value = this.original; return this.run(); }
+    if (kind === "sentence") {
+      const parts = text.split(/(?<=[.!?])\s+/);
+      if (parts.length > 2) { parts.splice(1, 1); text = parts.join(" "); }
+    }
+    if (kind === "start") text = text.slice(text.indexOf(" ", Math.floor(text.length * 0.2)) + 1);
+    if (kind === "end") text = text.slice(0, text.lastIndexOf(" ", Math.floor(text.length * 0.8)));
+    if (kind === "swap") {
+      const words = text.split(" ");
+      for (let k = 0; k < 5 && words.length > 6; k++) {
+        const i = 1 + Math.floor(Math.random() * (words.length - 3));
+        [words[i], words[i + 1]] = [words[i + 1], words[i]];
+      }
+      text = words.join(" ");
+    }
+    const keep = this.original;
+    this.ta.value = text + foot;
+    this.original = keep;
+    const res = await this.run({ quiet: true });
+    if (res && !res.valid) { this.strip.kill(); this.callouts.once("dead", this.strip.root); }
+    return res;
+  }
+
+  // every downloaded model reads the same text
+  async lineup() {
+    if (!this.ta.value.trim()) { this.edit(); this.ta.focus(); return; }
+    const box = this.q('[data-lineup-out]');
+    const models = this.picker.registry.rungs.filter(r => this.picker.probe.rungs.some(p => p.id === r.id && p.ok));
+    box.hidden = false;
+    box.innerHTML = '<table><thead><tr><th>Reader</th><th>Result</th></tr></thead><tbody></tbody></table>';
+    const body = box.querySelector('tbody');
+    this.batchRunning = true;
+    this.batchCancelled = false;
+    this.setBusy(true);
+    try {
+      for (const rung of models) {
+        if (this.batchCancelled) break;
+        const row = document.createElement('tr');
+        const name = document.createElement('td');
+        const status = document.createElement('td');
+        name.textContent = rung.id.replace(/-Q.*$/, '');
+        status.textContent = 'Reading…';
+        row.append(name, status); body.append(row);
+        const res = await this.run({ rung, quiet: true });
+        status.textContent = this.batchCancelled ? 'Stopped' : !res ? 'Not read' : res.valid ? `Message recovered: ${hexToText(res.payload)}` : 'No message recovered';
+        if (!res || this.batchCancelled) break;
+      }
+    } finally {
+      this.batchRunning = false;
+      this.setBusy(false);
+    }
+  }
+}
+
+function hexToText(hexStr) { return decodeHexMessage(hexStr); }
+

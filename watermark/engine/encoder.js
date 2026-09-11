@@ -1,0 +1,211 @@
+// Embed a payload while generating — the token choices ARE the watermark.
+// Port of encoder.py: greedy and same-parity temperature sampling, full
+// context (no window in the browser engine).
+
+import { keyFor, keyBit } from "./keying.js";
+import { hexToBytes } from "./bits.js";
+import { buildFrame, layoutOf, tagOf, ECHO_PROFILE } from "./framing.js";
+import { buildEcho, echoLayout, EchoSlots, ECHO } from "./echo.js";
+import { entropyOf, rankOf, sortedTokenIds } from "./logits.js";
+import { mulberry32, randomSeed, sampleSoftmax } from "./sampling.js";
+import { textHash } from "./mark.js";
+
+// encode_step: below the gate emit rank 0 (a null); above it emit the top token
+// whose rank parity == nextBit. Banned tokens (the end-of-generation set, until
+// one frame is planted) are skipped to the next choice of the same role, so the
+// rank the reader recovers keeps its parity. With a sampler, a null samples
+// across the top_k window and a carrier samples among top_k tokens of the right
+// parity; the reader only ever reads parity, so the round trip is unchanged.
+function encodeStep(logits, nextBit, tau, ban, sampler) {
+  const entropy = entropyOf(logits);
+  const order = sortedTokenIds(logits);
+  const isNull = entropy < tau;
+  const banned = r => ban !== null && ban.has(order[r]);
+
+  if (!sampler) {
+    if (isNull) {
+      let rank = 0;
+      while (banned(rank)) rank++;
+      return { tokenId: order[rank], planted: false, rank, entropy };
+    }
+    let rank = nextBit;
+    while (banned(rank)) rank += 2; // same parity, next-best
+    return { tokenId: order[rank], planted: true, rank, entropy };
+  }
+
+  const k = Math.min(sampler.topK, order.length);
+  let cand = [];
+  for (let r = 0; r < k; r++) if (isNull || r % 2 === nextBit) cand.push(r);
+  const allowed = cand.filter(r => !banned(r));
+  if (allowed.length) cand = allowed;
+  const pick = sampleSoftmax(cand.map(r => logits[order[r]]), sampler.temperature, sampler.rng);
+  const rank = cand[pick];
+  return { tokenId: order[rank], planted: !isNull, rank, entropy };
+}
+
+export async function embed(lens, opts, onEvent) {
+  const {
+    prompt, payloadHex, profile = 0,
+    temperature = 0.7, topK = 48,
+    copies = 1,   // frames to plant before the passage may end
+  } = opts;
+  // the gate is a property of the lens: bigger models are more confident and need a lower one
+  const tau = opts.tau ?? lens.rung?.tau ?? 2.0;
+  const seed = temperature > 0 ? (opts.seed ?? randomSeed()) : null;
+  const sampler = temperature > 0 ? { temperature, topK, rng: mulberry32(seed) } : null;
+
+  const key = await keyFor(opts.passphrase);
+  const payload = hexToBytes(payloadHex);
+  const nbytes = payload.length;
+  // the echo has no frame: a packet whose bits are voted on by slot
+  const echo = profile === ECHO_PROFILE;
+  const packet = echo ? buildEcho(payload, tagOf(lens.name)) : null;
+  const frame = echo ? null : buildFrame(payload, profile, tagOf(lens.name));
+  const frameBits = echo ? packet.length : frame.length;
+
+  const context = await lens.completionContext(prompt);
+  if (!context.length) throw new Error("prompt tokenized to nothing");
+  const eog = lens.eogIds;
+
+  // budget from the measured carrier rate (one frame plus slack), capped by the
+  // context window; the ban keeps the run going until a frame is planted
+  const rate = lens.rung?.carrierRate || 0.12;
+  // the run stops at the first sentence end past the last copy, so slack is free on a
+  // normal text; the echo's random-ish slots need more words to cover every bit
+  const need = Math.ceil((frameBits * (echo ? (copies + 3) * 2 : copies + 2)) / rate);
+  const cap = Math.max(64, (lens.nCtx ?? 2048) - context.length - 8);
+  const maxNew = Math.min(opts.maxNew || need, cap);
+
+  let planted = 0, carriers = 0, nextIdx = 0;
+  // the echo counts its votes per slot, and the strays the opening will cast: a
+  // reader cannot tell the opening from the rest, so its carrier words vote too,
+  // with whatever parity they happen to have. The writer sees those words go by
+  // during the replay, scores them the way the reader will, and keeps writing
+  // until its own votes outnumber the contrary strays on every slot.
+  const votes = echo ? new Array(frameBits).fill(0) : null;
+  const strays = echo ? new Array(frameBits).fill(0) : null;
+  let minVotes = 0;
+  const margin = () => Math.min(...votes.map((v, j) => v - strays[j]));
+  const complete = () => (echo ? margin() >= copies : planted >= frameBits * copies);
+  onEvent({
+    type: "start", frame_bits: frameBits, max_new: maxNew, seed, temperature, tau, copies, echo,
+    layout: echo ? echoLayout(nbytes) : layoutOf(nbytes, profile), context_tokens: context.length,
+  });
+
+  // context[0] is the prefill seed; context[1..] are force-replayed as single
+  // steps (ungated, not part of the watermark) so encode's KV cache is built the
+  // exact way decode's is. Only after the context is replayed does the channel
+  // start planting bits.
+  const replay = context.slice(1);
+  let ri = 0;
+  // the ids so far, for the echo's slot rule (the previous k before each step);
+  // the rule advances at every token, and a carrier votes with the slot it lands on
+  const history = [...context];
+  const slotRule = echo ? new EchoSlots(frameBits) : null;
+
+  const keyHistory = [context[0]];
+  const decide = async logits => {
+    if (ri < replay.length) {
+      // still feeding the context: the reader will score these words too
+      const id = replay[ri++];
+      if (echo && entropyOf(logits) >= tau) {
+        const step = slotRule.peek(history.slice(-ECHO.k));
+        slotRule.commit(step);
+        if ((rankOf(logits, id) % 2 ^ await keyBit(key, keyHistory)) !== packet[step.slot]) strays[step.slot]++;
+      }
+      keyHistory.push(id);
+      history.push(id);
+      return id;
+    }
+    let slot = null, step = null, nextBit;
+    if (echo) { step = slotRule.peek(history.slice(-ECHO.k)); slot = step.slot; nextBit = packet[slot]; }
+    else nextBit = frame[nextIdx % frameBits];
+    const ban = complete() ? null : eog;   // no ending the passage before the last copy is in
+    const mask = await keyBit(key, keyHistory);
+    const choice = encodeStep(logits, nextBit ^ mask, tau, ban, sampler);
+    keyHistory.push(choice.tokenId);
+    history.push(choice.tokenId);
+    if (choice.planted) {
+      planted++; carriers++;
+      if (echo) { slotRule.commit(step); votes[slot]++; minVotes = margin(); } else nextIdx++;
+    }
+    onEvent({
+      type: "token",
+      id: choice.tokenId,
+      piece: lens.decodeOne(choice.tokenId),
+      rank: choice.rank,
+      entropy: Math.round(choice.entropy * 1000) / 1000,
+      carrier: choice.planted,
+      bit: choice.rank % 2 ^ mask,
+      slot: choice.planted && echo ? slot : undefined,
+      top: topOf(logits, lens, 8),
+    });
+    if (choice.planted) {
+      if (echo) onEvent({ type: "progress", carriers, frameBits, copies: minVotes, frac: votes.filter(v => v > 0).length / frameBits, nbytes, votes: minVotes });
+      else onEvent({ type: "progress", carriers, frameBits, copies: Math.floor(carriers / frameBits), frac: (carriers % frameBits) / frameBits, nbytes });
+    }
+    return choice.tokenId;
+  };
+
+  // once a whole frame is in, end the passage at the next sentence boundary
+  // rather than running out the budget; a few words past the seal keep the
+  // last bits off the very end of the text
+  let sinceFrame = 0;
+  const stopWhen = id => {
+    if (!complete()) return false;
+    sinceFrame++;
+    return sinceFrame >= 6 && /[.!?]["')\]]?\s*$/.test(lens.decodeOne(id));
+  };
+  const allIds = await lens.run(context[0], replay.length + maxNew, decide, { stopOn: eog, stopWhen });
+  const plain = await lens.encodeText(prompt);
+  const bosLen = context.length - plain.length; // 1 if BOS was prepended
+  const visibleIds = allIds.slice(bosLen).filter(t => !eog.has(t));
+  const text = await lens.decodeTokens(visibleIds);
+
+  const retokenizes = arraysEqual(await lens.encodeText(text), visibleIds);
+  const hash = await textHash(text);
+  const framesPlanted = echo ? minVotes : planted / frameBits;
+  const result = {
+    text,
+    ids: visibleIds,
+    framesPlanted,
+    retokenizes,
+    seed,
+    temperature,
+    copies,
+    fingerprint: lens.fp,
+    textHash: hash,
+    lens: lens.name,
+  };
+  onEvent({
+    type: "done",
+    text,
+    frames_planted: Math.round(framesPlanted * 100) / 100,
+    retokenizes_cleanly: retokenizes,
+    seed,
+    fingerprint: lens.fp,
+    text_hash: hash,
+    lens: lens.name,
+  });
+  return result;
+}
+
+// the model's top candidates at this step, for showing the ranked list
+export function topOf(logits, lens, k = 8) {
+  const idx = [];
+  for (let i = 0; i < logits.length; i++) {
+    if (idx.length < k) { idx.push(i); idx.sort((a, b) => logits[b] - logits[a] || a - b); continue; }
+    const worst = idx[idx.length - 1];
+    if (logits[i] > logits[worst] || (logits[i] === logits[worst] && i < worst)) {
+      idx[idx.length - 1] = i;
+      idx.sort((a, b) => logits[b] - logits[a] || a - b);
+    }
+  }
+  return idx.map(i => ({ id: i, piece: lens.decodeOne(i), logit: Math.round(logits[i] * 1000) / 1000 }));
+}
+
+function arraysEqual(a, b) {
+  if (a.length !== b.length) return false;
+  for (let i = 0; i < a.length; i++) if (a[i] !== b[i]) return false;
+  return true;
+}
