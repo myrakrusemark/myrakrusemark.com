@@ -14,7 +14,7 @@ body {
 body::before {
   content: '';
   position: fixed; inset: 0; z-index: 0;
-  background: url('../assets/bg-bokeh.jpg?v=e59fd3176d3189aa58c0') center 40% / cover no-repeat;
+  background: url('../assets/bg-bokeh.jpg?v=8ee67d2c3612bfccb49e') center 40% / cover no-repeat;
   filter: brightness(0.55) saturate(0.9);
 }
 body::after {

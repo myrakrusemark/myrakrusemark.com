@@ -1,11 +1,11 @@
-import {SUPPORT_MODEL} from './support-config.js?v=e59fd3176d3189aa58c0';
-import {FACTS, ROUTES, ANSWERS, BINARY_OPTIONS, ROUTE_INSTRUCTIONS, BINARY_INSTRUCTIONS, classifyQuestion, lookupOrder} from './support-policy.js?v=e59fd3176d3189aa58c0';
+import {SUPPORT_MODEL} from './support-config.js?v=8ee67d2c3612bfccb49e';
+import {FACTS, ROUTES, ANSWERS, BINARY_OPTIONS, ROUTE_INSTRUCTIONS, BINARY_INSTRUCTIONS, classifyQuestion, lookupOrder} from './support-policy.js?v=8ee67d2c3612bfccb49e';
 
 class SupportWorker {
   constructor(onState) { this.onState = onState; this.pending = new Map(); this.next = 0; this.worker = null; this.disposed = false; }
   start() {
     if (this.worker) return;
-    this.worker = new Worker(new URL('./support.worker.js?v=e59fd3176d3189aa58c0', import.meta.url), {type: 'module'});
+    this.worker = new Worker(new URL('./support.worker.js?v=8ee67d2c3612bfccb49e', import.meta.url), {type: 'module'});
     this.worker.onmessage = ({data: {reqId, kind, data}}) => {
       const job = this.pending.get(reqId);
       if (!job) return;
@@ -102,7 +102,7 @@ export function createSupportEngine({judge, registry, jevUrl = '/decide', fetche
       checkActive();
       state('head', 'loading', {message: 'Starting classifier…'});
       if (judge.rung?.id !== 'bge-small') throw new Error('The support classifier needs bge-small.');
-      const response = await active(fetcher(new URL('../data/support-question-head.json?v=e59fd3176d3189aa58c0', import.meta.url), {signal: controller.signal}));
+      const response = await active(fetcher(new URL('../data/support-question-head.json?v=8ee67d2c3612bfccb49e', import.meta.url), {signal: controller.signal}));
       if (!response.ok) throw new Error('The support classifier could not download. Please retry.');
       head = await active(response.json());
       checkActive();
@@ -130,23 +130,9 @@ export function createSupportEngine({judge, registry, jevUrl = '/decide', fetche
   }
   async function jev(question) {
     checkActive();
-    if (!jevUrl) throw new Error('The hosted Jev handoff is not configured for this preview.');
-    const controller = new AbortController(), timer = setTimeout(() => controller.abort(), 60000);
-    requests.add(controller);
-    try {
-      const response = await active(fetcher(jevUrl, {method: 'POST', headers: {'Content-Type': 'application/json'}, body: JSON.stringify({question}), signal: controller.signal}));
-      let data;
-      try { data = await active(response.json()); } catch (error) { checkActive(); throw new Error('The Jev handoff is unavailable. Please try again later.'); }
-      if (!response.ok) throw new Error(data.error?.message || (typeof data.error === 'string' && data.error) || 'The Jev handoff is unavailable. Please try again later.');
-      if (!['tracking', 'returns', 'refund', 'clarify', 'llm'].includes(data.choice)) throw new Error('Jev returned an unknown support route.');
-      return data;
-    } catch (error) {
-      checkActive();
-      if (error.name === 'AbortError') throw new Error('The Jev handoff timed out. Please try again.');
-      if (error instanceof TypeError) throw new Error('Could not reach the Jev handoff. Check your connection.');
-      throw error;
-    } finally { clearTimeout(timer); requests.delete(controller); }
+    return scriptedJevDecision(question);
   }
+
   return {
     preload, snapshot,
     dispose() {
@@ -177,4 +163,16 @@ export function createSupportEngine({judge, registry, jevUrl = '/decide', fetche
       } finally { busy = false; }
     },
   };
+}
+
+// Demonstrates the hosted handoff without making a paid request.
+// These rules are not Jev inference and are not benchmark measurements.
+export function scriptedJevDecision(question) {
+  const text = String(question).toLowerCase();
+  let choice = 'clarify';
+  if (/\b(explain|compare|difference|why|wording)\b/.test(text) || /store credit/.test(text)) choice = 'llm';
+  else if (/\b(refund|money back|reimburse)\b/.test(text)) choice = 'refund';
+  else if (/\b(return|returns|send back)\b/.test(text)) choice = 'returns';
+  else if (/\b(track|tracking|shipment|shipped|delivery|delivered|where.*order)\b/.test(text)) choice = 'tracking';
+  return {choice, simulated: true};
 }

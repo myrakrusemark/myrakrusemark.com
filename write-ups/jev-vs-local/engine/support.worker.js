@@ -1,5 +1,5 @@
-import {SUPPORT_MODEL} from './support-config.js?v=e59fd3176d3189aa58c0';
-import {choiceMessages, scoreLetters, EXPLANATION_INSTRUCTIONS} from './support-policy.js?v=e59fd3176d3189aa58c0';
+import {SUPPORT_MODEL} from './support-config.js?v=8ee67d2c3612bfccb49e';
+import {choiceMessages, scoreLetters, EXPLANATION_INSTRUCTIONS} from './support-policy.js?v=8ee67d2c3612bfccb49e';
 
 let library, tokenizer, model, modelInfo;
 let chain = Promise.resolve();

@@ -3,7 +3,7 @@
 // masks the judge to the actions that make sense there, and runs the handler
 // the band allows. Typed, chip and spoken input all come in through route().
 
-import { parseNumber, bandFor, strictBandFor, SECTIONS } from "../engine/judge.js?v=e59fd3176d3189aa58c0";
+import { parseNumber, bandFor, strictBandFor, SECTIONS } from "../engine/judge.js?v=8ee67d2c3612bfccb49e";
 
 // the head's twelve kitchen labels: always allowed, always land on the map
 // when the active station cannot take them (override with opts.kitchen)

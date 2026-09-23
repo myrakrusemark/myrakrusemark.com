@@ -2,7 +2,7 @@
 // to. Every rung carries the engine block so the worker imports the pinned
 // transformers.js build, not whatever "latest" is that day.
 
-export async function loadRegistry(url = new URL("./registry.json?v=e59fd3176d3189aa58c0", import.meta.url)) {
+export async function loadRegistry(url = new URL("./registry.json?v=8ee67d2c3612bfccb49e", import.meta.url)) {
   const res = await fetch(url);
   if (!res.ok) throw new Error(`registry: HTTP ${res.status}`);
   const reg = await res.json();

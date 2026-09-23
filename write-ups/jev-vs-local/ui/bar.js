@@ -3,8 +3,8 @@
 // (top three, addressed, band) and lets the reader correct it. Everything it
 // hears goes through router.route(); it never decides anything itself.
 
-import { selectTryCommands } from './try-commands.js?v=e59fd3176d3189aa58c0';
-import { SECTIONS } from '../engine/judge.js?v=e59fd3176d3189aa58c0';
+import { selectTryCommands } from './try-commands.js?v=8ee67d2c3612bfccb49e';
+import { SECTIONS } from '../engine/judge.js?v=8ee67d2c3612bfccb49e';
 
 const esc = s => String(s ?? "").replace(/[&<>"]/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]));
 const pct = p => `${Math.round((p || 0) * 100)}%`;

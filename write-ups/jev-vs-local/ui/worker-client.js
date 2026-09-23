@@ -10,7 +10,7 @@ export class EngineClient {
   }
   spawn() {
     if (this.disposed) return;
-    this.worker = new Worker(new URL("../engine/embed.worker.js?v=e59fd3176d3189aa58c0", import.meta.url), { type: "module" });
+    this.worker = new Worker(new URL("../engine/embed.worker.js?v=8ee67d2c3612bfccb49e", import.meta.url), { type: "module" });
     this.worker.onmessage = ev => {
       const { reqId, kind, data } = ev.data;
       const p = this.pending.get(reqId);

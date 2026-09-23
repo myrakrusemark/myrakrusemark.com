@@ -9,7 +9,7 @@
 <meta property="og:description" content="Jev is great because it’s general. Your project probably needs a few specific decisions, and small local models can make them. Seven methods, 22 small tests, and demos you can drive with your voice.">
 <meta property="og:type" content="article">
 <meta property="og:url" content="https://myrakrusemark.com/write-ups/jev-vs-local/">
-<meta property="og:image" content="https://myrakrusemark.com/write-ups/jev-vs-local/assets/jev-social-card.png?v=e59fd3176d3189aa58c0">
+<meta property="og:image" content="https://myrakrusemark.com/write-ups/jev-vs-local/assets/jev-social-card.png?v=8ee67d2c3612bfccb49e">
 <meta property="og:image:width" content="1200">
 <meta property="og:image:height" content="630">
 <meta property="og:image:alt" content="Jev ain't all that: seven ways to turn language into a decision, compared.">
@@ -20,15 +20,15 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Jost:wght@200;300;400;500&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="styles/subpage.css?v=20260923-live">
-<link rel="stylesheet" href="styles/support-flow.css?v=e59fd3176d3189aa58c0">
-<link rel="stylesheet" href="styles/stations.css?v=e59fd3176d3189aa58c0">
-<link rel="stylesheet" href="styles/bar.css?v=e59fd3176d3189aa58c0">
-<link rel="stylesheet" href="styles/results-comparison.css?v=e59fd3176d3189aa58c0">
-<link rel="stylesheet" href="styles/map.css?v=e59fd3176d3189aa58c0">
-<link rel="stylesheet" href="styles/expedition.css?v=e59fd3176d3189aa58c0">
-<link rel="stylesheet" href="styles/solution.css?v=e59fd3176d3189aa58c0">
-<link rel="stylesheet" href="/css/breadcrumb.css?v=20260923-live">
+<link rel="stylesheet" href="styles/subpage.css?v=8ee67d2c3612bfccb49e">
+<link rel="stylesheet" href="styles/support-flow.css?v=8ee67d2c3612bfccb49e">
+<link rel="stylesheet" href="styles/stations.css?v=8ee67d2c3612bfccb49e">
+<link rel="stylesheet" href="styles/bar.css?v=8ee67d2c3612bfccb49e">
+<link rel="stylesheet" href="styles/results-comparison.css?v=8ee67d2c3612bfccb49e">
+<link rel="stylesheet" href="styles/map.css?v=8ee67d2c3612bfccb49e">
+<link rel="stylesheet" href="styles/expedition.css?v=8ee67d2c3612bfccb49e">
+<link rel="stylesheet" href="styles/solution.css?v=8ee67d2c3612bfccb49e">
+<link rel="stylesheet" href="/css/breadcrumb.css?v=20260923">
 </head>
 <body>
 
@@ -166,8 +166,8 @@
   <div class="paper" id="support-desk" data-section="support-desk" data-title="Who handles this?">
     <h2>One more decision: who handles this?</h2>
     <p class="lede">And you can use more than one. A flowchart can be a team of decision makers.</p>
-    <p>Try this little support desk. My classifier spots yes/no questions. Qwen, a small local LLM, reads the order details and shop policy, then chooses how to help: use a prepared answer, write an explanation, or ask Jev to choose. If Qwen wants to ask the customer for clarification, I send that to Jev for a second opinion first. Watch the question travel through the flowchart.</p>
-    <p class="small">This is a demo with a fictional shop and orders. The classifier and Qwen run in your browser; a handoff sends your question to Jev’s hosted service. The second-opinion rule is built into the flow.</p>
+    <p>Try this little support desk. My classifier spots yes/no questions. Qwen, a small local LLM, reads the order details and shop policy, then chooses how to help: use a prepared answer, write an explanation, or demonstrate a Jev handoff using a scripted stand-in. If Qwen wants to ask the customer for clarification, the scripted stand-in demonstrates the second-opinion step first. Watch the question travel through the flowchart.</p>
+    <p class="small">This is a demo with a fictional shop and orders. The classifier and Qwen run in your browser; the Jev handoff is simulated locally with scripted rules, with no paid API requests. This stand-in is not real Jev inference; the benchmark results above are real measurements. The second-opinion rule is built into the flow.</p>
     <div class="station" id="st-support" data-station="support" data-title="Support desk"></div>
     <p>You don’t need one model to handle everything. You can make the handoff another decision.</p>
   </div>
@@ -208,7 +208,7 @@
 </dialog>
 
 <div id="command-bar" aria-live="polite"></div>
-<script type="module" src="ui/app.js?v=e59fd3176d3189aa58c0"></script>
-<script type="module" src="scripts/lineup-summary.js?v=e59fd3176d3189aa58c0"></script>
+<script type="module" src="ui/app.js?v=8ee67d2c3612bfccb49e"></script>
+<script type="module" src="scripts/lineup-summary.js?v=8ee67d2c3612bfccb49e"></script>
 </body>
 </html>

@@ -1,4 +1,4 @@
-import { EXAMPLES, rankExamples, START, SAMPLES, REEFS, step, parseCommand } from '../../engine/expedition.js?v=e59fd3176d3189aa58c0';
+import { EXAMPLES, rankExamples, START, SAMPLES, REEFS, step, parseCommand } from '../../engine/expedition.js?v=8ee67d2c3612bfccb49e';
 const INITIAL=()=>({...START,collected:[],moves:0,bumps:0,complete:false});
 const px=x=>65+x*76, py=y=>74+y*66;
 export async function mount(el,{judge}) {
@@ -110,7 +110,7 @@ export async function mount(el,{judge}) {
   judge.onStatus(s=>{if(s.status!=='ready'){vectors=null;model=null;}});
   render();
   // Load the local renderer without delaying controls or the page command router.
-  import('../reef-scene.js?v=e59fd3176d3189aa58c0').then(({createReefScene})=>{
+  import('../reef-scene.js?v=8ee67d2c3612bfccb49e').then(({createReefScene})=>{
     reef=createReefScene(q('.reef-viewport'),state);
     addEventListener('pagehide', e=>{if(!e.persisted)reef?.dispose();});
   }).catch(err=>console.warn('The reef is using its 2D view.',err));

@@ -12,16 +12,16 @@ const consoleErrors = [];
   addEventListener("unhandledrejection", e => consoleErrors.push(`unhandled: ${e.reason?.message || e.reason}`));
 }
 
-import { loadRegistry } from "../engine/models.js?v=e59fd3176d3189aa58c0";
-import { probe } from "../engine/probe.js?v=e59fd3176d3189aa58c0";
-import { createJudge } from "../engine/judge.js?v=e59fd3176d3189aa58c0";
-import { createSpeech } from "../engine/speech.js?v=e59fd3176d3189aa58c0";
-import { ModelPicker, MB } from "./models.js?v=e59fd3176d3189aa58c0";
-import { createRouter } from "./router.js?v=e59fd3176d3189aa58c0";
-import { createBar } from "./bar.js?v=e59fd3176d3189aa58c0";
-import { createSupportEngine } from "../engine/support.js?v=e59fd3176d3189aa58c0";
-import { jevEndpoint } from '../engine/runtime-config.js?v=e59fd3176d3189aa58c0';
-import { modelRows, modelStatusText, modelProgress, allModelsReady, voiceModelsReady } from './model-load-state.js?v=e59fd3176d3189aa58c0';
+import { loadRegistry } from "../engine/models.js?v=8ee67d2c3612bfccb49e";
+import { probe } from "../engine/probe.js?v=8ee67d2c3612bfccb49e";
+import { createJudge } from "../engine/judge.js?v=8ee67d2c3612bfccb49e";
+import { createSpeech } from "../engine/speech.js?v=8ee67d2c3612bfccb49e";
+import { ModelPicker, MB } from "./models.js?v=8ee67d2c3612bfccb49e";
+import { createRouter } from "./router.js?v=8ee67d2c3612bfccb49e";
+import { createBar } from "./bar.js?v=8ee67d2c3612bfccb49e";
+import { createSupportEngine } from "../engine/support.js?v=8ee67d2c3612bfccb49e";
+import { jevEndpoint } from '../engine/runtime-config.js?v=8ee67d2c3612bfccb49e';
+import { modelRows, modelStatusText, modelProgress, allModelsReady, voiceModelsReady } from './model-load-state.js?v=8ee67d2c3612bfccb49e';
 
 const $ = s => document.querySelector(s);
 const esc = s => String(s ?? "").replace(/[&<>"]/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]));
@@ -74,7 +74,7 @@ const support = createSupportEngine({judge, registry, jevUrl: jevEndpoint()});
 const dataCache = new Map();
 const ctx = {
   data(name) {
-    if (!dataCache.has(name)) dataCache.set(name, fetch(new URL(`../data/${name}.json?v=e59fd3176d3189aa58c0`, import.meta.url))
+    if (!dataCache.has(name)) dataCache.set(name, fetch(new URL(`../data/${name}.json?v=8ee67d2c3612bfccb49e`, import.meta.url))
       .then(r => { if (!r.ok) throw new Error(`data/${name}.json: HTTP ${r.status}`); return r.json(); })
       .catch(err => { dataCache.delete(name); throw err; }));
     return dataCache.get(name);
@@ -97,7 +97,7 @@ await Promise.all(STATIONS.map(async name => {
   const el = document.getElementById(`st-${name}`);
   if (!el) { mounts[name] = "missing"; return; }
   try {
-    const mod = await import(`./stations/${name}.js?v=e59fd3176d3189aa58c0`);
+    const mod = await import(`./stations/${name}.js?v=8ee67d2c3612bfccb49e`);
     const st = await mod.mount(el, ctx);
     router.register(name, { el, ...st });
     mounts[name] = "ok";

@@ -1,7 +1,7 @@
 // Browser speech when available; otherwise local Whisper transcribes each
 // utterance after a pause and keeps the microphone open until the user stops it.
-import { EngineClient } from "../ui/worker-client.js?v=e59fd3176d3189aa58c0";
-import { createWhisperCapture } from "./whisper-capture.js?v=e59fd3176d3189aa58c0";
+import { EngineClient } from "../ui/worker-client.js?v=8ee67d2c3612bfccb49e";
+import { createWhisperCapture } from "./whisper-capture.js?v=8ee67d2c3612bfccb49e";
 
 const SR = () => self.SpeechRecognition || self.webkitSpeechRecognition || null;
 const SERVICE_KEY = "jev.browser-speech-service";

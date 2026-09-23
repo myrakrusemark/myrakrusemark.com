@@ -27,7 +27,7 @@ export function validateOfficialResults(raw){
  return raw;
 }
 export function loadOfficialResults(){
- pending??=fetch(new URL('../data/official-results.json?v=e59fd3176d3189aa58c0',import.meta.url),{cache:'no-cache'})
+ pending??=fetch(new URL('../data/official-results.json?v=8ee67d2c3612bfccb49e',import.meta.url),{cache:'no-cache'})
   .then(response=>{if(!response.ok)throw Error('Official results could not be loaded');return response.json();})
   .then(validateOfficialResults);
  return pending;

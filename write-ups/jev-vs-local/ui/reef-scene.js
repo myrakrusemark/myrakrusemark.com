@@ -1,5 +1,5 @@
-import * as T from '../vendor/three/three.module.min.js?v=e59fd3176d3189aa58c0';
-import {START, SAMPLES, REEFS} from '../engine/expedition.js?v=e59fd3176d3189aa58c0';
+import * as T from '../vendor/three/three.module.min.js?v=8ee67d2c3612bfccb49e';
+import {START, SAMPLES, REEFS} from '../engine/expedition.js?v=8ee67d2c3612bfccb49e';
 
 const point = (x, y) => new T.Vector3((x - 4) * 3, (4 - y) * 2.5 + 2, 0);
 const TAU = Math.PI * 2;

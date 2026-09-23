@@ -1,4 +1,4 @@
-import {loadOfficialResults} from './official-data.js?v=e59fd3176d3189aa58c0';
+import {loadOfficialResults} from './official-data.js?v=8ee67d2c3612bfccb49e';
 const names={jev:'Jev',head:'Embeddings + head',layers:'LLM lower layers',llm:'Bare LLM',nli:'NLI',decider:'Decider',laya:'Laya'};
 const esc=v=>String(v).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const pct=v=>`${(100*v).toFixed(1).replace(/\.0$/,'')}%`;

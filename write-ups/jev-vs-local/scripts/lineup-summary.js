@@ -1,4 +1,4 @@
-import {loadOfficialResults} from './official-data.js?v=e59fd3176d3189aa58c0';
+import {loadOfficialResults} from './official-data.js?v=8ee67d2c3612bfccb49e';
 const root=globalThis.document?.querySelector('[data-lineup-summary]');
 const methods=[['jev','Jev'],['head','Embeddings + head'],['layers','LLM lower layers'],['llm','Bare LLM'],['nli','NLI'],['decider','Decider'],['laya','Laya']];
 const blurbs={jev:'Hosted general decision model',head:'Small classifier on embeddings · trained',layers:'Classifier on a small LLM’s middle layer · trained',llm:'Qwen3-0.6B picking an answer letter',nli:'Entailment model scoring each answer',decider:'Local 2B general decision model',laya:'Local decision router'};
@@ -47,7 +47,7 @@ async function render(){
   const rows=methods.map(([key,name])=>{
    const groups=strengthsByMethod[key].filter(([,ids])=>!ids||ids.every(id=>matched(accuracy,id,key)));
    const strengths=`<ul class="lineup-strengths">${groups.map(([label])=>`<li><span class="strength-check" aria-hidden="true">✓</span><span>${esc(label)}</span></li>`).join('')}</ul>`;
-   const identity=badges[key]?`<span class="method-letter-badge badge-${key}" aria-hidden="true">${badges[key]}</span>`:`<img class="method-logo ${key==='layers'||key==='llm'?'method-wordmark':''}" src="assets/methods/${marks[key][0]}?v=e59fd3176d3189aa58c0" alt="" title="${marks[key][1]}" width="40" height="40">`;
+   const identity=badges[key]?`<span class="method-letter-badge badge-${key}" aria-hidden="true">${badges[key]}</span>`:`<img class="method-logo ${key==='layers'||key==='llm'?'method-wordmark':''}" src="assets/methods/${marks[key][0]}?v=8ee67d2c3612bfccb49e" alt="" title="${marks[key][1]}" width="40" height="40">`;
    return `<tr class="${key==='head'?'my-solution-row':key==='jev'?'jev-row':''}" data-model="${key}"><th scope="row">${key==='head'?'<span class="my-solution-callout">My solution</span>':''}<div class="method-identity">${identity}<span>${name}</span><small class="method-blurb">${blurbs[key]}</small></div></th><td data-label="Best at">${strengths}</td><td data-label="Response time per decision"><div class="timing-stack">${lanes(key).map(v=>track(v,position)).join('')}</div>${ticks('timing-axis-row')}</td></tr>`;
   }).join('');
   const legend=[['laptop','Laptop CPU'],['bs-gpu','GPU workstation'],['hosted','Hosted Jev']].map(([host,label])=>`<span class="timing-${host}"><span class="legend-swatch" aria-hidden="true"><svg viewBox="0 0 24 24" focusable="false">${icons[host]}</svg></span> ${label}</span>`).join('');

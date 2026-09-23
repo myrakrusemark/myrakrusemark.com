@@ -2,7 +2,7 @@
 // Cache API transformers.js writes to), the consent dialog with size and time
 // before any download that is not the arrival one, and the remembered rung.
 
-import { fileUrls } from "../engine/models.js?v=e59fd3176d3189aa58c0";
+import { fileUrls } from "../engine/models.js?v=8ee67d2c3612bfccb49e";
 
 export const MB = b => `${Math.round(b / 1e6)} MB`;
 const RUNG_KEY = "jev.rung";

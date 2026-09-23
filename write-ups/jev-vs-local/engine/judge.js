@@ -4,8 +4,8 @@
 // corrections, and cheap deterministic slots. The head and the example index
 // belong to a rung: switching rungs swaps the head and re-embeds everything.
 
-import { loadRegistry, rungById, defaultRung } from "./models.js?v=e59fd3176d3189aa58c0";
-import { EngineClient } from "../ui/worker-client.js?v=e59fd3176d3189aa58c0";
+import { loadRegistry, rungById, defaultRung } from "./models.js?v=8ee67d2c3612bfccb49e";
+import { EngineClient } from "../ui/worker-client.js?v=8ee67d2c3612bfccb49e";
 
 export const POLICY = {
   actAddressed: 0.75, actConf: 0.35, askAddressed: 0.5, askConfLo: 0.15,
@@ -161,7 +161,7 @@ export function createJudge({ registry = null, client = null, rungId = null, bas
   const notify = () => { const s = { status, progress, error, rung: rung?.id ?? null }; for (const cb of listeners.status) { try { cb(s); } catch { /* listener's problem */ } } };
   const setStatus = (s, extra = {}) => { status = s; if ("progress" in extra) progress = extra.progress; error = extra.error ?? null; notify(); };
 
-  const registryReady = async () => (reg ||= await loadRegistry(new URL("engine/registry.json?v=e59fd3176d3189aa58c0", base)));
+  const registryReady = async () => (reg ||= await loadRegistry(new URL("engine/registry.json?v=8ee67d2c3612bfccb49e", base)));
   const preferred = async () => {
     const r = await registryReady();
     let id = rungId;

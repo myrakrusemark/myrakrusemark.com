@@ -15,7 +15,7 @@
       "task": "feature-extraction",
       "repo": "Xenova/bge-small-en-v1.5",
       "revision": "ea104dacec62c0de699686887e3f920caeb4f3e3",
-      "head": "data/head.bge-small.json?v=e59fd3176d3189aa58c0",
+      "head": "data/head.bge-small.json?v=8ee67d2c3612bfccb49e",
       "pooling": "cls",
       "normalize": true,
       "dim": 384,

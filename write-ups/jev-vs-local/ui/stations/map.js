@@ -2,7 +2,7 @@
 // 384 dimensions to two (map.json, precomputed), and a drop zone. A dropped
 // sentence is NEVER projected live: the flattening isn't faithful, so it lands
 // on its nearest real example in the full space (judge.nearest), with a jitter.
-import { createScreen } from "../screen.js?v=e59fd3176d3189aa58c0";
+import { createScreen } from "../screen.js?v=8ee67d2c3612bfccb49e";
 
 const VW = 800, VH = 500, VH_NARROW = 720, PAD = { x: 26, y: 34 };   // ~16:10 in SVG units; nearly square on a phone so the names fit
 const GLIDE = 600;                                                   // ms; the article says "glides"
