@@ -1,0 +1,52 @@
+{
+  "_comment": "Model ladder for the Jev write-up, pinned by Hugging Face repo revision and file size (from the HF API, blobs=true, 2026-09-20). transformers.js fetches exactly the files listed here at that revision and keeps them in the Cache API under 'transformers-cache', so a rung's URLs (engine/models.js fileUrls) double as its cache keys. The heads in data/ were trained on the Python side with the same models, so a rung and its head travel together.",
+  "engine": {
+    "name": "transformers.js",
+    "version": "3.8.1",
+    "url": "https://cdn.jsdelivr.net/npm/@huggingface/transformers@3.8.1",
+    "host": "https://huggingface.co",
+    "_comment": "the worker import()s this URL; the ONNX runtime wasm comes from the same package's dist/ (transformers.js's default)"
+  },
+  "defaultRung": "bge-small",
+  "rungs": [
+    {
+      "id": "bge-small",
+      "default": true,
+      "task": "feature-extraction",
+      "repo": "Xenova/bge-small-en-v1.5",
+      "revision": "ea104dacec62c0de699686887e3f920caeb4f3e3",
+      "head": "data/head.bge-small.json?v=e59fd3176d3189aa58c0",
+      "pooling": "cls",
+      "normalize": true,
+      "dim": 384,
+      "dtype": "q8",
+      "note": "the arrival model: the head in the article was trained on this one",
+      "files": {
+        "onnx/model_quantized.onnx": 34014426,
+        "tokenizer.json": 711396,
+        "tokenizer_config.json": 366,
+        "config.json": 683
+      },
+      "bytes": 34726871,
+      "sectionSim": 0.75,
+      "_sectionSimNote": "cosine floor for the section slot, measured 2026-09-20: bge scores unrelated text 0.55-0.67 and near-misses up to 0.74 ('highlight laya' vs 'von laya decider'); real section phrasings 0.80-0.92"
+    }
+  ],
+  "speech": {
+    "id": "whisper-tiny",
+    "task": "automatic-speech-recognition",
+    "repo": "Xenova/whisper-tiny.en",
+    "revision": "79fb389fc764e7c395bd330e9531d9d32ada7049",
+    "dtype": "q8",
+    "note": "local speech with Silero voice activity detection; automatically preloaded when no working browser speech service is known; microphone starts only on click",
+    "files": {
+      "onnx/encoder_model_quantized.onnx": 10124913,
+      "onnx/decoder_model_merged_quantized.onnx": 30727382,
+      "tokenizer.json": 2128494,
+      "config.json": 2202,
+      "generation_config.json": 1590,
+      "preprocessor_config.json": 339
+    },
+    "bytes": 42984920
+  }
+}

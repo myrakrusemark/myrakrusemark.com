@@ -1,0 +1,23 @@
+.paper .solution-explainer { margin:26px 0 0; }
+.paper .solution-explainer h3 { margin:0 0 8px; font:400 28px/1.2 var(--font-display); color:#34432a; }
+.paper .solution-explainer .solution-intro { font-size:14px; line-height:1.6; margin:0; max-width:64ch; color:#5c6b50; }
+.solution-flow { display:grid; grid-template-columns:1fr 1.8fr 1fr; align-items:stretch; gap:28px; margin-top:26px; }
+.solution-step { position:relative; display:flex; flex-direction:column; align-items:center; text-align:center; min-width:0; }
+.solution-step + .solution-step::before { content:'→'; position:absolute; left:-24px; top:45%; color:#7d8f6e; font:24px/1 var(--font-body); }
+.solution-step-label { font:500 10px/1.5 var(--font-mono); color:#5c704d; }
+.paper .solution-request code { display:flex; align-items:center; justify-content:center; flex:1; width:100%; background:none; border:0; padding:0; font:13px/1.8 var(--font-mono); color:#4f6144; text-wrap:balance; }
+.solution-cloud { display:block; width:100%; max-width:280px; flex:1; margin:10px 0; overflow:visible; }
+.solution-cloud-labels { font:11px var(--font-mono); }
+.solution-cloud-leaders { opacity:.65; }
+.solution-step-note { font:12px/1.5 var(--font-body); color:#657559; margin-top:8px; }
+.solution-head { display:flex; flex-direction:column; align-items:center; justify-content:center; gap:15px; flex:1; width:100%; font:12px/1.5 var(--font-body); color:#68775d; }
+.solution-answer { display:inline-flex; align-items:center; justify-content:center; gap:7px; padding:9px 12px; border-radius:999px; background:#dce8d3; color:#365b3f; font:500 12px/1.4 var(--font-mono); white-space:nowrap; }
+.paper .solution-explainer figcaption { border-top:1px solid #c8d2ba88; padding-top:14px; margin-top:22px; text-align:left; text-transform:none; letter-spacing:0; font:12px/1.65 var(--font-body); color:#647456; }
+@media(max-width:720px) {
+  .solution-flow { grid-template-columns:1fr; gap:30px; margin-top:24px; }
+  .solution-step + .solution-step::before { content:'↓'; top:-26px; left:calc(50% - 7px); font-size:22px; }
+  .paper .solution-request code { padding:14px 0 4px; }
+  .solution-cloud { width:280px; max-width:100%; flex:none; }
+  .solution-head { margin-top:14px; gap:10px; }
+  .paper .solution-explainer h3 { font-size:25px; }
+}

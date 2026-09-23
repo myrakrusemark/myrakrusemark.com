@@ -39,6 +39,8 @@ import {
 
 export function createAudio(params) {
   let ctx = null;
+  let output = null;
+  let muted = false;
   let bus = null;             // voices -> here
   let compressor = null;
   let delayNode = null;
@@ -94,6 +96,9 @@ export function createAudio(params) {
   // --- Graph construction (lazy, once, on the first gesture) ---------------
 
   function buildGraph() {
+    output = ctx.createGain();
+    output.gain.value = muted ? 0 : 1;
+    output.connect(ctx.destination);
     // voiceGain -> panner -> bus -> compressor -> destination,
     // with a parallel short-delay send for outdoor space. No ConvolverNode:
     // a 90 ms slap with a darkening feedback path gives the same "this is
@@ -110,7 +115,7 @@ export function createAudio(params) {
     compressor.release.value = 0.25;
 
     bus.connect(compressor);
-    compressor.connect(ctx.destination);
+    compressor.connect(output);
 
     delayNode = ctx.createDelay(0.5);
     delayNode.delayTime.value = 0.09;
@@ -131,7 +136,7 @@ export function createAudio(params) {
     damp.connect(feedback);
     feedback.connect(delayNode);   // each repeat is darker than the last
     damp.connect(send);
-    send.connect(ctx.destination);
+    send.connect(output);
 
     // One shared noise buffer for every contact click. 60 ms is longer than the
     // 25 ms click decay, so a randomised start offset still leaves plenty of
@@ -252,6 +257,11 @@ export function createAudio(params) {
   }
 
   const audio = {
+    setMuted(value) {
+      muted = !!value;
+      if (output) output.gain.setTargetAtTime(muted ? 0 : 1, ctx.currentTime, 0.02);
+    },
+
 
     async unlock() {
       if (ctx) return resumeBounded();

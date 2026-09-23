@@ -2081,7 +2081,22 @@ export function createStage(opts) {
 
     // Wind sail: the only part the wind meaningfully pushes.
     const sailH = Number.isFinite(params.sailHeight) ? params.sailHeight : 0.15;
-    const sailGeo = new THREE.BoxGeometry(0.11, sailH, 0.004);
+    // A softly tapered wooden petal, with a substantial rounded edge.
+    // Keep it centered on the existing sail body and cord attachment.
+    const sailOutline = new THREE.Shape();
+    sailOutline.moveTo(0, sailH * 0.5);
+    sailOutline.bezierCurveTo(0.018, sailH * 0.5, 0.020, sailH * 0.28, 0.039, sailH * 0.08);
+    sailOutline.bezierCurveTo(0.065, -sailH * 0.19, 0.053, -sailH * 0.43, 0.016, -sailH * 0.49);
+    sailOutline.bezierCurveTo(0.006, -sailH * 0.505, -0.006, -sailH * 0.505, -0.016, -sailH * 0.49);
+    sailOutline.bezierCurveTo(-0.053, -sailH * 0.43, -0.065, -sailH * 0.19, -0.039, sailH * 0.08);
+    sailOutline.bezierCurveTo(-0.020, sailH * 0.28, -0.018, sailH * 0.5, 0, sailH * 0.5);
+    sailOutline.closePath();
+    const sailGeo = new THREE.ExtrudeGeometry(sailOutline, {
+      depth: 0.006, steps: 1, curveSegments: 24,
+      bevelEnabled: true, bevelThickness: 0.002, bevelSize: 0.002,
+      bevelSegments: 4,
+    });
+    sailGeo.translate(0, 0, -0.003);
     const sailMat = new THREE.MeshPhysicalMaterial({
       color: S.sail, roughness: 0.7, metalness: 0, clearcoat: 0,
       envMapIntensity: 0.68 * S.envIntensity,

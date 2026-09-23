@@ -3,33 +3,128 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Notes — Myra Krusemark</title>
-<meta name="description" content="Teardowns of how the builds work, written on Myra Krusemark's own domain.">
-<meta property="og:title" content="Notes — Myra Krusemark">
-<meta property="og:description" content="Teardowns of how the builds work, written on Myra Krusemark's own domain.">
-<meta property="og:type" content="article">
+<title>Write-ups — Myra Krusemark</title>
+<meta name="description" content="Everything Myra Krusemark has written up: essays with tools in them, benchmarks, and UX case studies.">
+<meta property="og:title" content="Write-ups — Myra Krusemark">
+<meta property="og:description" content="Essays with tools in them, benchmarks, and UX case studies.">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://myrakrusemark.com/blog/">
+<link rel="alternate" type="application/rss+xml" title="Myra Krusemark — Write-ups" href="/feed.xml">
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='M12 2l2.4 7.6L22 12l-7.6 2.4L12 22l-2.4-7.6L2 12l7.6-2.4z' fill='%23e2725b'/%3E%3C/svg%3E">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Jost:wght@200;300;400;500&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="/subpage.css">
+<link rel="stylesheet" href="/subpage.css?v=20260923-live">
+<link rel="stylesheet" href="/css/breadcrumb.css?v=20260923-live">
 </head>
 <body>
 
 <div class="wrap">
   <header>
-    <div class="eyebrow">St. Louis, MO · <em>Notes</em></div>
-    <h1>Notes</h1>
-    <p class="note">Teardowns of how the builds work, starting with the chime:
-    why a struck tube never sounds like a guitar string, and how to
-    synthesize that live.</p>
-    <a class="back" href="/">← Home</a>
+    <nav class="eyebrow breadcrumb" aria-label="Breadcrumb"><a href="/">MYRAKRUSEMARK.COM</a> <span aria-hidden="true">-</span> <span aria-current="page">Write-ups</span></nav>
+    <h1>Write-ups</h1>
+    <p class="note">Everything I've written up, newest first: essays with tools
+    in them, benchmarks, and the UX case studies. The feed is at
+    <a href="/feed.xml" style="color:inherit">/feed.xml</a>.</p>
+
   </header>
 
-  <div class="paper">
-    <p>Nothing published here yet. The feed will live at
-    <a href="/feed.xml">/feed.xml</a> when the first post does.</p>
-  </div>
+  <div style="height: 34px"></div>
+
+  <a class="cs-card" href="/write-ups/jev-vs-local/">
+    <div class="meta">Benchmark · Interactive article</div>
+    <div>
+      <h2>Jev ain't all that.</h2>
+      <p>Jev is great because it’s general. Your project probably needs a few
+      specific decisions. Seven methods, 22 small tests, and local demos
+      you can drive with your voice.</p>
+      <span class="go">read it →</span>
+    </div>
+    <img src="/assets/work/jev-thumbnail-editorial.png" alt="The phrase a bit louder, please connected to the volume up command" loading="lazy">
+  </a>
+
+  <a class="cs-card" href="/write-ups/watermark/">
+    <div class="meta">2026-09-10 · Essay + tool · Rankmark</div>
+    <div>
+      <h2>The watermark you can't see</h2>
+      <p>How a language model hides a message in its word choices. An
+      interactive explanation, with a tool to write, read, or run it
+      locally.</p>
+      <span class="go">read it →</span>
+    </div>
+    <img src="/write-ups/watermark/assets/watermark-thumbnail.png" alt="Highlighted words connected to a strip of binary digits" loading="lazy">
+  </a>
+
+  <!-- The case studies below are copied from /write-ups/index.html; keep the two in step. -->
+<a class="cs-card" href="https://fathomdx.io/" target="_blank" rel="noopener">
+    <div class="meta">2026 · Independent · Designer &amp; Architect · Patent pending</div>
+    <div>
+      <h2>Fathom</h2>
+      <p>Self-hosted memory and identity platform for persistent AI agents:
+      dashboard, CLI, versioned design system, and integrations over a
+      Postgres/pgvector store.</p>
+      <span class="go">fathomdx.io →</span>
+    </div>
+    <img src="/assets/work/fathom.webp" alt="Fathom dashboard" loading="lazy" style="object-position: center 32%;">
+  </a>
+
+<a class="cs-card" href="/write-ups/fap/">
+    <div class="meta">2025 · Centene (Fortune 25) · UX Team Lead</div>
+    <div>
+      <h2>Find A Provider</h2>
+      <p>Ground-up redesign of a decade-old provider search used by tens of
+      millions of Medicaid, Medicare, and Commercial members. Led research,
+      content, and design across a three-phase delivery.</p>
+      <span class="go">+40% user satisfaction · read the case study →</span>
+    </div>
+    <img src="/assets/work/fap.webp" alt="Find A Provider search results" loading="lazy">
+  </a>
+
+<a class="cs-card" href="/write-ups/design-explorations/">
+    <div class="meta">2023 · Centene</div>
+    <div>
+      <h2>Design Explorations</h2>
+      <p>Concept work across member experience: dashboards, digital delivery,
+      ID cards, progressive display patterns, recent claims, and secure
+      messaging.</p>
+      <span class="go">read the case study →</span>
+    </div>
+    <img src="/assets/work/design-explorations.webp" alt="Member experience design concepts" loading="lazy">
+  </a>
+
+<a class="cs-card" href="/write-ups/anpi-cust-portal/">
+    <div class="meta">2014 · Associated Network Partners</div>
+    <div>
+      <h2>ANPI Customer Admin Portal</h2>
+      <p>Customer-facing portal for a Unified Communications platform:
+      dashboard widgets, admin views, and interactive network maps for an
+      enterprise telecom.</p>
+      <span class="go">read the case study →</span>
+    </div>
+    <img src="/assets/ux/anpi-cust-portal/dashboard-widgets.webp" alt="ANPI portal dashboard widgets" loading="lazy">
+  </a>
+
+<a class="cs-card" href="/write-ups/style-browser/">
+    <div class="meta">2009 · Weissman Designs for Dance</div>
+    <div>
+      <h2>Style Browser</h2>
+      <p>Interactive costume catalog and video showcase for browsing dance
+      costumes in motion; shipped on 30,000 DVDs.</p>
+      <span class="go">read the case study →</span>
+    </div>
+    <img src="/assets/work/style-browser.webp" alt="Style Browser costume catalog" loading="lazy">
+  </a>
+
+<a class="cs-card" href="/write-ups/slate/">
+    <div class="meta">2008 · Webster University</div>
+    <div>
+      <h2>UuberSlate</h2>
+      <p>Arduino-based smart clapperboard with automated video organization
+      software for film production. Hardware and software, one system.</p>
+      <span class="go">read the case study →</span>
+    </div>
+    <img src="/assets/work/slate.webp" alt="UuberSlate hardware and software" loading="lazy">
+  </a>
 </div>
 
 <footer>

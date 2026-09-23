@@ -1,0 +1,55 @@
+/* Shared station chrome for the Jev write-up: the paper tokens from /watermark/styles/tokens.css,
+   so a station reads as part of its cream card. Each station keeps its own sheet for its own parts. */
+:root {
+  --ground: #fffdf6; --surface: #f5f2e9; --surface-2: #e8e4d8;
+  --ink: #23261f; --ink-2: rgba(35,38,31,0.82); --muted: rgba(35,38,31,0.7);   /* 0.7, not the watermark's 0.55: the 11px mono labels need 4.5:1 on every paper tone */
+  --line: rgba(35,38,31,0.12); --line-strong: rgba(35,38,31,0.28);
+  --accent: #d4573c; --accent-ink: #b8402a; --accent-deep: #96321f; --accent-soft: rgba(212,87,60,0.12);
+  --ok: #2e6f4e; --ok-soft: rgba(46,111,78,0.12); --warn: #9a3e2a; --warn-soft: rgba(154,62,42,0.10);
+  --cloud: #2a78d6; --cloud-soft: rgba(42,120,214,0.12);
+  --font-display: "Jost", system-ui, sans-serif; --font-body: "IBM Plex Sans", system-ui, sans-serif; --font-mono: "IBM Plex Mono", ui-monospace, Menlo, monospace;
+  --radius: 10px; --radius-sm: 6px; --ease-snap: cubic-bezier(0.22,1,0.36,1); --ease-out: cubic-bezier(0.16,1,0.3,1); --t-fast: 150ms; --t-move: 320ms;
+  --forest: #101410; --cream: #efe9db;
+}
+.station { margin: 22px 0 6px; padding: 18px 0 0; border-top: 1px solid var(--line); }
+.station:empty { display: none; }
+.station .st-head { display: flex; align-items: baseline; gap: 12px; font: 500 11px/1.4 var(--font-mono); letter-spacing: 0.1em; text-transform: uppercase; color: var(--muted); margin-bottom: 14px; }
+.station .st-head .st-note { margin-left: auto; text-transform: none; letter-spacing: 0; font-weight: 400; }
+.station .st-intro { font-size: 15px; line-height: 1.6; color: var(--ink-2); margin: 0 0 14px; max-width: 68ch; }
+.station .st-caption { font: 400 12.5px/1.55 var(--font-body); color: var(--muted); margin: 12px 0 0; max-width: 68ch; }
+/* controls: the only interactive things on the paper */
+.btn { font: 500 13px/1 var(--font-body); color: var(--ink); background: var(--surface); border: 1px solid var(--line-strong); border-radius: 999px; padding: 9px 16px; cursor: pointer; transition: background var(--t-fast) var(--ease-snap), border-color var(--t-fast) var(--ease-snap), transform var(--t-fast) var(--ease-snap); }
+.btn:hover { background: var(--surface-2); border-color: var(--ink); }
+.btn:active { transform: translateY(1px); }
+.btn.primary { background: var(--accent-ink); border-color: var(--accent-ink); color: #fff; }   /* accent-ink, not accent: white on #d4573c is 4.0:1, on #b8402a 5.5:1 */
+.btn.primary:hover { background: #9a3320; border-color: #9a3320; }
+.btn[disabled] { opacity: .45; cursor: default; }
+.btn-row { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; margin: 0 0 14px; }
+.seg { display: inline-flex; border: 1px solid var(--line-strong); border-radius: 999px; overflow: hidden; }
+.seg label, .seg button { font: 500 12.5px/1 var(--font-body); color: var(--ink-2); padding: 8px 14px; cursor: pointer; background: var(--surface); border: 0; border-right: 1px solid var(--line); }
+.seg > :last-child { border-right: 0; }
+.seg input { position: absolute; opacity: 0; pointer-events: none; }
+.seg .on, .seg :has(input:checked) { background: var(--accent-soft); color: var(--accent-ink); }
+.chip { display: inline-block; font: 400 12.5px/1 var(--font-mono); color: var(--ink-2); background: var(--surface); border: 1px solid var(--line); border-radius: 999px; padding: 7px 11px; cursor: pointer; transition: background var(--t-fast) var(--ease-snap), border-color var(--t-fast) var(--ease-snap); }
+.chip:hover { border-color: var(--accent); color: var(--accent-ink); }
+.chip.on { background: var(--accent-soft); border-color: var(--accent); color: var(--accent-ink); }
+.pill { display: inline-block; font: 500 10.5px/1 var(--font-mono); letter-spacing: .08em; text-transform: uppercase; padding: 4px 8px; border-radius: 999px; background: var(--surface-2); color: var(--muted); }
+.pill.ok { background: var(--ok-soft); color: var(--ok); } .pill.warn { background: var(--warn-soft); color: var(--warn); } .pill.accent { background: var(--accent-soft); color: var(--accent-ink); } .pill.cloud { background: var(--cloud-soft); color: var(--cloud); }
+input[type="text"].st-input, textarea.st-input { width: 100%; font: 400 15px/1.5 var(--font-body); color: var(--ink); background: var(--ground); border: 1px solid var(--line-strong); border-radius: var(--radius-sm); padding: 10px 12px; }
+input[type="text"].st-input:focus, textarea.st-input:focus { outline: none; border-color: var(--accent); }
+input[type="range"].st-range { width: 100%; accent-color: var(--accent); }
+/* a tiny scorecard — bars for a probability distribution; reused by the bar, the map, the lineup */
+.mini-card { display: grid; gap: 4px; font: 400 12.5px/1.4 var(--font-mono); }
+.mini-card .row { display: grid; grid-template-columns: minmax(90px, 160px) 1fr 52px; align-items: center; gap: 10px; }
+.mini-card .row .lbl { color: var(--ink-2); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.mini-card .row .bar { height: 10px; border-radius: 4px; background: var(--surface-2); overflow: hidden; }
+.mini-card .row .bar i { display: block; height: 100%; width: 0; background: var(--accent); border-radius: 4px; transition: width var(--t-move) var(--ease-out); }
+.mini-card .row.top .bar i { background: var(--accent); } .mini-card .row:not(.top) .bar i { background: var(--line-strong); }
+.mini-card .row .val { color: var(--muted); text-align: right; font-variant-numeric: tabular-nums; }
+.highlight-flash { animation: st-flash 1.2s var(--ease-out); }
+@keyframes st-flash { 0% { background: var(--accent-soft); } 100% { background: transparent; } }
+@media (prefers-reduced-motion: reduce) { .mini-card .row .bar i { transition: none; } .highlight-flash { animation: none; } }
+/* hidden means hidden: .chip, .pill and the map's card set their own display, which beats the UA [hidden] rule */
+[hidden] { display: none !important; }
+
+.challenge-kind{font-size:12px!important;color:var(--muted);margin-top:18px!important}

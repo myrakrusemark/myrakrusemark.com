@@ -51,6 +51,7 @@
   }
   .sim-wrap.ready #sim { opacity: 1; }
   @media (prefers-reduced-motion: reduce) {
+    html { scroll-behavior: auto; }
     #sim { transition: none; }
   }
   /* shade grading over the scene: darken the left reading zone. The mask
@@ -115,9 +116,22 @@
     color: rgba(242,240,234,0.62);
     margin-bottom: 34px;
   }
-  .wind-row {
-    display: flex; align-items: center; gap: 18px; flex-wrap: wrap;
+  .hero-actions {
+    display: flex; flex-direction: column; align-items: flex-start; gap: 16px; margin-bottom: 18px;
   }
+  .hero-actions .ring-chip { text-decoration: none; padding: 13px 18px; line-height: 1.5; }
+  .hero-actions .ring-chip:focus-visible { outline: 2px solid #ff9d84; outline-offset: 4px; }
+  .hero-secondary { display: flex; flex-wrap: wrap; gap: 4px 22px; }
+  .hero-secondary a {
+    pointer-events: auto; display: inline-flex; align-items: center; gap: 6px;
+    min-height: 44px; color: rgba(251,250,246,0.78); text-decoration: none;
+    font: 400 11px/1.5 'IBM Plex Mono', monospace;
+    letter-spacing: 0.06em; text-transform: uppercase;
+    transition: color 0.2s;
+  }
+  .hero-secondary a:hover { color: #ff9d84; }
+  .hero-secondary a:focus-visible { outline: 2px solid #ff9d84; outline-offset: 4px; }
+  #what-ive-seen { scroll-margin-top: 32px; }
   .ring-chip {
     font-family: 'IBM Plex Mono', monospace;
     font-size: 12px; letter-spacing: 0.12em; text-transform: uppercase;
@@ -134,12 +148,6 @@
      simulator's real strike events. The chime's tuning IS the x-axis. */
   .meter-fft { width: 48px; height: 16px; display: block; }
   .ring-chip:hover { background: rgba(255,157,132,0.26); border-color: #ff9d84; }
-  .wind-note {
-    font-family: 'IBM Plex Mono', monospace;
-    font-size: 11px; letter-spacing: 0.12em; text-transform: uppercase;
-    color: rgba(242,240,234,0.55);
-  }
-  .wind-note b { color: #ff9d84; font-weight: 500; }
 
   /* ============ THE DRIFT — the forest deepens as you descend ============ */
   /* Pulled up to overlap the hero's lower half: its darkening rises while
@@ -367,7 +375,7 @@
     <iframe id="sim" src="/sim/index.html?c=v1_hs-86_hc-0_sp-35" title="Wind Chime Simulator, live"></iframe>
   </div>
   <div class="hero-copy">
-    <div class="eyebrow">St. Louis, MO · <em>Designer</em> · Builder · AI Engineer</div>
+    <div class="eyebrow">St. Louis, MO · <em>Product Designer</em> · Builder · AI Engineer</div>
     <h1>Myra Krusemark</h1>
     <p class="lede">
       I build what I love.
@@ -376,12 +384,16 @@
       Thirteen years of UX and development. I dream up, design, build,
       and deliver finished products.
     </p>
-    <div class="wind-row">
+    <div class="hero-actions" role="group" aria-label="Explore and listen">
       <button class="ring-chip" id="ring">
         <canvas class="meter-fft" id="meter-fft" width="96" height="32" aria-hidden="true"></canvas>
         <span id="ring-label">Hear the chimes</span>
       </button>
-      <span class="wind-note" id="wind-note"><b>live St. Louis wind</b></span>
+      <nav class="hero-secondary" aria-label="Explore more">
+      <a href="/write-ups/">Write-ups and case studies</a>
+      <a href="/Myra%20Krusemark%20-%20Resume.pdf">Resume</a>
+      <a href="#what-ive-seen">More <span aria-hidden="true">↓</span></a>
+      </nav>
     </div>
   </div>
 </header>
@@ -391,14 +403,18 @@
 
 <!-- ================= ORGANIC GALLERY ================= -->
 <section class="field">
-  <div class="field-head">
+  <div class="field-head" id="what-ive-seen">
     <h2>What I've built, what I've seen</h2>
     <p>projects and photographs</p>
   </div>
   <div class="flow">
+    <div class="card proj tilt-l">
+      <a href="/write-ups/jev-vs-local/" aria-label="Read Jev ain't all that."><img src="/assets/work/jev-thumbnail-editorial.png" alt="The phrase a bit louder, please connected to the volume up command" width="1536" height="1024" loading="lazy"></a>
+      <div class="pad"><h3><a href="/write-ups/jev-vs-local/">Jev ain't all that.</a></h3><p>Seven ways to turn words into decisions. An interactive comparison of Jev and small local models, with demos you can drive by voice.</p></div>
+    </div>
     <div class="card proj tilt-r">
-      <a href="/watermark/" aria-label="Read The watermark you can't see"><img src="/watermark/assets/watermark-thumbnail.png" alt="Highlighted words connected to a strip of binary digits" width="1536" height="1024" loading="lazy"></a>
-      <div class="pad"><h3><a href="/watermark/">The watermark you can't see</a></h3><p>How a language model hides a message in its word choices. An interactive explanation, with a tool to try it yourself.</p></div>
+      <a href="/write-ups/watermark/" aria-label="Read The watermark you can't see"><img src="/write-ups/watermark/assets/watermark-thumbnail.png" alt="Highlighted words connected to a strip of binary digits" width="1536" height="1024" loading="lazy"></a>
+      <div class="pad"><h3><a href="/write-ups/watermark/">The watermark you can't see</a></h3><p>How a language model hides a message in its word choices. An interactive explanation, with a tool to try it yourself.</p></div>
     </div>
     <div class="card proj tilt-l">
       <div class="thumb-row"><img src="/assets/projects/frederico.webp" alt=""><h3><a href="https://myrakrusemark.com/frederico/" target="_blank" rel="noopener">Frederico</a></h3></div>
@@ -610,7 +626,7 @@
     above, ten of them at Centene for tens of millions of Medicaid and
     Medicare members. I design the product and direct the AI harnesses
     that write the code. The full write-ups live in the
-    <a class="rec-link" href="/ux/">case studies</a>.</p>
+    <a class="rec-link" href="/write-ups/">write-ups</a>.</p>
     <div class="role"><span class="when">2016 — 2026</span><div><h3>Senior Product Designer · Centene</h3>
       <p>Led end-to-end design for member, provider, and internal products across
       Medicaid, Medicare, and Commercial plans. Find A Provider raised user
@@ -618,7 +634,7 @@
       managers build plan portals without code, cutting setup 60%; live for four
       years. Built an accessibility auditor that caught WCAG gaps the industry
       tools missed. Mentored five designers; three advanced to senior.
-      <a class="rec-link" href="/ux/fap/">Case study</a></p></div></div>
+      <a class="rec-link" href="/write-ups/fap/">Case study</a></p></div></div>
     <div class="role"><span class="when">2015 — 16</span><div><h3>Web, Interactive, UI/UX Designer · Masergy</h3>
       <p>Customer portals and lead-generation tools for an enterprise SD-WAN and
       cybersecurity provider. WebRTC tools let visitors call any employee
@@ -835,12 +851,24 @@ sim.addEventListener('load', () => {
   setTimeout(() => clearInterval(tryPlace), 20000);
 });
 
-ring.addEventListener('click', () => {
+let windMph = 10;
+let chimesPlaying = false;
+const updateWindLabel = () => {
+  document.getElementById('ring-label').textContent = chimesPlaying ? `St. Louis - ${windMph}mph` : 'Hear the chimes';
+  ring.setAttribute('aria-pressed', String(chimesPlaying));
+  ring.setAttribute('aria-label', chimesPlaying ? `Mute chimes. St. Louis - ${windMph}mph` : 'Hear the chimes');
+};
+updateWindLabel();
+ring.addEventListener('click', async () => {
+  const api = sim.contentWindow?.__wcs;
+  if (!api?.setSoundEnabled) return;
+  ring.disabled = true;
   try {
-    const doc = sim.contentDocument;
-    const btn = doc && doc.getElementById('wcsSound');
-    if (btn) { btn.click(); document.getElementById('ring-label').textContent = 'Ringing'; }
-  } catch (e) { /* leave the chip as-is if the frame is not ready */ }
+    chimesPlaying = await api.setSoundEnabled(!chimesPlaying);
+    updateWindLabel();
+  } finally {
+    ring.disabled = false;
+  }
 });
 
 /* ---------- the live spectrum: the chimes shape the graph ----------
@@ -911,32 +939,92 @@ ring.addEventListener('click', () => {
   })(last);
 })();
 
-/* live St. Louis wind annotation (the simulator reads weather on its own;
-   this note is the page speaking about it) */
+/* Match the chimes to local wind, using 10mph when weather is unavailable. */
+let windDirection;
+let windRevision = 0;
+let appliedWindRevision = -1;
+const feedWind = setInterval(() => {
+  try {
+    const wcs = sim.contentWindow.__wcs;
+    if (!wcs?.setWind || appliedWindRevision === windRevision) return;
+    wcs.setWind(windMph, windDirection);
+    appliedWindRevision = windRevision;
+  } catch (e) {}
+}, 500);
+setTimeout(() => clearInterval(feedWind), 20000);
 fetch('https://api.weather.gov/stations/KSTL/observations/latest', { signal: AbortSignal.timeout(5000) })
-  .then(r => r.json())
+  .then(r => {
+    if (!r.ok) throw new Error('Weather unavailable');
+    return r.json();
+  })
   .then(d => {
     const kmh = d?.properties?.windSpeed?.value;
-    if (kmh == null) return;
-    const mph = Math.round(kmh * 0.621371);
-    const deg = d?.properties?.windDirection?.value;
-    const dirs = ['N','NE','E','SE','S','SW','W','NW'];
-    const dir = deg == null ? '' : ' ' + dirs[Math.round(deg / 45) % 8];
-    document.getElementById('wind-note').innerHTML =
-      `<b>live st. louis wind \u00b7 ${mph} mph${dir}</b>`;
-    // Feed the real observation into the simulator's own wind system, so
-    // the claim above is physically true: the chime's sway and strikes
-    // run on this reading (the sim eases into it over 8 seconds).
-    const feed = setInterval(() => {
-      try {
-        const wcs = sim.contentWindow.__wcs;
-        if (!wcs || !wcs.setWind) return;
-        wcs.setWind(mph, deg == null ? undefined : deg);
-        clearInterval(feed);
-      } catch (e) {}
-    }, 500);
-    setTimeout(() => clearInterval(feed), 20000);
+    if (typeof kmh !== 'number' || !Number.isFinite(kmh) || kmh < 0) return;
+    windMph = Math.round(kmh * 0.621371);
+    const degrees = d?.properties?.windDirection?.value;
+    windDirection = typeof degrees === 'number' && Number.isFinite(degrees) ? degrees : undefined;
+    windRevision++;
+    updateWindLabel();
   }).catch(() => {});
+</script>
+<script>
+/* More offers a leisurely tour; any user input gives control back immediately. */
+(() => {
+  const more = document.querySelector('.hero-actions a[href="#what-ive-seen"]');
+  const gallery = document.getElementById('what-ive-seen');
+  const reducedMotion = matchMedia('(prefers-reduced-motion: reduce)');
+  let frame = 0;
+  let cleanup = () => {};
+  const stop = () => {
+    cancelAnimationFrame(frame);
+    frame = 0;
+    cleanup();
+  };
+  more.addEventListener('click', event => {
+    if (event.metaKey || event.ctrlKey || event.shiftKey || event.altKey) return;
+    stop();
+    if (reducedMotion.matches) return;
+    event.preventDefault();
+    history.replaceState(null, '', '#what-ive-seen');
+    const events = ['wheel', 'touchstart', 'pointerdown', 'keydown', 'click'];
+    events.forEach(type => window.addEventListener(type, stop, { capture: true, passive: true }));
+    window.addEventListener('blur', stop);
+    document.addEventListener('visibilitychange', stop);
+    reducedMotion.addEventListener('change', stop);
+    cleanup = () => {
+      events.forEach(type => window.removeEventListener(type, stop, true));
+      window.removeEventListener('blur', stop);
+      document.removeEventListener('visibilitychange', stop);
+      reducedMotion.removeEventListener('change', stop);
+    };
+    const from = scrollY;
+    const destination = Math.max(0, gallery.getBoundingClientRect().top + scrollY - 32);
+    const started = performance.now();
+    let previous = started;
+    let position = from;
+    let expected = scrollY;
+    function step(now) {
+      // Also catch scrolling initiated by assistive technology or another control.
+      if (Math.abs(scrollY - expected) > 2) { stop(); return; }
+      const elapsed = now - started;
+      if (elapsed < 1400) {
+        const progress = elapsed / 1400;
+        const eased = progress * progress * (3 - 2 * progress);
+        position = from + (destination - from) * eased;
+      } else if (elapsed < 2600) {
+        position = destination;
+      } else {
+        position += Math.min(now - previous, 50) * 0.022;
+      }
+      previous = now;
+      window.scrollTo({ top: position, behavior: 'instant' });
+      expected = scrollY;
+      if (scrollY + innerHeight >= document.documentElement.scrollHeight - 1) { stop(); return; }
+      frame = requestAnimationFrame(step);
+    }
+    frame = requestAnimationFrame(step);
+  });
+})();
 </script>
 </body>
 </html>

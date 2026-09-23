@@ -1,13 +1,26 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
-    <title>Myra Krusemark — Notes</title>
+    <title>Myra Krusemark — Write-ups</title>
     <link>https://myrakrusemark.com/blog/</link>
-    <description>Notes from my workbench in St. Louis. What I'm building and how it went.</description>
+    <description>Write-ups from my workbench in St. Louis: essays with tools in them, benchmarks, and case studies.</description>
     <language>en-us</language>
     <atom:link href="https://myrakrusemark.com/feed.xml" rel="self" type="application/rss+xml"/>
+    <item>
+      <title>Jev ain't all that.</title>
+      <link>https://myrakrusemark.com/write-ups/jev-vs-local/</link>
+      <guid>https://myrakrusemark.com/write-ups/jev-vs-local/</guid>
+      <description>Jev is great because it’s general. Your project probably needs a few specific decisions. Seven methods, 22 small tests, and local demos you can drive with your voice.</description>
+    </item>
+    <item>
+      <title>The watermark you can't see</title>
+      <link>https://myrakrusemark.com/write-ups/watermark/</link>
+      <guid>https://myrakrusemark.com/write-ups/watermark/</guid>
+      <pubDate>Thu, 10 Sep 2026 09:00:00 -0500</pubDate>
+      <description>How a language model hides a message in its word choices. An interactive explanation, with a tool to try it yourself.</description>
+    </item>
     <!-- Hand-maintained. New post: add an <item> above this comment,
-         newest first, matching the post's /blog/<slug>/ page.
+         newest first, matching the write-up's page (usually /blog/<slug>/).
 
     <item>
       <title>The post title</title>

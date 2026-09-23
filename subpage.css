@@ -81,7 +81,9 @@ h1 {
   font-size: 9.5px; letter-spacing: 0.14em; text-transform: uppercase;
   color: rgba(239,233,219,0.5); margin-bottom: 4px;
 }
-.spec .v { font-size: 13px; color: rgba(239,233,219,0.9); line-height: 1.45; }
+.spec .v { font-size: 13px; color: rgba(239,233,219,0.9); line-height: 1.45; overflow-wrap: anywhere; }
+.spec a { color: #ff9d84; text-decoration: none; border-bottom: 1px solid rgba(255,157,132,0.45); }
+.spec a:hover { border-bottom-color: #ff9d84; }
 @media (max-width: 700px) { .spec { grid-template-columns: 1fr 1fr; } .spec > div:nth-child(2n) { border-right: none; } }
 
 /* ---- reading: cream paper cards ---- */
@@ -161,3 +163,48 @@ footer {
   padding: 26px clamp(20px, 5vw, 64px); text-align: center;
 }
 footer a { color: rgba(239,233,219,0.85); }
+
+/* ---- essays: what a write-up needs that a case study doesn't ---- */
+.paper .lede { font-size: 1.22rem; line-height: 1.5; color: #23261f; max-width: 62ch; }
+.paper .aside { border-left: 3px solid #d4573c; padding: 4px 0 4px 16px; color: rgba(35,38,31,0.82); font-size: 15.5px; margin: 18px 0; max-width: 70ch; }
+.paper .small { font-size: 0.88rem; color: rgba(35,38,31,0.6); }
+.paper code {
+  font-family: 'IBM Plex Mono', monospace; font-size: 0.86em;
+  background: rgba(35,38,31,0.06); border: 1px solid rgba(35,38,31,0.12);
+  border-radius: 4px; padding: 1px 5px;
+}
+.paper pre {
+  font-family: 'IBM Plex Mono', monospace; font-size: 13px; line-height: 1.6;
+  background: #f5f2e9; border: 1px solid rgba(35,38,31,0.12); border-radius: 8px;
+  padding: 14px 16px; overflow-x: auto; margin: 0 0 16px;
+}
+.paper pre code { background: none; border: 0; padding: 0; font-size: inherit; }
+.paper .table-wrap { overflow-x: auto; margin: 6px 0 22px; }
+.paper .compare { border-collapse: collapse; width: 100%; min-width: 560px; font-size: 14px; line-height: 1.45; }
+.paper .compare th, .paper .compare td { text-align: left; vertical-align: top; padding: 10px 12px 10px 0; border-bottom: 1px solid rgba(35,38,31,0.12); }
+.paper .compare th + th, .paper .compare th + td, .paper .compare td + td { padding-left: 12px; }
+.paper .compare thead th { font: 500 11px/1.4 'IBM Plex Mono', monospace; letter-spacing: 0.1em; text-transform: uppercase; color: rgba(35,38,31,0.55); border-bottom-color: rgba(35,38,31,0.28); padding-top: 0; }
+.paper .compare tbody th { font-weight: 600; color: #23261f; width: 26%; }
+.paper .compare tbody th small { display: block; font-size: 12px; font-weight: 400; color: rgba(35,38,31,0.55); margin-top: 2px; }
+.paper .compare td { color: rgba(35,38,31,0.82); font-variant-numeric: tabular-nums; }
+.paper .compare td.n, .paper .compare th.n { text-align: right; white-space: nowrap; }
+.paper .compare td.win { font-weight: 600; color: #23261f; }
+.paper .compare tbody tr:last-child th, .paper .compare tbody tr:last-child td { border-bottom: 0; }
+
+/* ---- write-up filters and categories ---- */
+.writeup-filters { display: flex; flex-wrap: wrap; gap: 10px; margin: 34px 0 24px; }
+.writeup-filters button {
+  font: 500 12px/1.5 'IBM Plex Mono', monospace;
+  padding: 11px 18px; border-radius: 999px;
+  border: 1px solid rgba(239,233,219,0.45);
+  background: rgba(6,9,6,0.5); color: #efe9db; cursor: pointer;
+}
+.writeup-filters button[aria-pressed="true"] { background: #ff9d84; border-color: #ff9d84; color: #23261f; }
+.writeup-filters button:hover { border-color: #ff9d84; }
+.writeup-filters button:focus-visible { outline: 2px solid #fbfaf6; outline-offset: 4px; }
+.cs-card[hidden] { display: none; }
+.case-study-badge {
+  display: inline-block; padding: 4px 8px; margin: 0 8px 6px 0;
+  border: 1px solid #b8402a; border-radius: 4px;
+  color: #92351f; background: #fbe8df; font-size: 10px;
+}

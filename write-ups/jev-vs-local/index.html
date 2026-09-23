@@ -1,0 +1,214 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Jev ain't all that. — Myra Krusemark</title>
+<meta name="description" content="Jev is great because it’s general. Your project probably needs a few specific decisions, and small local models can make them. Seven methods, 22 small tests, laptop and GPU timings, and demos you can drive with your voice.">
+<meta property="og:title" content="Jev ain't all that.">
+<meta property="og:description" content="Jev is great because it’s general. Your project probably needs a few specific decisions, and small local models can make them. Seven methods, 22 small tests, and demos you can drive with your voice.">
+<meta property="og:type" content="article">
+<meta property="og:url" content="https://myrakrusemark.com/write-ups/jev-vs-local/">
+<meta property="og:image" content="https://myrakrusemark.com/write-ups/jev-vs-local/assets/jev-social-card.png?v=e59fd3176d3189aa58c0">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="Jev ain't all that: seven ways to turn language into a decision, compared.">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="canonical" href="https://myrakrusemark.com/write-ups/jev-vs-local/">
+<link rel="alternate" type="application/rss+xml" title="Myra Krusemark — Write-ups" href="https://myrakrusemark.com/feed.xml">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='M12 2l2.4 7.6L22 12l-7.6 2.4L12 22l-2.4-7.6L2 12l7.6-2.4z' fill='%23e2725b'/%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Jost:wght@200;300;400;500&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="styles/subpage.css?v=20260923-live">
+<link rel="stylesheet" href="styles/support-flow.css?v=e59fd3176d3189aa58c0">
+<link rel="stylesheet" href="styles/stations.css?v=e59fd3176d3189aa58c0">
+<link rel="stylesheet" href="styles/bar.css?v=e59fd3176d3189aa58c0">
+<link rel="stylesheet" href="styles/results-comparison.css?v=e59fd3176d3189aa58c0">
+<link rel="stylesheet" href="styles/map.css?v=e59fd3176d3189aa58c0">
+<link rel="stylesheet" href="styles/expedition.css?v=e59fd3176d3189aa58c0">
+<link rel="stylesheet" href="styles/solution.css?v=e59fd3176d3189aa58c0">
+<link rel="stylesheet" href="/css/breadcrumb.css?v=20260923-live">
+</head>
+<body>
+
+<div class="wrap">
+  <header>
+    <nav class="eyebrow breadcrumb" aria-label="Breadcrumb"><a href="/">MYRAKRUSEMARK.COM</a> <span aria-hidden="true">-</span> <a href="/write-ups/">WRITE-UPS</a> <span aria-hidden="true">-</span> <span aria-current="page">Jev ain't all that.</span></nav>
+    <h1>Jev ain't all that.</h1>
+    <p class="note">Jev is great because it’s general. Your project probably needs a few specific decisions, and small local models can make them.</p>
+    
+  </header>
+
+  <div class="paper" id="intro" data-section="intro" data-title="Jev is new">
+    <p class="lede"><a href="https://typesafe.ai">Jev</a> is new. But turning language into a decision isn’t. Jev doesn’t write replies: give it a situation, a question, and possible answers, and it returns a choice and probabilities.</p>
+    <p>Fantastic, I thought! After checking out some of the things people on the web were using it for, I gave it a shot too. Using my laptop mic, I set up Jev to control my Hyprland desktop. Then I had a realization: I’ve already made this!</p>
+    <p>Spoiler: Jev won or tied 21 of the 22 tests I ran. It’s good! But I wanted to know how much of that flexibility I actually needed to control my own computer.</p>
+    <p class="voice-hint"><strong>Real examples. Real models.</strong> The live demos below run models right in your browser. Try your own words in the bottom bar, or tap the mic and say “go to the lineup.” You can cancel model loading and keep reading.</p>
+  </div>
+
+  <div class="paper" id="how-it-works" data-section="how-it-works" data-title="I built the first version in 2023">
+    <h2>I don’t need an API for every decision.</h2>
+    <p>In 2023 I built a tool picker: <a href="https://github.com/myrakrusemark/embedding-command-search">embedding-command-search</a>. Give each command a few example phrases, turn them into vectors with BERT, then find the command closest to a new sentence.</p>
+    <p>I used it to quickly pick which tool to use, in a time long ago when GPT-3.5 Turbo was king. It was fast! It was smooth! But of course, life happened and it got ignored.</p>
+    <p>For my desktop, the choices are already there: turn the volume up, close a window, open a terminal. I can give a small model examples of those requests and teach it to choose between them. So I dusted off the idea and added one piece: a classifier.</p>
+    <figure class="solution-explainer" aria-labelledby="my-solution-title">
+      <h3 id="my-solution-title">My solution</h3>
+      <p class="solution-intro">Each example starts as a string of text. An embedding model turns it into a list of numbers: its <strong>embedding</strong>. My old version picked the nearest example. A small trained classifier, called a <strong>head</strong>, learns which choice fits instead.</p>
+      <div class="solution-flow">
+        <div class="solution-step solution-request">
+          <span class="solution-step-label">Your words</span>
+          <code>“A bit louder, please.”</code>
+          <span class="solution-step-note">A new request comes in.</span>
+        </div>
+        <div class="solution-step solution-embedding">
+          <span class="solution-step-label">Embedding model</span>
+          <svg class="solution-cloud" viewBox="0 0 280 220" role="img" aria-labelledby="solution-cloud-title">
+            <title id="solution-cloud-title">Each dot represents one text string’s embedding. Quoted phrases are connected to their dots: “Turn it up,” “Mute it,” and “Nice weather.” The new request, “A bit louder, please,” is marked with an orange ring. This is a schematic illustration.</title>
+            <g transform="translate(15 25)">
+            <g fill="#547f64">
+              <circle cx="36" cy="49" r="3"/><circle cx="47" cy="35" r="3.5"/><circle cx="51" cy="56" r="3"/><circle cx="57" cy="72" r="3.5"/><circle cx="74" cy="67" r="3"/><circle cx="85" cy="53" r="3"/><circle cx="77" cy="30" r="3.5"/><circle cx="91" cy="39" r="2.5"/><circle cx="41" cy="70" r="2.5"/><circle cx="62" cy="25" r="2.5"/><circle cx="95" cy="72" r="2.5"/><circle cx="70" cy="82" r="2.5"/>
+            </g>
+            <g fill="#8b769d">
+              <circle cx="151" cy="32" r="3"/><circle cx="167" cy="21" r="3.5"/><circle cx="180" cy="34" r="3"/><circle cx="192" cy="46" r="3.5"/><circle cx="168" cy="48" r="3"/><circle cx="154" cy="61" r="3.5"/><circle cx="188" cy="65" r="2.5"/><circle cx="204" cy="30" r="2.5"/><circle cx="143" cy="46" r="2.5"/><circle cx="173" cy="73" r="2.5"/>
+            </g>
+            <g fill="#a4a394">
+              <circle cx="119" cy="114" r="3"/><circle cx="133" cy="133" r="3.5"/><circle cx="152" cy="117" r="3"/><circle cx="164" cy="141" r="3"/><circle cx="179" cy="123" r="3.5"/><circle cx="193" cy="141" r="2.5"/><circle cx="207" cy="113" r="3"/><circle cx="151" cy="99" r="2.5"/><circle cx="99" cy="137" r="2.5"/><circle cx="128" cy="152" r="2.5"/>
+            </g>
+            <circle cx="67" cy="47" r="9" fill="#fffdf6" stroke="#ba6346" stroke-width="2"/><circle cx="67" cy="47" r="3" fill="#ba6346"/>
+            </g>
+            <g class="solution-cloud-leaders" fill="none" stroke-width="1">
+              <path d="M62 60V26H14" stroke="#547f64"/>
+              <path d="M182 46V26H264" stroke="#8b769d"/>
+              <path d="M82 82V119H14" stroke="#ba6346"/>
+              <path d="M179 166V190H264" stroke="#8a8a7b"/>
+            </g>
+            <g class="solution-cloud-labels">
+              <text x="14" y="17" fill="#416a50">“Turn it up.”</text>
+              <text x="264" y="17" text-anchor="end" fill="#79608e">“Mute it.”</text>
+              <text x="14" y="134" fill="#a14f36">“A bit louder,</text>
+              <text x="14" y="148" fill="#a14f36">please.”</text>
+              <text x="264" y="207" text-anchor="end" fill="#737668">“Nice weather.”</text>
+            </g>
+          </svg>
+          <span class="solution-step-note">One dot = one phrase’s embedding.</span>
+        </div>
+        <div class="solution-step solution-classifier">
+          <span class="solution-step-label">Classifier · “head”</span>
+          <div class="solution-head"><span>Scores the choices</span><span class="solution-answer"><span aria-hidden="true">✓</span> Volume up</span></div>
+          <span class="solution-step-note">Learns which choice fits.</span>
+        </div>
+      </div>
+      <figcaption>These dots illustrate embeddings; their positions are schematic. Each phrase also has a label, such as “volume up” or “chatter.” The head learns from those labeled embeddings, then scores the possible choices for a new sentence.</figcaption>
+    </figure>
+  </div>
+
+  <div class="paper expedition-paper" id="expedition" data-section="expedition" data-title="What am I trying to prove?">
+    <h2>What am I trying to prove?</h2>
+    <p class="lede">Can a small local model recognize the same requests, accurately and quickly? For a known set of commands, we can teach it which one you mean.</p>
+    <p>Try giving this office screen a command in the bottom bar. The map shows where your words land among the training examples.</p>
+    <div class="station example-surface" id="st-map" data-station="map" data-title="the map"></div>
+    <p>Try “close the window,” then “do not close the window.” They share almost every word, but only one is a command to act on. That’s where the head helps: examples teach it the difference between similar words and similar intentions.</p>
+    <p class="small">This demo uses bge-small in your browser. My tested classifier uses the larger e5-base embedding model.</p>
+  </div>
+
+  <div class="paper" id="fit" data-section="fit" data-title="Fit the solution to the job">
+    <h2>Your project doesn’t need to solve everything.</h2>
+    <p class="lede">Jev is fantastic as a general decision engine. You can change the question and the possible answers without first building a labeled training set for every new task.</p>
+    <p>The submarine below only needs to understand movement, collecting crystals, and getting home. That small set of decisions is enough to explore a whole underwater world, and it runs in your browser, so each instruction becomes a move right away.</p>
+    <p>Pilot Manta through the reef, collect three crystals, then bring them home. Use the controls or say their names out loud.</p>
+    <div class="station example-surface" id="st-submarine" data-station="submarine" data-title="Reef expedition"></div>
+    <p class="small">The game recognizes its control names directly and matches other phrasing to examples in your browser. It’s here to play with the idea; its scores aren’t in the tests below.</p>
+  </div>
+
+  <div class="paper lineup-summary" id="lineup-comparison" data-section="lineup-comparison" data-title="The lineup">
+    <h2>The lineup</h2>
+    <p class="lede">Jev isn’t the only thing that turns language into a choice. I lined it up against six local options and gave them all the same 22 small tests.</p>
+    <p>I tried recognizing commands, sorting bank requests, judging sentiment, checking return policies, and more. Some methods learn from examples; others can take a new question and choose an answer right away.</p>
+    <div data-lineup-summary>Loading the lineup…</div>
+    <div class="lineup-pair">
+      <div class="lineup-pair-card pair-good">
+        <span class="pair-kicker">Where a local head fits</span>
+        <strong>Six banking intents</strong>
+        <p>Jev and my trained head both got 60/60. The head answered in about 130 ms on my laptop, against Jev’s 262 ms.</p>
+      </div>
+      <div class="lineup-pair-card pair-bad">
+        <span class="pair-kicker">Where it doesn’t</span>
+        <strong>Changing return policies</strong>
+        <p>Jev: 12/12. Embeddings + head: 7/12. When the rules change with every question, a head trained on fixed examples can miss the difference. Decider, a general local model, got 12/12.</p>
+      </div>
+    </div>
+    <p class="small">Curious about the setup? <a href="#methods">A little about the numbers.</a></p>
+  </div>
+
+  <div class="paper comparison-paper" id="comparison" data-section="comparison" data-title="Full test results">
+    <h2>Who covers what</h2>
+    <p class="lede">No single local method matched Jev everywhere. Together, they equaled or beat it on 21 of 22 tests.</p>
+    <p>Decider came closest on its own, matching Jev on 15 tests. The other local methods filled in most of the gaps. One even did better at spotting yes/no questions: LLM lower layers got 8/9 against Jev’s 7/9. Reviews with multiple labels were the one test where Jev stayed ahead of every local option.</p>
+    <p>Pick a test to see an example prompt and all seven scores. A filled mark means that method equaled or beat Jev’s score.</p>
+    <div class="station" id="st-comparison" data-station="comparison" data-title="Full test results"></div>
+    <p>There’s the useful part: try a few approaches on the decisions your project actually makes. You might only need one of them.</p>
+  </div>
+
+  <div class="paper" id="conclusion" data-section="conclusion" data-title="A flowchart of decisions">
+    <h2>So which one do you need?</h2>
+    <p class="lede">Yes, Jev is new, and it’s pretty novel. It’s got people talking, and it’s versatile. But how often does your project actually need a totally general decision model?</p>
+    <p>For a lot of projects, you already know what you’re trying to decide. That gives you a place to start:</p>
+    <ul class="choice-guide">
+      <li><strong>Stable labels and some examples?</strong> Train a small head on embeddings. It’s tiny and can answer quickly on a laptop.</li>
+      <li><strong>Rules or choices that change every time?</strong> Use a general decision model. Decider runs locally; Jev is hosted.</li>
+      <li><strong>Need a written explanation?</strong> That’s a job for an LLM.</li>
+    </ul>
+    <p>For my original problem, that little head held up on a plain laptop. It got all nine command questions right, just like Jev, and answered in about 140 ms against Jev’s 243 ms. I can work with that.</p>
+    <p>That’s my point. Jev makes a lot of different decisions easy to ask for. But with a little planning, a small local model can give you the same answers, often faster, for the job you actually have. You can even ask Claude where to start, then check the suggestion on your own examples.</p>
+  </div>
+
+  <div class="paper" id="support-desk" data-section="support-desk" data-title="Who handles this?">
+    <h2>One more decision: who handles this?</h2>
+    <p class="lede">And you can use more than one. A flowchart can be a team of decision makers.</p>
+    <p>Try this little support desk. My classifier spots yes/no questions. Qwen, a small local LLM, reads the order details and shop policy, then chooses how to help: use a prepared answer, write an explanation, or ask Jev to choose. If Qwen wants to ask the customer for clarification, I send that to Jev for a second opinion first. Watch the question travel through the flowchart.</p>
+    <p class="small">This is a demo with a fictional shop and orders. The classifier and Qwen run in your browser; a handoff sends your question to Jev’s hosted service. The second-opinion rule is built into the flow.</p>
+    <div class="station" id="st-support" data-station="support" data-title="Support desk"></div>
+    <p>You don’t need one model to handle everything. You can make the handoff another decision.</p>
+  </div>
+
+  <div class="paper methods-paper" id="methods" data-section="methods" data-title="About the numbers">
+    <h2>About the numbers</h2>
+    <p>These are 22 small tests for a personal project, not a general benchmark: two use public banking and restaurant-review data, and twenty are examples I put together. Most have only a handful of questions. They’re enough to explore the idea; your own examples are the next test.</p>
+    <p>The embeddings head and LLM lower layers learned from labeled examples. Jev and the other methods got the question and possible answers without that training. That preparation is part of the trade-off: I’m happy to teach a model a fixed set of commands, but changing rules and choices call for something more flexible.</p>
+    <p>Times are typical successful responses after the models are loaded, measured as medians over three passes. Jev includes a network round trip; the local models run on my laptop or GPU workstation. Downloads, startup, and retry waits aren’t included. GPU timings for the head’s fixed-label tests are still unmeasured, so those cells stay blank.</p>
+  </div>
+</div>
+
+<footer>
+  <a href="mailto:myra@myrakrusemark.com">Email: myra@myrakrusemark.com</a> · &copy; 2026
+</footer>
+
+<aside class="autoload off" id="autoload" hidden data-live-only aria-live="polite">
+  <button type="button" class="al-pill" data-al-pill hidden></button>
+  <div class="al-body">
+    <div class="model-panel-header"><b data-al-title>Local models</b><button type="button" data-al-cancel aria-label="Close model status">×</button></div>
+    <p class="model-panel-intro">The live demos use real models, downloaded to run in your browser.</p>
+    <p class="model-panel-note" data-al-msg></p>
+    <ul class="al-list" data-al-list></ul>
+    <div class="model-panel-actions"><button type="button" class="model-cancel" data-al-stop>Cancel loading</button></div>
+    <p class="model-panel-note" data-al-cancel-note hidden>Loading cancelled. Refresh the page to load models again.</p>
+  </div>
+</aside>
+
+<dialog id="consent">
+  <form method="dialog">
+    <h3>Download <span data-name></span>?</h3>
+    <p><b data-size></b> once, kept in this browser's storage so the next visit is instant. It takes <span data-time></span>. <span data-space></span></p>
+    <div class="btn-row">
+      <button class="btn" value="no">Not now</button>
+      <button class="btn primary" value="yes">Download</button>
+    </div>
+  </form>
+</dialog>
+
+<div id="command-bar" aria-live="polite"></div>
+<script type="module" src="ui/app.js?v=e59fd3176d3189aa58c0"></script>
+<script type="module" src="scripts/lineup-summary.js?v=e59fd3176d3189aa58c0"></script>
+</body>
+</html>

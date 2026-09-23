@@ -17,9 +17,9 @@ import * as THREE from 'three';
 
 import { createWind } from './wind.js';
 import { createRig, freqsFor, setParts, PART_DEFAULTS, PART_LIMITS } from './physics.js';
-import { createStage } from './scene.js';
+import { createStage } from './scene.js?v=20260923-live';
 import { createWindViz } from './windviz.js';
-import { createAudio } from './audio.js';
+import { createAudio } from './audio.js?v=20260923-live';
 import { CATALOGUE, DECAY_NOMINAL, TUBE_STOCK, stockFor, tubeLengthFor } from './modal.js';
 import * as weather from './weather.js';
 
@@ -2349,6 +2349,13 @@ function snapshot() {
 // Assign rather than replace: the design members were installed at WCS:UI-MOUNT,
 // ~1200 lines up, because the UI pieces mount there and need them.
 Object.assign( window.__wcs, {
+
+  async setSoundEnabled(enabled) {
+    if (!audio) return false;
+    audio.setMuted(!enabled);
+    if (!enabled) return false;
+    return !!(await audio.unlock());
+  },
 
 	snapshot,
 

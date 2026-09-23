@@ -1,0 +1,87 @@
+/* map station — the flattened training set and the drop zone. Marks and type are
+   sized in screen pixels through --u (SVG units per px, set by the station on
+   resize) so the picture scales with its box but the dots and names don't. */
+#st-map .map-plot { margin: 0 0 16px; }
+#st-map .map-svg { display: block; width: 100%; height: auto; --u: 1; --fs: 11; font-family: var(--font-mono); }
+#st-map .map-bg { fill: transparent; stroke: none; }
+#st-map .pt { stroke: var(--ground); stroke-width: calc(1.2px * var(--u)); opacity: .92; }
+#st-map .pt.chatter { opacity: .8; }
+#st-map .cent { fill: var(--ground); stroke-width: calc(2px * var(--u)); }
+#st-map .cent-lbl { font-size: calc(var(--fs) * 1px * var(--u)); font-weight: 500; fill: var(--ink); paint-order: stroke; stroke: var(--ground); stroke-width: calc(3px * var(--u)); stroke-linejoin: round; }
+#st-map .cent-lead { stroke-width: calc(1px * var(--u)); opacity: .7; }
+/* a drop: mark, leader and the sentence; the group's transform is what glides */
+#st-map .drop { transition: transform 600ms var(--ease-out); }
+#st-map .drop-mark { stroke: var(--ink); stroke-width: calc(1.6px * var(--u)); }
+#st-map .drop-lead { stroke: var(--ink); stroke-width: calc(1px * var(--u)); opacity: 0; transition: opacity var(--t-fast) var(--ease-out); }
+#st-map .drop-lbl { font-size: calc((var(--fs) + 1) * 1px * var(--u)); font-weight: 500; fill: var(--ink); paint-order: stroke; stroke: var(--ground); stroke-width: calc(3px * var(--u)); stroke-linejoin: round; opacity: 0; transition: opacity var(--t-fast) var(--ease-out); }
+#st-map .drop.landed .drop-lead, #st-map .drop.landed .drop-lbl, #st-map .drop.waiting .drop-lbl { opacity: 1; }
+#st-map .drop:not(.latest) { opacity: .55; }
+#st-map .drop:not(.latest) .drop-lbl { display: none; }
+#st-map .drop.provisional .drop-mark { stroke-dasharray: calc(2px * var(--u)) calc(2px * var(--u)); }
+#st-map .drop.waiting .drop-mark { animation: map-pulse 1.4s var(--ease-out) infinite; }
+@keyframes map-pulse { 50% { opacity: .35; } }
+#st-map .map-legend { display: flex; flex-wrap: wrap; gap: 4px 14px; margin: 10px 0 0; font: 400 11.5px/1.5 var(--font-mono); color: var(--ink-2); }
+#st-map .map-legend i, #st-map .sw { display: inline-block; width: 9px; height: 9px; border-radius: 50%; vertical-align: -1px; margin-right: 5px; }
+/* the box and its button share a row; the presets under it */
+#st-map .map-form { margin: 0 0 10px; }
+#st-map .map-lbl { display: block; font: 500 13px/1.4 var(--font-body); color: var(--ink-2); margin: 0 0 6px; }
+#st-map .map-in { display: flex; gap: 8px; align-items: stretch; }
+#st-map .map-in .st-input { flex: 1; min-width: 0; }
+#st-map .map-in .btn { flex: none; }
+#st-map .map-note { margin: 0 0 10px; }
+#st-map .map-chips { margin-bottom: 14px; }
+#st-map .map-chips .chip { text-align: left; }
+/* the label card: what it landed on, and the head's verdict */
+#st-map .map-card { background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius); padding: 12px 14px; display: grid; gap: 8px; font-size: 13.5px; line-height: 1.5; color: var(--ink-2); }
+#st-map .mc-text { font: 500 16px/1.4 var(--font-body); color: var(--ink); }
+#st-map .mc-row { display: grid; grid-template-columns: 96px 1fr; gap: 8px; align-items: baseline; }
+#st-map .mc-k { font: 500 11px/1.6 var(--font-mono); letter-spacing: .08em; text-transform: uppercase; color: var(--muted); }
+#st-map .mc-v { display: flex; flex-wrap: wrap; gap: 6px 8px; align-items: baseline; }
+#st-map .mc-lbl { font: 500 12.5px/1.4 var(--font-mono); color: var(--ink); white-space: nowrap; }
+#st-map .mc-note { margin: 0; color: var(--muted); }
+#st-map .map-card .mini-card { margin-top: 2px; }
+@media (max-width: 480px) {
+  #st-map .mc-row { grid-template-columns: 1fr; gap: 2px; }
+  #st-map .map-in { flex-wrap: wrap; }
+  #st-map .map-in .btn { width: 100%; }
+}
+@media (prefers-reduced-motion: reduce) {
+  #st-map .drop, #st-map .drop-lead, #st-map .drop-lbl { transition: none; }
+  #st-map .drop.waiting .drop-mark { animation: none; }
+}
+
+/* The screen floats over the open upper-right region of the transparent plot. */
+.map-row { position:relative;display:block; }
+.map-screen-wrap { position:absolute;top:0;right:0;width:32%;max-width:240px;z-index:2; }
+.map-screen { filter:drop-shadow(0 7px 7px #34432a18); }
+@media (max-width:640px) { .map-screen-wrap { width:34%;max-width:190px; } .map-screen-said { font-size:10px; } }
+.map-screen { display: block; width: 100%; height: auto; overflow: visible; }
+.map-screen-said { font: 400 11.5px/1.45 var(--font-mono); color: var(--muted); text-align: center; margin-top: 6px; }
+.map-screen-said b { display: block; font-weight: 500; color: var(--ink-2); }
+.map-screen-said [data-screen-said] { color: var(--accent-ink); display: inline-block; padding: 1px 4px; border-radius: 3px; }
+/* the office screen */
+.map-screen .sc-bezel { fill: var(--ink); }
+.map-screen .sc-panel { fill: #f7f4ec; }
+.map-screen .sc-stand { stroke: var(--ink); stroke-width: 1.6; stroke-linecap: round; fill: none; }
+.map-screen .sc-bar { fill: var(--surface-2); }
+.map-screen text { font: 500 6.5px var(--font-mono); fill: var(--ink-2); }
+.map-screen .sc-clock { fill: var(--muted); }
+.map-screen .sc-win rect { fill: #fff; stroke: var(--line-strong); stroke-width: 0.6; }
+.map-screen .sc-win .sc-win-title { fill: var(--surface-2); stroke: none; }
+.map-screen .sc-win.front .sc-win-title { fill: var(--accent-soft); }
+.map-screen .sc-win text { font-size: 5.5px; }
+.map-screen .sc-win-x { fill: var(--accent-ink); }
+.map-screen .sc-vol-track { fill: var(--surface-2); }
+.map-screen .sc-vol-fill { fill: var(--accent); }
+.map-screen .sc-media, .map-screen .sc-vol { font-size: 6px; }
+.map-screen .sc-dim { fill: #000; pointer-events: none; transition: opacity 300ms var(--ease-out); }
+.map-screen .sc-lock rect:first-child { fill: rgba(35,38,31,0.72); }
+.map-screen .sc-lock path, .map-screen .sc-lock rect:nth-child(3) { stroke: #fff; stroke-width: 1.4; fill: none; }
+.map-screen .sc-lock text { fill: #fff; font-size: 7px; }
+.map-screen .sc-flash { fill: #fff; pointer-events: none; }
+@media (prefers-reduced-motion: reduce) { .map-screen .sc-dim { transition: none; } }
+#st-map .map-legend.map-chips{gap:7px;margin:16px 0 0}
+#st-map .map-legend .chip{display:inline-flex;align-items:center;gap:6px;text-align:left;background:#fffdf67d;font-size:11px;line-height:1.4;padding:6px 10px;border-color:#c7d0ba}
+#st-map .map-legend .chip:hover{background:#fffdf6;border-color:#98aa82}
+#st-map .map-legend .chip i{flex:none;width:7px;height:7px;margin:0}
+#st-map .map-clear[hidden]{display:none}

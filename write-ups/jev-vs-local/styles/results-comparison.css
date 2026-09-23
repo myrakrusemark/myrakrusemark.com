@@ -1,0 +1,64 @@
+.comparison-paper{max-width:1160px!important;width:100%}
+.results-comparison .preview-note{font-size:12px;color:#69765d}
+.results-comparison .workbench{display:grid;grid-template-columns:minmax(300px,340px) minmax(0,1fr);gap:28px;align-items:start}
+.results-comparison aside{background:#eeeee4;border-radius:8px;padding:14px}
+.results-comparison [data-result-cases]{display:grid;gap:4px;overflow:visible;max-height:none}
+.results-comparison [data-result-cases] button{font:inherit;font-size:13px;line-height:1.35;text-align:left;padding:10px;border:1px solid transparent;border-radius:5px;background:transparent;color:#48523f;cursor:pointer}
+.results-comparison [data-result-cases] button[aria-pressed=true]{background:#fffdf6;border-color:#a9b993;color:#263027}
+.results-comparison :is(button,summary):focus-visible{outline:2px solid #a7472b;outline-offset:3px}
+.results-comparison [data-result-detail]{min-width:0;position:sticky;top:20px}
+.results-comparison .small-label,.results-comparison .example-title{font:10px 'IBM Plex Mono',monospace;letter-spacing:.08em;color:#69765d;margin:0 0 10px}
+.results-comparison .pill{display:inline-block;border:1px solid #ccd5bd;background:#e4ead8;color:#526344;font-size:10px;padding:4px 9px;border-radius:20px;margin-bottom:15px}
+.results-comparison h2{font-size:28px;margin:0}
+.results-comparison .prompt-example{margin:22px 0 26px;background:#eeeee4;border-left:3px solid #a9b993;padding:16px 18px}
+.results-comparison .prompt-text{white-space:pre-wrap;font-size:14px;line-height:1.55;margin:0}
+.results-comparison .expected{font-size:13px;margin:12px 0 0;color:#50613f}
+.results-comparison .chart-label{display:flex;justify-content:space-between;font-size:10px;color:#69765d}
+.results-comparison .accuracy-bar{display:grid;grid-template-columns:135px minmax(25px,1fr) 50px;gap:12px;align-items:center;margin:12px 0;font-size:13px}
+.results-comparison .method-name small{display:block;color:#69765d;font-size:10px;margin-top:2px}
+.results-comparison .accuracy-bar strong{text-align:right;font-weight:500}
+.results-comparison progress{width:100%;height:14px;border:0;border-radius:5px;overflow:hidden;appearance:none;background:#e1e5d6}
+.results-comparison progress::-webkit-progress-bar{background:#e1e5d6;border-radius:5px}
+.results-comparison progress::-webkit-progress-value{background:#82965f;border-radius:5px}
+.results-comparison progress::-moz-progress-bar{background:#82965f;border-radius:5px}
+.results-comparison .accuracy-bar:first-child progress::-webkit-progress-value{background:#c87959}
+.results-comparison .accuracy-bar:first-child progress::-moz-progress-bar{background:#c87959}
+.results-comparison .short-take{font-size:14px;line-height:1.65;margin-top:26px}
+.results-comparison .evidence{font-size:12px;line-height:1.65;border-top:1px solid #dce1d1;padding-top:16px}
+.results-comparison .evidence p{font-size:12px}
+.results-comparison summary{cursor:pointer}
+@media(max-width:760px){.results-comparison .workbench{grid-template-columns:1fr}.results-comparison [data-result-cases]{grid-template-columns:repeat(2,minmax(0,1fr))}.results-comparison [data-result-detail]{position:static}.results-comparison .accuracy-bar{grid-template-columns:110px minmax(25px,1fr) 46px;gap:8px}}
+.results-comparison .method-timing{grid-column:1/-1;color:#69765d;font-size:11px;line-height:1.4;margin-top:-7px}
+
+.timing-progress{margin:16px 0 26px;padding:14px 16px;border:1px solid #b6c2a5;border-radius:8px;background:#e9eddf;color:#34432a}.timing-progress-label{display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap;font-size:12px;margin-bottom:10px}.timing-progress progress{display:block;width:100%;height:12px;border:0;border-radius:6px;overflow:hidden;appearance:none;background:#d3dbc7}.timing-progress progress::-webkit-progress-bar{background:#d3dbc7}.timing-progress progress::-webkit-progress-value{background:#657f43}.timing-progress progress::-moz-progress-bar{background:#657f43}
+
+.prompt-example .prompt-text{font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,"Liberation Mono",monospace}
+.prompt-options{display:flex;flex-wrap:wrap;gap:7px;margin-top:16px}
+.prompt-option{display:inline-block;padding:5px 11px;border-radius:999px;background:#dfe5d4;color:#34432a;font:12px/1.45 ui-monospace,SFMono-Regular,Menlo,Consolas,"Liberation Mono",monospace}
+
+.prompt-option.prompt-option-correct{background:#cce8b8;color:#244b18;font-weight:600}
+.option-sr-only{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip-path:inset(50%);white-space:nowrap}
+
+/* Coverage matrix: the test list doubles as a who-matched-Jev grid. */
+.results-comparison .preview-note{font-size:14px;line-height:1.55;color:#34432a;margin:0 0 18px;max-width:70ch}
+.results-comparison [data-result-cases]{gap:0}
+.cov-head,.cov-row{display:grid;grid-template-columns:minmax(0,1fr) auto;align-items:center;gap:8px}
+.cov-head{font:9px/1.4 'IBM Plex Mono',monospace;color:#69765d;letter-spacing:.04em;padding:0 4px 6px 10px;border-bottom:1px solid #d5dacb;position:sticky;top:0;background:#eeeee4;z-index:1}
+.cov-head .cov-column-label{writing-mode:vertical-rl;transform:rotate(180deg);white-space:nowrap;font:11.5px/1.4 'IBM Plex Sans',sans-serif;letter-spacing:0;color:#48523f;cursor:help}
+.cov-marks{display:grid;grid-template-columns:repeat(7,16px);gap:3px;justify-items:center}
+.cov-head .cov-marks{grid-template-columns:repeat(7,16px);align-items:end;min-height:112px;letter-spacing:0}
+.cov-head{align-items:end;padding-top:4px;padding-right:0;padding-bottom:9px}
+.results-comparison .cov-group{font:10px/1.4 'IBM Plex Mono',monospace;letter-spacing:.08em;text-transform:uppercase;color:#69765d;margin:14px 0 4px 10px}
+.results-comparison [data-result-cases] .cov-row button{padding:7px 10px}
+.cov-mark{display:block;width:10px;height:10px;border-radius:50%;border:1.5px solid #b9c3aa;background:transparent}
+.cov-mark.is-match{background:#6f8f4c;border-color:#6f8f4c}
+.cov-mark.is-jev{background:#6f9ccb;border-color:#6f9ccb}
+.cov-none button{color:#8a4b33!important}
+.results-comparison .accuracy-bar.is-jev progress::-webkit-progress-value{background:#6f9ccb}
+.results-comparison .accuracy-bar.is-jev progress::-moz-progress-bar{background:#6f9ccb}
+.results-comparison .accuracy-bar:first-child:not(.is-jev) progress::-webkit-progress-value{background:#82965f}
+.results-comparison .accuracy-bar:first-child:not(.is-jev) progress::-moz-progress-bar{background:#82965f}
+.results-comparison .accuracy-bar.is-match .method-name small{color:#48632c;font-weight:500}
+@media(max-width:760px){.results-comparison [data-result-cases]{grid-template-columns:1fr}.cov-head{position:static}}
+.results-comparison .cohort-note{font-size:12.5px;line-height:1.6;color:#5f6d52;border-left:3px solid #d9b3a3;padding-left:12px}
+.results-comparison .pill-clean{background:#f8eee8;border-color:#d9b3a3;color:#8a4b33}

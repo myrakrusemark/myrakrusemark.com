@@ -1,0 +1,116 @@
+.example-details { border-top: 1px solid var(--line); margin-top: 18px; padding-top: 12px; font-size: 13px; color: var(--ink-2); }
+.example-details summary { cursor: pointer; color: var(--accent); font-weight: 500; }
+.example-details p { font-size: 13px; line-height: 1.65; }
+.challenge-quote { margin: 20px 0; padding: 16px 20px; border-left: 3px solid var(--accent); background: var(--surface-2); font-size: clamp(19px,3vw,25px); }
+.challenge-progress { margin-left: auto; font: 12px var(--font-mono); color: var(--muted); }
+.challenge-result { margin: 14px 0 0; min-height: 1em; font-size: 15px; }
+.challenge-result:empty { display:none; }
+#st-challenge { margin: 26px 0; }
+.expedition-paper { overflow: hidden; }
+.expedition-paper .eyebrow { color: var(--accent); font-size: 11px; }
+.expedition-paper h2 { font-size: clamp(30px,5vw,46px); letter-spacing: -.04em; margin-top: 12px; }
+
+.dive-header { display:flex; justify-content:space-between; gap:12px; margin-bottom:14px; font:11px/1.5 var(--font-mono); text-transform:uppercase; letter-spacing:.07em; color:var(--muted); }
+.dive-label { color:var(--accent); }
+.ocean { position:relative; background:#0c2731; border-radius:12px; overflow:hidden; box-shadow:0 8px 28px #071e291a; }
+.ocean:focus-visible { outline:3px solid var(--accent); outline-offset:5px; }
+.ocean svg { display:block; width:100%; height:auto; }
+.ocean text { font:11px var(--font-mono); fill:#a3c7c1; }
+.ocean .depth-mark { font-size:9px; fill:#a1b9b8; }
+.sub,.sub-ghost { transition:transform 160ms ease-out; }
+.sample { transition:opacity .25s; }
+.sample.collected { opacity:.15; }
+.ocean-legend { padding:10px 16px; display:flex; flex-wrap:wrap; gap:10px 22px; color:#b0c7c5; border-top:1px solid #afddd21a; font:10px var(--font-mono); }
+.ocean-legend i { width:9px; height:9px; background:#f0ba65; border-radius:50%; display:inline-block; margin-right:5px; }
+.dive-instruments { display:grid; grid-template-columns:repeat(3,1fr); margin:22px 0 12px; }
+.dive-instruments>div { display:grid; gap:4px; text-align:center; border-right:1px solid var(--line); }
+.dive-instruments>div:last-child { border:0; }
+.dive-instruments strong { font:400 clamp(23px,4vw,34px)/1.2 var(--font-body); color:var(--ink); letter-spacing:-.03em; }
+.dive-instruments span { font:11px var(--font-mono); color:var(--muted); }
+.dive-form { margin-top:22px; }
+.dive-form label { display:block; font-size:13px; margin-bottom:8px; color:var(--ink); }
+.dive-form>div { display:flex; gap:8px; }
+.dive-form input { flex:1; min-width:0; }
+.dive-form .btn { white-space:nowrap; }
+.dive-examples { margin-top:12px; display:flex; gap:7px; flex-wrap:wrap; align-items:center; }
+.dive-examples>span { font:10px var(--font-mono); color:var(--muted); text-transform:uppercase; margin-right:3px; }
+.dive-bottom { display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:14px; margin-top:22px; }
+.manual { display:flex; gap:5px; align-items:center; flex-wrap:wrap; }
+.manual>span { font:11px var(--font-mono); color:var(--muted); margin-right:5px; }
+.manual .btn, .dive-bottom > .btn { padding:10px 14px; min-height:44px; }
+.dive-choices { padding:14px; background:var(--accent-soft); border-radius:6px; margin-top:14px; font-size:14px; }
+.dive-choices>div { display:flex; flex-wrap:wrap; gap:8px; margin-top:8px; }
+.ghost-option { display:flex; gap:9px; align-items:center; cursor:pointer; }
+#st-submarine button:disabled { opacity:.5; cursor:wait; }
+#st-submarine :is(button,input,summary):focus-visible { outline:2px solid var(--accent); outline-offset:3px; }
+@media(max-width:600px){ .dive-header { font-size:9px; } .dive-form>div { flex-wrap:wrap; } .dive-form input { flex-basis:100%; } .dive-form .btn { width:100%; } .dive-instruments span { font-size:9px; } .ocean-legend { padding:10px; gap:8px 12px; font-size:9px; } .manual>span { flex-basis:100%; margin-bottom:4px; } .dive-bottom { align-items:flex-end; } }
+@media(prefers-reduced-motion:reduce){ .sub,.sub-ghost,.sample { transition:none; } }
+.article-jumps { display:flex; flex-wrap:wrap; gap:12px 24px; margin:24px 0; }
+.article-jumps a { color:#f0be9a; font:13px var(--font-body); text-decoration:none; border-bottom:1px solid #f0be9a66; padding-bottom:3px; }
+.article-jumps a:hover { color:#fff5dc; }
+.dive-form input { border:1px solid var(--line-strong); border-radius:8px; padding:11px 14px; font:14px/1.4 var(--font-body); background:var(--ground); color:var(--ink); }
+@media(min-width:701px){ .ocean svg { max-height:300px; } .dive-instruments { margin:14px 0 10px; } .dive-form { margin-top:14px; } .dive-bottom { margin-top:16px; } }
+
+/* Manta's little world. The overlay is passive; all controls stay below it. */
+.reef-viewport { position:relative; height:clamp(380px,54vw,510px); isolation:isolate; overflow:hidden; background:radial-gradient(ellipse at 25% 0%,#239b9e,#075769 60%,#073b4b); }
+.reef-canvas { position:absolute; inset:0; display:block; width:100%; height:100%; }
+.reef-viewport .ocean-fallback { width:100%; height:100%; max-height:none; }
+.reef-ready .ocean-fallback { display:none; }
+.reef-hud { position:absolute; inset:0; pointer-events:none; color:#ddf4e8; display:none; font-family:var(--font-mono); }
+.reef-ready .reef-hud { display:block; }
+.reef-hud::after { content:""; position:absolute; inset:0; z-index:-1; box-shadow:inset 0 0 75px #001c363d; }
+.reef-wordmark { position:absolute; left:22px; top:22px; width:min(285px,calc(100% - 230px)); color:#ddf4e8; font-family:var(--font-mono); text-shadow:0 2px 10px #002d3c77; display:grid; gap:5px; pointer-events:none; }
+.reef-wordmark>span { color:#f9d994; letter-spacing:.2em; font-size:10px; }
+.reef-wordmark strong { font:500 clamp(18px,3vw,25px)/1.2 var(--font-body); letter-spacing:-.03em; }
+.reef-wordmark small { font:12px/1.5 var(--font-body); color:#ddf4e8; text-wrap:pretty; }
+.reef-marker { position:absolute; transform:translate(-50%,-50%); padding:3px 7px; font:10px/1.4 var(--font-mono); color:#c3ffe9; border:1px solid #a8ffe64d; background:#063c43a6; border-radius:4px; box-shadow:0 0 18px #8affdf19; }
+.reef-marker.marker-1 { color:#ebd7ff; border-color:#cfb1ff6b; }
+.reef-marker.marker-2 { color:#ffe6ac; border-color:#ffe19a66; }
+.reef-marker.marker-3 { font-size:8px; letter-spacing:.13em; border:none; background:none; color:#cdf7e0; }
+.reef-sonar { position:absolute; width:116px; left:18px; bottom:18px; padding:9px 10px 6px; border:1px solid #9ddfd628; background:#062f38a6; border-radius:9px; backdrop-filter:blur(5px); }
+.reef-sonar>span { display:flex; justify-content:space-between; font-size:8px; letter-spacing:.2em; color:#a2cebc; }
+.reef-sonar i { height:4px; width:4px; margin-top:3px; background:#b1ffce; border-radius:50%; box-shadow:0 0 6px #9fffad; }
+.reef-sonar svg { width:100%; height:auto; margin-top:5px; max-height:none; }
+.reef-compass { position:absolute; right:20px; bottom:20px; display:grid; gap:6px; text-align:right; }
+.reef-compass span { font-size:11px; letter-spacing:.08em; color:#daf5e8; }
+.reef-compass small { font-size:8px; letter-spacing:.06em; color:#a4c8b9; }
+.reef-compass b { padding:0 5px; font-weight:400; }
+.reef-proximity { position:absolute; left:50%; bottom:24px; transform:translateX(-50%); white-space:nowrap; background:#c2ffe3; color:#163d38; border-radius:20px; padding:9px 14px; font-size:11px; box-shadow:0 3px 25px #7affcc33; }
+.reef-finish { position:absolute; inset:0; display:flex; flex-direction:column; align-items:center; justify-content:center; text-align:center; background:#083d4d7d; backdrop-filter:blur(3px); }
+.reef-finish span { font-size:10px; letter-spacing:.2em; color:#c8e8ae; margin-bottom:18px; }
+.reef-finish strong { font:500 clamp(26px,5vw,42px)/1.14 var(--font-body); color:#fff5d5; letter-spacing:-.04em; }
+.reef-finish p { font:13px/1.5 var(--font-body)!important; color:#c8e6dc; margin-top:18px; }
+.reef-finish[hidden],.reef-proximity[hidden],.reef-marker[hidden] { display:none; }
+#st-submarine .in-reach { background:#d3ebcf; border-color:#4d8a61; color:#235c37; box-shadow:0 0 0 3px #619a681a; }
+#st-submarine .dive-bottom { gap:10px; margin-top:14px; }
+#st-submarine .st-caption { margin-top:8px; }
+@media(max-width:600px) {
+  .reef-viewport { height:390px; }
+  .reef-wordmark { left:14px; top:15px; width:min(285px,calc(100% - 28px)); }
+  .reef-wordmark small { font-size:11px; }
+  .reef-sonar { left:12px; bottom:12px; width:88px; padding:7px; }
+  .reef-compass { right:12px; bottom:16px; }
+  .reef-compass span { font-size:9px; }
+  .reef-compass small { font-size:7px; }
+  .reef-proximity { bottom:104px; font-size:10px; }
+  .manual { gap:6px; }
+  .manual .btn, .dive-bottom>.btn { font-size:12px; padding:10px 12px; }
+}
+
+.reef-score { position:absolute; right:20px; top:20px; display:flex; gap:18px; color:#f1f6d9; padding:10px 14px; border:1px solid #bfe6ce26; border-radius:9px; background:#06353d80; backdrop-filter:blur(6px); pointer-events:none; }
+.reef-score>div { display:grid; gap:3px; }
+.reef-score>div+div { border-left:1px solid #c8edcf33; padding-left:18px; }
+.reef-score strong { font:500 20px/1.1 var(--font-body); letter-spacing:-.03em; }
+.reef-score span { font:8px/1.4 var(--font-mono); text-transform:uppercase; letter-spacing:.12em; color:#c0dcc8; }
+@media(max-width:600px) {
+  .reef-score { top:112px; right:12px; gap:12px; padding:8px 10px; }
+  .reef-score>div+div { padding-left:12px; }
+  .reef-score strong { font-size:17px; }
+}
+.reef-compass { padding:8px 10px; border-radius:7px; background:#06353d99; border:1px solid #bfe6ce1c; backdrop-filter:blur(5px); }
+.reef-return { position:absolute; z-index:2; bottom:20px; left:50%; transform:translateX(-50%); width:min(330px,calc(100% - 36px)); padding:13px 17px; border:1px solid #f3d8987a; border-radius:10px; background:#153d40e8; color:#fff0bb; box-shadow:0 4px 30px #042b4066; text-align:center; pointer-events:none; }
+.reef-return strong { display:block; font:500 16px/1.3 var(--font-body); }
+.reef-return span { display:block; margin-top:5px; font:12px/1.4 var(--font-body); color:#d6e8cd; }
+.reef-return[hidden] { display:none; }
+.returning-home .reef-marker.marker-3 { color:#fff0b2; padding:6px 10px; border:1px solid #ffe59a; background:#264343; font-size:11px; box-shadow:0 0 22px #ffefb04d; }
+@media(max-width:600px) { .reef-return { top:12px; bottom:auto; padding:10px 12px; } .returning-home .reef-wordmark { visibility:hidden; } .reef-return strong { font-size:14px; } .reef-return span { font-size:11px; } }

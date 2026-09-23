@@ -76,6 +76,6 @@ a **pinned snapshot** at `vendor/singularity-ui/`, committed to this repo.
 ## Content sources
 
 Current live site: https://myrakrusemark.com (static, "Cool Little
-Projects"). UX case studies at /ux/. Résumé PDF at site root. Positioning
+Projects"). UX case studies at /write-ups/. Résumé PDF at site root. Positioning
 comes from the résumé: UX Architect — design systems, IA, AI-era product
 experiences; directs AI coding agents to ship what she designs.
