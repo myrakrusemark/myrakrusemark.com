@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>GNAT — Myra Krusemark</title>
+<meta name="description" content="An internal tool that let project managers stand up a new insurance plan site themselves, without code, in an afternoon. Setup time fell about 60%.">
+<meta property="og:title" content="GNAT — Myra Krusemark">
+<meta property="og:description" content="An internal tool that let project managers stand up a new insurance plan site themselves, without code, in an afternoon. Setup time fell about 60%.">
+<meta property="og:type" content="article">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='M12 2l2.4 7.6L22 12l-7.6 2.4L12 22l-2.4-7.6L2 12l7.6-2.4z' fill='%23e2725b'/%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Jost:wght@200;300;400;500&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/subpage.css?v=20260923-live">
+<link rel="stylesheet" href="/css/breadcrumb.css?v=20260923-live">
+<style>
+.flow2{display:grid;grid-template-columns:1fr 1fr;gap:18px;margin:22px 0}
+.flow2 .col{border:1px solid rgba(35,38,31,.18);border-radius:10px;padding:16px 18px;background:rgba(255,255,255,.35)}
+.flow2 .lbl{font-family:'IBM Plex Mono',monospace;font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:#8b5f7e;margin-bottom:10px}
+.flow2 ol{margin:0;padding-left:20px}
+.flow2 li{margin-bottom:6px;font-size:.95rem;line-height:1.5}
+.flow2 .after{border-color:#c96a45;background:rgba(241,195,173,.35)}
+@media (max-width:640px){.flow2{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+
+<div class="wrap">
+  <header>
+    <nav class="eyebrow breadcrumb" aria-label="Breadcrumb"><a href="/">MYRAKRUSEMARK.COM</a> <span aria-hidden="true">-</span> <a href="/write-ups/">WRITE-UPS</a> <span aria-hidden="true">-</span> <span aria-current="page">GNAT</span></nav>
+    <h1>GNAT</h1>
+    <p class="note">An internal tool that let project managers stand up a new
+    insurance plan site themselves, without code, in an afternoon.</p>
+  </header>
+
+  <div class="spec" aria-label="Project overview">
+    <div><span class="k">Role</span><span class="v">Designer; led the design through implementation</span></div>
+    <div><span class="k">Team</span><span class="v">My team built it in React and Node</span></div>
+    <div><span class="k">Users</span><span class="v">Project managers launching new plan sites</span></div>
+    <div><span class="k">Result</span><span class="v">Setup time down about 60%; in production four years</span></div>
+  </div>
+
+  <div class="paper">
+    <figure>
+      <img src="/assets/work/gnat-editorial.webp" alt="The phrase a plan site in an afternoon connected to the word committable, between visible and reversible" loading="lazy">
+    </figure>
+    <h2>The Problem</h2>
+    <p>At Centene, standing up the website for a new insurance plan took weeks
+    of developer time for work that was mostly configuration, and the project
+    managers who needed it had to wait in line.</p>
+    <p>I knew the work firsthand. For years I stood up these sites by hand,
+    knee deep in the Oracle, Mongo and Postgres databases that all had to
+    work together for millions of members. One wrong change could break
+    something people depended on, and there was no good way to see what I'd
+    touched or walk it back.</p>
+  </div>
+
+  <div class="paper">
+    <h2>The Evidence</h2>
+    <p>I'd set up dozens of sites myself, and conversations with the project
+    managers confirmed the bottleneck. We already had a knowledge base and
+    code snippets. Keeping that approach meant the team would still be making
+    database changes by hand, so I ruled it out.</p>
+    <div class="flow2" aria-label="Before and after">
+      <div class="col">
+        <div class="lbl">Before</div>
+        <ol>
+          <li>Project manager requests a new plan site</li>
+          <li>The request waits in the developer queue</li>
+          <li>A developer edits the databases by hand</li>
+          <li>Weeks later, the site is ready</li>
+        </ol>
+      </div>
+      <div class="col after">
+        <div class="lbl">With GNAT</div>
+        <ol>
+          <li>Project manager opens GNAT</li>
+          <li>Configures the plan site without code</li>
+          <li>Reviews and commits each dangerous step</li>
+          <li>The site is ready that afternoon</li>
+        </ol>
+      </div>
+    </div>
+  </div>
+
+  <div class="paper">
+    <h2>The Design</h2>
+    <p>Nobody asked, but I designed GNAT, a web UI that let a project manager
+    do the whole setup themselves, with the dangerous steps visible,
+    committable and reversible.</p>
+    <p>The hard part with a system like this is never how to automate it. It's
+    that the person accountable for the system has to see what changed and be
+    able to stop it. GNAT was built around that.</p>
+  </div>
+
+  <div class="paper">
+    <h2>Building It</h2>
+    <p>My team built it in React and Node. I stayed on it through
+    implementation, sitting next to the engineers and adjusting the design as
+    real constraints surfaced, until it was running in production.</p>
+  </div>
+
+  <div class="paper">
+    <h2>Impact</h2>
+    <ul>
+      <li>Setup time fell by about 60%</li>
+      <li>Project managers could set up a plan site in an afternoon, without waiting on a developer</li>
+      <li>In production for four years</li>
+    </ul>
+    <p>The part I remember is seeing a non-expert's face light up when they
+    make the same connections the developer did. The design made the system
+    legible to them, and that is the work I want to keep doing.</p>
+  </div>
+</div>
+
+<footer>
+  <a href="mailto:myra@myrakrusemark.com">myra@myrakrusemark.com</a> · &copy; 2026
+</footer>
+
+</body>
+</html>

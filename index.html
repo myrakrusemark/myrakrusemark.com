@@ -3,10 +3,10 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Myra Krusemark — Designer · Builder · AI Engineer</title>
-<meta name="description" content="I build what I love. Thirteen years of UX and development: a living wind chime that rings with real St. Louis weather, a worm's nervous system in a bookmarklet, Fathom, and enterprise design for tens of millions.">
-<meta property="og:title" content="Myra Krusemark — Designer · Builder · AI Engineer">
-<meta property="og:description" content="I build what I love. The homepage is a living wind chime simulation ringing with real St. Louis weather.">
+<title>Myra Krusemark — Senior Product Designer</title>
+<meta name="description" content="Senior product designer in St. Louis with thirteen years of UX and development. Case studies: Find A Provider, GNAT and Fathom.">
+<meta property="og:title" content="Myra Krusemark — Senior Product Designer">
+<meta property="og:description" content="Senior product designer in St. Louis with thirteen years of UX and development. I take a design into working software.">
 <meta property="og:type" content="website">
 <meta property="og:url" content="https://myrakrusemark.com/">
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='M12 2l2.4 7.6L22 12l-7.6 2.4L12 22l-2.4-7.6L2 12l7.6-2.4z' fill='%23e2725b'/%3E%3C/svg%3E">
@@ -183,6 +183,30 @@
     font-size: 11.5px; letter-spacing: 0.14em; text-transform: uppercase;
     color: rgba(251,250,246,0.7); margin-top: 8px;
   }
+  /* ============ SELECTED WORK — the case studies, first thing below the hero ============ */
+  .sel {
+    max-width: 1100px; margin: -4vh auto 0;
+    display: grid; grid-template-columns: repeat(3, 1fr); gap: 26px;
+  }
+  @media (max-width: 900px) { .sel { grid-template-columns: 1fr 1fr; } }
+  @media (max-width: 560px) { .sel { grid-template-columns: 1fr; } }
+  .sel-card {
+    display: flex; flex-direction: column;
+    border-radius: 14px; overflow: hidden; text-decoration: none;
+    background: #fffdf6; color: #23261f;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.18), 0 22px 54px -20px rgba(0,0,0,0.5);
+    transition: transform 0.35s cubic-bezier(0.22,1,0.36,1), box-shadow 0.35s cubic-bezier(0.22,1,0.36,1);
+  }
+  .sel-card:hover { transform: translateY(-4px); box-shadow: 0 4px 10px rgba(0,0,0,0.2), 0 30px 64px -22px rgba(0,0,0,0.55); }
+  .sel-card:focus-visible { outline: 2px solid #ff9d84; outline-offset: 4px; }
+  .sel-card img { display: block; width: 100%; height: auto; aspect-ratio: 3 / 2; object-fit: cover; border-bottom: 1px solid rgba(35,38,31,0.1); }
+  .sel-pad { padding: 18px 20px 20px; display: flex; flex-direction: column; flex: 1; }
+  .sel-meta { font-family: 'IBM Plex Mono', monospace; font-size: 10.5px; letter-spacing: 0.12em; text-transform: uppercase; color: rgba(35,38,31,0.55); margin-bottom: 6px; }
+  .sel-card h3 { font-family: 'Jost', sans-serif; font-weight: 400; font-size: 1.45rem; margin: 0 0 8px; }
+  .sel-card p { font-size: 0.9rem; line-height: 1.6; color: rgba(35,38,31,0.75); margin: 0; }
+  .sel-go { margin-top: auto; padding-top: 14px; font-family: 'IBM Plex Mono', monospace; font-size: 11px; letter-spacing: 0.08em; color: #b8402a; }
+  .field-head-2 { transform: none; margin-top: 90px; margin-bottom: 7vh; }
+  @media (prefers-reduced-motion: reduce) { .sel-card { transition: none; } }
   .flow {
     max-width: 1100px; margin: -2vh auto 0;
     columns: 3; column-gap: 26px;
@@ -375,14 +399,16 @@
     <iframe id="sim" src="/sim/index.html?c=v1_hs-86_hc-0_sp-35" title="Wind Chime Simulator, live"></iframe>
   </div>
   <div class="hero-copy">
-    <div class="eyebrow">St. Louis, MO · <em>Product Designer</em> · Builder · AI Engineer</div>
+    <div class="eyebrow">St. Louis, MO · <em>Senior Product Designer</em></div>
     <h1>Myra Krusemark</h1>
     <p class="lede">
-      I build what I love.
+      I take a design into working software.
     </p>
     <p class="lede-sub">
-      Thirteen years of UX and development. I dream up, design, build,
-      and deliver finished products.
+      Thirteen years of UX and development, ten of them leading design for
+      member, provider and internal tools at Centene. Today I direct AI coding
+      agents with the same discipline: planning, code review, testing and
+      security.
     </p>
     <div class="hero-actions" role="group" aria-label="Explore and listen">
       <button class="ring-chip" id="ring">
@@ -390,9 +416,9 @@
         <span id="ring-label">Hear the chimes</span>
       </button>
       <nav class="hero-secondary" aria-label="Explore more">
-      <a href="/write-ups/">Write-ups and case studies</a>
+      <a href="#selected-work">Selected work <span aria-hidden="true">↓</span></a>
+      <a href="/write-ups/">All write-ups</a>
       <a href="/Myra%20Krusemark%20-%20Resume.pdf">Resume</a>
-      <a href="#what-ive-seen">More <span aria-hidden="true">↓</span></a>
       </nav>
     </div>
   </div>
@@ -403,7 +429,41 @@
 
 <!-- ================= ORGANIC GALLERY ================= -->
 <section class="field">
-  <div class="field-head" id="what-ive-seen">
+  <div class="field-head" id="selected-work">
+    <h2>Selected work</h2>
+    <p>case studies</p>
+  </div>
+  <div class="sel">
+    <a class="sel-card" href="/write-ups/fap/">
+      <img src="/assets/work/fap-editorial.webp" alt="The phrase the ocean first connected to browse, ahead of filter and choose" width="1536" height="1024" loading="lazy">
+      <div class="sel-pad">
+        <div class="sel-meta">Centene · UX Team Lead</div>
+        <h3>Find A Provider</h3>
+        <p>A ground-up redesign of a decade-old provider search for Medicaid, Medicare and Commercial members. Browse first, filter second, so members reach results instead of dead ends.</p>
+        <span class="sel-go">+40% user satisfaction · case study →</span>
+      </div>
+    </a>
+    <a class="sel-card" href="/write-ups/gnat/">
+      <img src="/assets/work/gnat-editorial.webp" alt="The phrase a plan site in an afternoon connected to committable, between visible and reversible" width="1536" height="1024" loading="lazy">
+      <div class="sel-pad">
+        <div class="sel-meta">Centene · Designer</div>
+        <h3>GNAT</h3>
+        <p>An internal tool that let project managers stand up a new insurance plan site themselves, without code, with the dangerous steps visible, committable and reversible.</p>
+        <span class="sel-go">about 60% faster setup · case study →</span>
+      </div>
+    </a>
+    <a class="sel-card" href="https://fathomdx.io/" target="_blank" rel="noopener">
+      <img src="/assets/work/fathom-editorial.webp" alt="The question what did it remember connected to paper trail, beside memory and intent" width="1536" height="1024" loading="lazy">
+      <div class="sel-pad">
+        <div class="sel-meta">Independent · Designer · Patent pending</div>
+        <h3>Fathom</h3>
+        <p>A self-hosted memory and identity platform for persistent AI agents. The design problem: making an opaque agent system legible to the person who has to act on it.</p>
+        <span class="sel-go">fathomdx.io →</span>
+      </div>
+    </a>
+  </div>
+
+  <div class="field-head field-head-2" id="what-ive-seen">
     <h2>What I've built, what I've seen</h2>
     <p>projects and photographs</p>
   </div>
