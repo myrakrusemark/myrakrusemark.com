@@ -183,15 +183,19 @@
     font-size: 11.5px; letter-spacing: 0.14em; text-transform: uppercase;
     color: rgba(251,250,246,0.7); margin-top: 8px;
   }
-  /* ============ CASE STUDIES — the first row of the gallery ============ */
-  .sel {
-    max-width: 1100px; margin: -2vh auto 40px;
-    display: grid; grid-template-columns: repeat(3, 1fr); gap: 26px;
+  /* ============ CASE STUDIES — sprinkled through the top rows of the gallery ============ */
+  /* laid out row by row by the script after .flow, so a card's DOM
+     position is its row; without JS the columns fallback still works */
+  .flow.masonry { columns: auto; display: grid; grid-template-columns: repeat(var(--cols), minmax(0, 1fr)); column-gap: 26px; align-items: start; }
+  .cs-badge {
+    position: absolute; top: 12px; left: 12px; z-index: 1;
+    font-family: 'IBM Plex Mono', monospace; font-size: 10.5px; letter-spacing: 0.12em; text-transform: uppercase;
+    padding: 5px 9px; border-radius: 4px;
+    color: #92351f; background: #fbe8df; border: 1px solid #b8402a;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.18);
   }
-  @media (max-width: 900px) { .sel { grid-template-columns: 1fr 1fr; } }
-  @media (max-width: 560px) { .sel { grid-template-columns: 1fr; } }
   .sel-card {
-    display: flex; flex-direction: column;
+    position: relative; display: flex; flex-direction: column;
     border-radius: 14px; overflow: hidden; text-decoration: none;
     background: #fffdf6; color: #23261f;
     box-shadow: 0 2px 6px rgba(0,0,0,0.18), 0 22px 54px -20px rgba(0,0,0,0.5);
@@ -432,8 +436,9 @@
     <h2>What I've built, what I've seen</h2>
     <p>projects and photographs</p>
   </div>
-  <div class="sel">
-    <a class="sel-card" href="/write-ups/fap/">
+  <div class="flow">
+    <a class="card proj sel-card tilt-l" href="/write-ups/fap/">
+      <span class="cs-badge">Case study</span>
       <img src="/assets/work/fap-thumb.webp?v=2" alt="Aerial photo of a crowded beach of colorful umbrellas, one lit in the late sun" width="1536" height="1024" loading="lazy">
       <div class="sel-pad">
         <div class="sel-meta">Centene · UX Team Lead</div>
@@ -442,27 +447,6 @@
         <span class="sel-go">+40% user satisfaction · case study →</span>
       </div>
     </a>
-    <a class="sel-card" href="/write-ups/gnat/">
-      <img src="/assets/work/gnat-thumb.webp?v=2" alt="Macro photo of a gnat on the brass lever of an old on-off toggle switch" width="1536" height="1024" loading="lazy">
-      <div class="sel-pad">
-        <div class="sel-meta">Centene · Designer</div>
-        <h3>GNAT</h3>
-        <p>An internal tool that let project managers stand up a new insurance plan site themselves, without code, with the dangerous steps visible, committable and reversible.</p>
-        <span class="sel-go">about 60% faster setup · case study →</span>
-      </div>
-    </a>
-    <a class="sel-card" href="https://fathomdx.io/" target="_blank" rel="noopener">
-      <img src="/assets/work/fathom-thumb.webp?v=2" alt="Underwater photo of a sounding line with paper tags descending through shafts of light" width="1536" height="1024" loading="lazy">
-      <div class="sel-pad">
-        <div class="sel-meta">Independent · Designer · Patent pending</div>
-        <h3>Fathom</h3>
-        <p>A self-hosted memory and identity platform for persistent AI agents. The design problem: making an opaque agent system legible to the person who has to act on it.</p>
-        <span class="sel-go">fathomdx.io →</span>
-      </div>
-    </a>
-  </div>
-
-  <div class="flow">
     <div class="card proj tilt-l">
       <a href="/write-ups/jev-vs-local/" aria-label="Read Jev ain't all that."><img src="/assets/work/jev-thumbnail-editorial.png" alt="The phrase a bit louder, please connected to the volume up command" width="1536" height="1024" loading="lazy"></a>
       <div class="pad"><h3><a href="/write-ups/jev-vs-local/">Jev ain't all that.</a></h3><p>Seven ways to turn words into decisions. An interactive comparison of Jev and small local models, with demos you can drive by voice.</p></div>
@@ -475,6 +459,16 @@
       <div class="thumb-row"><img src="/assets/projects/frederico.webp" alt=""><h3><a href="https://myrakrusemark.com/frederico/" target="_blank" rel="noopener">Frederico</a></h3></div>
       <div class="pad"><p>A real C. elegans, its whole locomotion connectome simulated neuron by neuron in WebAssembly, living in a bookmarklet. Keep him fed or he dies.</p><a class="spawn-cta" id="frederico-spawn" href="https://myrakrusemark.com/frederico/" draggable="true">Release him on this page</a></div>
     </div>
+    <a class="card proj sel-card tilt-r" href="/write-ups/gnat/">
+      <span class="cs-badge">Case study</span>
+      <img src="/assets/work/gnat-thumb.webp?v=2" alt="Macro photo of a gnat on the brass lever of an old on-off toggle switch" width="1536" height="1024" loading="lazy">
+      <div class="sel-pad">
+        <div class="sel-meta">Centene · Designer</div>
+        <h3>GNAT</h3>
+        <p>An internal tool that let project managers stand up a new insurance plan site themselves, without code, with the dangerous steps visible, committable and reversible.</p>
+        <span class="sel-go">about 60% faster setup · case study →</span>
+      </div>
+    </a>
     <div class="card photo tilt-r">
       <img src="/assets/media/radio-film.webp" alt="Raccoon caught at the cat door, by Lego Mindstorms" loading="lazy">
       <div class="cap">Raccoon caught at the cat door, by Lego Mindstorms</div>
@@ -487,6 +481,16 @@
       <img src="/assets/media/balloons.webp" alt="Forest Park balloon race · photo contest winner" loading="lazy">
       <div class="cap">Forest Park balloon race · photo contest winner</div>
     </div>
+    <a class="card proj sel-card tilt-l" href="https://fathomdx.io/" target="_blank" rel="noopener">
+      <span class="cs-badge">Case study</span>
+      <img src="/assets/work/fathom-thumb.webp?v=2" alt="Underwater photo of a sounding line with paper tags descending through shafts of light" width="1536" height="1024" loading="lazy">
+      <div class="sel-pad">
+        <div class="sel-meta">Independent · Designer · Patent pending</div>
+        <h3>Fathom</h3>
+        <p>A self-hosted memory and identity platform for persistent AI agents. The design problem: making an opaque agent system legible to the person who has to act on it.</p>
+        <span class="sel-go">fathomdx.io →</span>
+      </div>
+    </a>
     <div class="card photo ">
       <img src="/assets/media/spark-swirl.webp" alt="Fireworks · long exposure" loading="lazy">
       <div class="cap">Fireworks · long exposure</div>
@@ -605,6 +609,34 @@
     </div>
   </div>
 </section>
+<script>
+/* Lay the gallery out row by row: item i goes to column i % cols, so its
+   place in the markup is its row. Re-runs only when the column count changes. */
+(function () {
+  const flow = document.querySelector('.flow');
+  if (!flow) return;
+  const items = [...flow.children];
+  const count = () => matchMedia('(max-width: 560px)').matches ? 1
+                    : matchMedia('(max-width: 900px)').matches ? 2 : 3;
+  let cols = 0;
+  function layout() {
+    const n = count();
+    if (n === cols) return;
+    cols = n;
+    const colEls = Array.from({ length: n }, () => {
+      const d = document.createElement('div');
+      d.className = 'mcol';
+      return d;
+    });
+    items.forEach((it, i) => colEls[i % n].appendChild(it));
+    flow.style.setProperty('--cols', n);
+    flow.classList.add('masonry');
+    flow.replaceChildren(...colEls);
+  }
+  layout();
+  addEventListener('resize', layout);
+})();
+</script>
 
 <!-- ================= PATENT PENDING ================= -->
 <section class="patents">
