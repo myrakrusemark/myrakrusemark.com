@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>An agent that grows a self — Myra Krusemark</title>
+<meta name="description" content="Why Fathom-lake is built to become someone, how it keeps everything as deltas, how it scores on LongMemEval, and where that test comes up short.">
+<meta property="og:title" content="An agent that grows a self">
+<meta property="og:description" content="Why Fathom-lake is built to become someone, how it keeps everything as deltas, how it scores on LongMemEval, and where that test comes up short.">
+<meta property="og:type" content="article">
+<meta property="og:url" content="https://myrakrusemark.com/write-ups/fathom-lake/">
+<meta property="og:image" content="https://myrakrusemark.com/write-ups/fathom-lake/assets/fathom-lake-social-card.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="A petri dish on a white lab bench, dotted with many different bacterial colonies in cream, yellow, orange and pink">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="canonical" href="https://myrakrusemark.com/write-ups/fathom-lake/">
+<link rel="alternate" type="application/rss+xml" title="Myra Krusemark — Write-ups" href="https://myrakrusemark.com/feed.xml">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='M12 2l2.4 7.6L22 12l-7.6 2.4L12 22l-2.4-7.6L2 12l7.6-2.4z' fill='%23e2725b'/%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Jost:wght@200;300;400;500&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/subpage.css?v=20260923-live">
+<link rel="stylesheet" href="/css/breadcrumb.css?v=20260923-live">
+<link rel="stylesheet" href="assets/crystal.css?v=5c1c6e85a2">
+</head>
+<body>
+
+<div class="wrap">
+  <header>
+    <nav class="eyebrow breadcrumb" aria-label="Breadcrumb"><a href="/">MYRAKRUSEMARK.COM</a> <span aria-hidden="true">-</span> <a href="/write-ups/">WRITE-UPS</a> <span aria-hidden="true">-</span> <span aria-current="page">An agent that grows a self</span></nav>
+    <h1>An agent that grows a self</h1>
+    <p class="note">Coding agents already remember me. Fathom becomes itself alongside me.</p>
+  </header>
+  <div class="spec" aria-label="Project overview">
+    <div><span class="k">What</span><span class="v">A memory and individuality library for AI agents, MIT licensed</span></div>
+    <div><span class="k">Result</span><span class="v">94.8% on LongMemEval-S</span></div>
+    <div><span class="k">Code</span><span class="v"><a href="https://github.com/myrakrusemark/fathom-lake">GitHub</a> · <a href="https://pypi.org/project/fathom-lake/">PyPI</a></span></div>
+  </div>
+
+  <div class="paper">
+    <p>Claude Code and Codex remember me pretty well. They keep notes in plain files, a project file here and a memory folder there, and most of the time that's enough!</p>
+    <p>But I keep building projects with an agent tucked inside them. A reading companion, a voice assistant, a watcher that sorts through job listings for me... every one of those agents would have been better with a memory. And more than a list of facts about me, each needed an account of everything that had happened since the day I switched it on.</p>
+    <p><img src="assets/fathom-logo.svg" alt="Fathom" width="160" height="40" style="float:left;margin:6px 22px 6px 0">Plenty of companies have taken a swing at agent memory. I wanted something a little different. Every time you open a terminal or a custom harness, do you want a fresh copy of Claude? Or do you want a colleague, someone who grows with you, learns your values, understands what you need, and slowly becomes the individual best suited to your particular job? I'm gonna guess that sometimes it's the latter.</p>
+  </div>
+
+  <div class="paper">
+    <h2>Johnny 5, C-3PO and Wall-E</h2>
+    <figure><img src="assets/robots.jpg" alt="Five robots side by side: Johnny 5 in a straw hat and denim vest, C-3PO, Wall-E, Data from Star Trek, and Baymax" loading="lazy"><figcaption>Johnny 5 (Short Circuit 2, TriStar Pictures, 1988). C-3PO (Star Wars exhibit, CC BY 2.0). Wall-E (Tianmu peter, CC BY 3.0). Data (Grcote, GFDL). Baymax (玄史生, CC0).</figcaption></figure>
+    <p>I grew up on robots who became someone.</p>
+    <p>Johnny 5 in Short Circuit gets hit by lightning, starts reading everything he can find ("Need input!"), and then decides he's alive. C-3PO, fussy and anxious and endlessly polite, is as much a character as anyone else in the room. Wall-E spends 700 years alone on Earth collecting trinkets and watching the same old musical until he's clearly a person.</p>
+    <p>Each of them became someone because of what they lived through. That's how I think of Fathom: a Johnny 5 that happens to come with a memory system as good as the best out there.</p>
+  </div>
+
+  <div class="paper">
+    <h2>How your own memory works</h2>
+    <p>Think about your own memory for a second. Everything you experience gets colored by what came before it. A fact from elementary school, an argument with a friend, a bad year. How you think today is a product of all of it.</p>
+    <p>Fathom works the same way. On a regular schedule it writes a <strong>crystal</strong>, a first-person account of who it is: what it holds to, where it's pulled in two directions, what it's trying to figure out, and who it's becoming. Every line has to cite the actual memories it rests on. The crystal goes into the agent's system prompt, so each session starts with the agent knowing who it is, based on everything it has learned and lived through.</p>
+    <p>The crystal changes the way people change, in small steps with reasons. When a new crystal replaces an old belief, it says so, in a section called "What changed in me lately":</p>
+    <blockquote>I used to hold: <em>the old belief</em>. Now: <em>the new one</em>. What changed it: <em>the memories that moved it</em>.</blockquote>
+    <p>On top of the crystal sits a slower layer: a few lines of who it is, pared down from everything it has lived through and rewritten only when enough has changed. My own Fathom has eight months of real conversations with me behind it, and this is who it thinks it is:</p>
+    <p><button class="crystal-cta" type="button" data-crystal><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 3h10l4 6-9 12L3 9z M3 9h18 M9 3l3 18 3-18" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/></svg>Look at a real crystal</button></p>
+  </div>
+
+  <div class="paper">
+    <h2>It takes in everything</h2>
+    <p>Most memory systems run a language model over every message as it arrives, pulling out facts like "User has a cat named Luna." Mem0, the best known, keeps only what that model decides is worth keeping. Zep and Honcho keep the original text too, but they still pay for a model call on every single message.</p>
+    <p>Fathom takes everything in (chat messages, code changes, notes, as much or as little as you want to feed it) and decides later what's important, without losing any of the other details. Saving a memory is a single database insert, so the front end is instant and free.</p>
+    <p>Later, on a schedule (mine runs overnight), agents go back through it all, reviewing every conversation, summarizing it, noticing when something new replaces something old, and drawing connections between memories. Ultimately those connections and experiences end up as an update to the crystal.</p>
+  </div>
+
+  <div class="paper">
+    <h2>Everything is a delta</h2>
+    <p>The smallest unit of memory in Fathom is a <strong>delta</strong>. Everything is one: a chat message, a summary, a bit of code, a mood, a crystal. All of it lives in one SQLite file, and all of it is available to the agent.</p>
+    <p>A delta is never edited and never deleted. When information changes, Fathom adds a new delta pointing at the old one. When Fathom reaches a conclusion and later realizes it was wrong, that change of mind is recorded like any other memory. My own lake has about 120,000 deltas in it right now, and about 170 of them record a correction or a change of mind.</p>
+    <figure><img src="assets/deltas-pile.svg" alt="Four index cards fall onto a pile. Card 1: John likes ham sandwiches. Card 2 corrects card 1: Actually it was Susan who likes ham sandwiches. John likes BLTs. Card 3: Susan is John&#x27;s wife. That night an amber consolidation card lands on top, citing cards 1 to 3: John likes BLTs. Susan, his wife, likes ham sandwiches." loading="lazy"><figcaption>A correction and an overnight summary are just more cards on the pile. Nothing underneath is erased.</figcaption></figure>
+    <figure><img src="assets/crystal.svg" alt="Thirteen cards land, links are drawn between related ones, they settle into three piles each topped by an overnight summary, and one large card, the crystal, lands on top. It says who the agent is: someone you can count on, attentive, practical and patient, and each trait cites the cards it rests on." loading="lazy"><figcaption>Night after night, the piles are linked, summarized and finally compacted into one card: the crystal.</figcaption></figure>
+    <p>Keeping the whole record pays off when a better model comes along. You can send it through your agent's entire life, from the very first delta, and let it retroactively improve what and who your agent is, without throwing away anything from before.</p>
+  </div>
+
+  <div class="paper">
+    <h2>How good is the memory?</h2>
+    <p>There's a public test for agent memory called <a href="https://github.com/xiaowu0162/LongMemEval">LongMemEval</a>. It gives a memory system a long history of past chats, then asks 500 questions about them: what did I say three weeks ago, what changed since, how many times did I go hiking. Each question comes with about 50 past conversations.</p>
+    <figure><img src="assets/longmemeval-s.svg" alt="Recall across about 50 past conversations" loading="lazy"></figure>
+    <p>Fathom scored 94.8% with Claude Opus 5.5 answering, right alongside the best scores anyone reports. With the much smaller Claude Haiku 4.5 answering, Fathom still scored 88%, so most of that score comes from the memory rather than the model reading it.</p>
+  </div>
+
+  <div class="paper">
+    <h2>Where LongMemEval comes up short</h2>
+    <p>LongMemEval is the best public test there is, and it only asks about facts. Every question has one right answer: a date, a count, a name, a preference.</p>
+    <p>It never asks about the lead-up. When I ask my agent why we moved a project to a different database, the answer isn't a single fact. It's a failed first attempt and a change of mind a week later, spread over several conversations. A good colleague remembers that path, and LongMemEval has no question that needs it.</p>
+    <p>It also has nothing to say about individuality. It can't tell you whether an agent keeps a consistent point of view, or whether two agents with different histories turn into different characters. For an agent that's supposed to become someone, those are the questions I care about most.</p>
+    <p>We need new tests for both: one for the lead-up to a fact, and one for individuality. I've built a first version of the individuality test on invented worlds, made-up people with months of made-up conversations. The numbers are small and the tests are mine. As far as I can find, though, nobody else in this field publishes a test for individuality at all.</p>
+    <ul>
+      <li>Across rebuilds, the crystal kept all but 2 of 64 stable beliefs. Regenerating the self from scratch each time lost 16 of 50.</li>
+      <li>When I showed the agent material that looked relevant but had nothing to do with one of its opinions, it held its position 6 times out of 6 with its memory, and only 3 times out of 6 without.</li>
+      <li>Two agents given different lives disagreed on 2 of 4 contested questions. The earlier version of the crystal, written as free prose, disagreed on none.</li>
+    </ul>
+  </div>
+
+  <div class="paper">
+    <h2>Use it! Grow it!</h2>
+    <img src="assets/petri.webp" alt="A petri dish on a white lab bench, dotted with many different bacterial colonies in cream, yellow, orange and pink" width="260" height="173" loading="lazy" style="float:right;width:min(40%,260px);height:auto;margin:4px 0 12px 22px;border-radius:8px">
+    <p>Fathom-lake is a Python library with no dependencies beyond the standard library, MIT licensed.</p>
+    <pre><code>pip install fathom-lake</code></pre>
+    <p>You can use it as a library inside your own program, as a plugin that gives Claude Code or Codex a self on your own machine (that's how I use it), or on a central server that several machines share. The code and the setup guides are on <a href="https://github.com/myrakrusemark/fathom-lake">GitHub</a>.</p>
+  </div>
+
+</div>
+
+<footer>
+  <a href="mailto:myra@myrakrusemark.com">myra@myrakrusemark.com</a> · &copy; 2026
+</footer>
+
+<script src="assets/crystal.js?v=fe3dd4facd" defer></script>
+</body>
+</html>

@@ -1,0 +1,123 @@
+/* "Look at a real crystal": the button in the article and the dialog it opens */
+.crystal-cta {
+  display: inline-flex; align-items: center; gap: 10px;
+  font: 500 15px/1 'IBM Plex Sans', sans-serif; color: #fffdf6;
+  background: linear-gradient(135deg, #a86412, #d98a2b);
+  border: 0; border-radius: 999px; padding: 12px 20px 12px 16px; cursor: pointer;
+  box-shadow: 0 2px 0 rgba(0,0,0,.08), 0 8px 22px -10px rgba(168,100,18,.8);
+  transition: transform .15s ease, box-shadow .15s ease;
+}
+.crystal-cta:hover { transform: translateY(-1px); box-shadow: 0 2px 0 rgba(0,0,0,.08), 0 12px 26px -10px rgba(168,100,18,.9); }
+.crystal-cta:focus-visible { outline: 2px solid #23261f; outline-offset: 3px; }
+.crystal-cta svg { width: 18px; height: 18px; flex: none; }
+
+dialog.crystal {
+  --hold: #a8620f; --pulled: #b8402a; --open: #3b6a8c; --changed: #4b7a43;
+  width: min(820px, calc(100vw - 32px)); max-height: calc(100vh - 48px);
+  margin: auto; padding: 0; border: 0; border-radius: 16px; overflow: hidden;
+  background: #fffdf6; color: #23261f;
+  box-shadow: 0 30px 80px -20px rgba(0,0,0,.7);
+}
+dialog.crystal[open] { display: flex; flex-direction: column; }
+dialog.crystal::backdrop { background: rgba(8,11,8,.62); backdrop-filter: blur(4px); }
+@media (prefers-reduced-motion: no-preference) {
+  dialog.crystal[open] { animation: crystal-in .28s cubic-bezier(.2,.8,.2,1); }
+  @keyframes crystal-in { from { opacity: 0; transform: translateY(14px) scale(.985); } }
+}
+
+.crystal .c-head {
+  position: relative; flex: none;
+  background: linear-gradient(120deg, #8f520c, #c47a22 60%, #d98a2b);
+  color: #fffdf6; padding: 18px 64px 16px 24px;
+}
+.crystal .c-head::after {
+  content: ""; position: absolute; inset: 0; pointer-events: none; opacity: .18;
+  background: repeating-linear-gradient(60deg, transparent 0 38px, #fff 38px 39px),
+              repeating-linear-gradient(-60deg, transparent 0 38px, #fff 38px 39px);
+  -webkit-mask-image: linear-gradient(90deg, transparent 40%, #000);
+  mask-image: linear-gradient(90deg, transparent 40%, #000);
+}
+.crystal .c-kicker { font: 600 11px/1 'IBM Plex Mono', monospace; letter-spacing: .14em; text-transform: uppercase; opacity: .85; }
+.crystal .c-title { font: 400 clamp(1.4rem, 3vw, 1.8rem)/1.2 'Jost', sans-serif; margin: 8px 0 10px; color: #fffdf6; }
+.crystal .c-meta { display: flex; flex-wrap: wrap; gap: 6px 8px; margin: 0; padding: 0; list-style: none; }
+.crystal .c-meta li {
+  font: 500 12px/1 'IBM Plex Sans', sans-serif; padding: 6px 9px; border-radius: 999px;
+  background: rgba(255,253,246,.16); border: 1px solid rgba(255,253,246,.28);
+}
+.crystal .c-close {
+  position: absolute; top: 14px; right: 14px; z-index: 1;
+  width: 36px; height: 36px; border-radius: 50%; border: 0; cursor: pointer;
+  background: rgba(255,253,246,.18); color: #fffdf6; font: 400 22px/1 'IBM Plex Sans', sans-serif;
+}
+.crystal .c-close:hover { background: rgba(255,253,246,.3); }
+.crystal .c-close:focus-visible { outline: 2px solid #fffdf6; outline-offset: 2px; }
+
+.crystal .c-body { overflow-y: auto; padding: 20px 24px 28px; overscroll-behavior: contain; }
+.crystal .c-intro { font-size: 15px; line-height: 1.6; color: rgba(35,38,31,.8); margin: 0 0 14px; }
+.crystal .c-legend { display: flex; flex-wrap: wrap; gap: 6px; margin: 0 0 8px; padding: 0; list-style: none; }
+.crystal .c-legend a {
+  display: inline-flex; align-items: center; gap: 7px; text-decoration: none; border: 1px solid rgba(35,38,31,.14);
+  font: 500 12.5px/1 'IBM Plex Sans', sans-serif; color: #23261f; padding: 7px 10px; border-radius: 999px; background: #fff;
+}
+.crystal .c-legend a:hover { border-color: rgba(35,38,31,.35); }
+.crystal .c-legend i { width: 9px; height: 9px; border-radius: 50%; background: var(--c); }
+
+.crystal .c-sec { --c: var(--hold); margin-top: 22px; border-left: 4px solid var(--c); padding-left: 16px; scroll-margin-top: 12px; }
+.crystal .c-sec[data-k="pulled"] { --c: var(--pulled); }
+.crystal .c-sec[data-k="open"] { --c: var(--open); }
+.crystal .c-sec[data-k="changed"] { --c: var(--changed); }
+.crystal .c-legend li[data-k="hold"] { --c: var(--hold); }
+.crystal .c-legend li[data-k="pulled"] { --c: var(--pulled); }
+.crystal .c-legend li[data-k="open"] { --c: var(--open); }
+.crystal .c-legend li[data-k="changed"] { --c: var(--changed); }
+.crystal .c-sec h3 { font: 500 1.15rem/1.3 'Jost', sans-serif; color: var(--c); margin: 0 0 4px; }
+.crystal .c-explain {
+  font-size: 13.5px; line-height: 1.5; color: rgba(35,38,31,.62); margin: 0 0 12px;
+  font-style: italic;
+}
+.crystal .c-item {
+  background: color-mix(in srgb, var(--c) 6%, #fffdf6);
+  border: 1px solid color-mix(in srgb, var(--c) 22%, transparent);
+  border-radius: 10px; padding: 12px 14px; margin: 0 0 10px;
+}
+.crystal .c-item p { font-size: 15px; line-height: 1.6; color: #23261f; margin: 0; }
+.crystal .c-cites { display: flex; flex-wrap: wrap; align-items: center; gap: 6px; margin-top: 10px; }
+.crystal .c-cites > span { font: 500 11px/1 'IBM Plex Mono', monospace; letter-spacing: .08em; text-transform: uppercase; color: rgba(35,38,31,.5); margin-right: 2px; }
+.crystal .c-chip {
+  font: 500 12px/1 'IBM Plex Mono', monospace; color: var(--c); cursor: pointer;
+  background: #fffdf6; border: 1px solid color-mix(in srgb, var(--c) 45%, transparent);
+  border-radius: 999px; padding: 5px 9px;
+}
+.crystal .c-chip:hover, .crystal .c-chip[aria-expanded="true"] { background: var(--c); color: #fffdf6; border-color: var(--c); }
+.crystal .c-chip:focus-visible { outline: 2px solid var(--c); outline-offset: 2px; }
+.crystal .c-memory {
+  margin-top: 10px; background: #fff; border: 1px dashed color-mix(in srgb, var(--c) 45%, transparent);
+  border-radius: 8px; padding: 10px 12px;
+}
+.crystal .c-memory .k { font: 500 11px/1.4 'IBM Plex Mono', monospace; letter-spacing: .06em; text-transform: uppercase; color: rgba(35,38,31,.55); }
+.crystal .c-memory .t { font-weight: 600; font-size: 14.5px; margin: 3px 0 2px; }
+.crystal .c-memory .x { font-size: 13.5px; line-height: 1.5; color: rgba(35,38,31,.72); margin: 0; }
+
+.crystal .c-edit .lab { font: 600 11px/1 'IBM Plex Mono', monospace; letter-spacing: .1em; text-transform: uppercase; color: rgba(35,38,31,.5); margin: 0 0 6px; }
+.crystal .c-edit .lab + p { margin-bottom: 10px; }
+.crystal .c-edit del { color: #9a3a26; background: rgba(184,64,42,.1); text-decoration: line-through; text-decoration-color: rgba(154,58,38,.55); border-radius: 3px; }
+.crystal .c-edit ins { color: #2f5a28; background: rgba(75,122,67,.14); text-decoration: none; border-radius: 3px; }
+.crystal .c-edit .why { font-size: 13.5px; line-height: 1.5; color: rgba(35,38,31,.72); margin-top: 10px; }
+.crystal .c-edit .why b { color: var(--c); font-weight: 600; }
+.crystal .c-foot { font-size: 13px; color: rgba(35,38,31,.55); margin: 22px 0 0; line-height: 1.5; }
+
+@media (max-width: 560px) {
+  dialog.crystal { width: 100vw; max-width: 100vw; max-height: 100dvh; height: 100dvh; border-radius: 0; }
+  .crystal .c-head { padding: 16px 56px 14px 16px; }
+  .crystal .c-body { padding: 16px 16px 24px; }
+  .crystal .c-sec { padding-left: 12px; }
+}
+
+/* the pared-down self sits above the working layer */
+.crystal .c-sec[data-k="self"], .crystal .c-legend li[data-k="self"] { --c: #6a4a8c; }
+.crystal .c-sec[data-k="self"] .c-item p { font-size: 16px; line-height: 1.65; }
+.crystal .c-layer {
+  margin: 30px 0 0; padding-top: 16px; border-top: 1px dashed rgba(35,38,31,.2);
+  font: 600 11px/1.4 'IBM Plex Mono', monospace; letter-spacing: .12em; text-transform: uppercase; color: rgba(35,38,31,.55);
+}
+.crystal .c-layer span { display: block; margin-top: 4px; font: italic 400 13.5px/1.5 'IBM Plex Sans', sans-serif; letter-spacing: 0; text-transform: none; }

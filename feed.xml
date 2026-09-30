@@ -7,6 +7,13 @@
     <language>en-us</language>
     <atom:link href="https://myrakrusemark.com/feed.xml" rel="self" type="application/rss+xml"/>
     <item>
+      <title>An agent that grows a self</title>
+      <link>https://myrakrusemark.com/write-ups/fathom-lake/</link>
+      <guid>https://myrakrusemark.com/write-ups/fathom-lake/</guid>
+      <pubDate>Wed, 30 Sep 2026 09:00:00 -0500</pubDate>
+      <description>Coding agents already remember me. Fathom becomes itself alongside me: why Fathom-lake keeps everything as deltas, how it scores on LongMemEval, and what that test misses.</description>
+    </item>
+    <item>
       <title>Jev ain't all that.</title>
       <link>https://myrakrusemark.com/write-ups/jev-vs-local/</link>
       <guid>https://myrakrusemark.com/write-ups/jev-vs-local/</guid>
