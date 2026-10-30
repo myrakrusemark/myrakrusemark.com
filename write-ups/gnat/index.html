@@ -4,9 +4,9 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>GNAT — Myra Krusemark</title>
-<meta name="description" content="An internal tool that let project managers stand up a new insurance plan site themselves, without code, in an afternoon. Setup time fell about 60%.">
+<meta name="description" content="An internal tool that lets new plan teams and product owners set up and change a health plan's websites themselves, with approvals, QA and UAT inside the tool, instead of database changes made by hand and tied to the sprint.">
 <meta property="og:title" content="GNAT — Myra Krusemark">
-<meta property="og:description" content="An internal tool that let project managers stand up a new insurance plan site themselves, without code, in an afternoon. Setup time fell about 60%.">
+<meta property="og:description" content="An internal tool that lets new plan teams and product owners set up and change a health plan's websites themselves, with approvals, QA and UAT inside the tool, instead of database changes made by hand and tied to the sprint.">
 <meta property="og:type" content="article">
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='M12 2l2.4 7.6L22 12l-7.6 2.4L12 22l-2.4-7.6L2 12l7.6-2.4z' fill='%23e2725b'/%3E%3C/svg%3E">
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -15,103 +15,564 @@
 <link rel="stylesheet" href="/subpage.css?v=20260923-live">
 <link rel="stylesheet" href="/css/breadcrumb.css?v=20260923-live">
 <style>
+/* ---- Before / after (same vocabulary as FAP) ---- */
 .flow2{display:grid;grid-template-columns:1fr 1fr;gap:18px;margin:22px 0}
 .flow2 .col{border:1px solid rgba(35,38,31,.18);border-radius:10px;padding:16px 18px;background:rgba(255,255,255,.35)}
 .flow2 .lbl{font-family:'IBM Plex Mono',monospace;font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:#8b5f7e;margin-bottom:10px}
-.flow2 ol{margin:0;padding-left:20px}
+.flow2 ol,.flow2 ul{margin:0;padding-left:20px}
 .flow2 li{margin-bottom:6px;font-size:.95rem;line-height:1.5}
 .flow2 .after{border-color:#c96a45;background:rgba(241,195,173,.35)}
 @media (max-width:640px){.flow2{grid-template-columns:1fr}}
+
+/* ---- Step lists ---- */
+.steps{list-style:none;padding:0;margin:18px 0 22px}
+.steps li{display:grid;grid-template-columns:132px 1fr;gap:12px;padding:10px 0;border-top:1px solid rgba(35,38,31,.12);max-width:none;margin:0;font-size:.97rem;line-height:1.55}
+.steps li:last-child{border-bottom:1px solid rgba(35,38,31,.12)}
+.steps .k{font-family:'IBM Plex Mono',monospace;font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:#8b5f7e;padding-top:3px}
+.steps .k.slow{color:#b8402a}
+@media (max-width:520px){.steps li{grid-template-columns:1fr;gap:2px}}
+
+/* ---- Redrawn GNAT screens, neutral colors ---- */
+.scr{border:1px solid rgba(35,38,31,.2);border-radius:10px;overflow:hidden;background:#f5f2e9;font-family:'IBM Plex Sans',sans-serif;font-size:13px;line-height:1.4;color:#23261f;text-align:left}
+.scr .bar{display:flex;gap:12px;align-items:center;background:#23261f;color:#fbfaf6;padding:8px 14px;font-size:12px}
+.scr .bar b{letter-spacing:.12em;font-weight:600}
+.scr .bar .crumb{color:rgba(251,250,246,.62);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;min-width:0}
+.scr .bar .who{margin-left:auto;color:rgba(251,250,246,.75);white-space:nowrap}
+.scr .body{padding:14px;overflow-x:auto}
+.scr .top{display:flex;flex-wrap:wrap;gap:8px 10px;align-items:flex-end;margin-bottom:12px}
+.scr .top .t{flex:1 1 220px}
+.scr .top h4{font-family:'Jost',sans-serif;font-weight:500;font-size:17px;margin:0}
+.scr .sub{color:rgba(35,38,31,.6);font-size:12px}
+.scr .btn{display:inline-block;border:1px solid rgba(35,38,31,.3);background:#fff;border-radius:6px;padding:5px 10px;font-size:12px;font-weight:600;white-space:nowrap}
+.scr .btn.p{background:#4a5a8a;border-color:#4a5a8a;color:#fff}
+.scr .card{background:#fff;border:1px solid rgba(35,38,31,.14);border-radius:8px}
+.scr table{width:100%;min-width:600px;border-collapse:collapse}
+.scr th,.scr td{text-align:left;padding:8px 10px;border-bottom:1px solid rgba(35,38,31,.1);vertical-align:middle}
+.scr tr:last-child td{border-bottom:0}
+.scr th{font-family:'IBM Plex Mono',monospace;font-weight:500;font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:rgba(35,38,31,.55);background:#faf8f2}
+.scr .pl{display:flex;align-items:center;gap:8px}
+.scr .logo{width:24px;height:24px;border-radius:5px;display:grid;place-items:center;color:#fff;font-size:10px;font-weight:600;flex:none}
+.scr .id{display:block;font-size:11px;color:rgba(35,38,31,.55)}
+.scr .chip{display:inline-block;padding:1px 8px;border-radius:999px;font-size:11px;font-weight:600;white-space:nowrap}
+.scr .ok{background:#dcebe2;color:#2e6f4e}
+.scr .warn{background:#f4e6c9;color:#80520f}
+.scr .new{background:#ece6f5;color:#6b4fa0}
+.scr .chg{background:#e3e7f1;color:#4a5a8a}
+.scr .grey{background:#ebe8e0;color:rgba(35,38,31,.62)}
+.scr .prog{display:inline-block;width:72px;height:6px;border-radius:3px;background:#e4e0d6;overflow:hidden;vertical-align:middle;margin-right:6px}
+.scr .prog i{display:block;height:100%;background:#2e6f4e}
+.scr .split{display:grid;grid-template-columns:168px minmax(0,1fr);gap:12px;align-items:start}
+.scr nav{padding:6px 0}
+.scr nav .g{font-family:'IBM Plex Mono',monospace;font-size:9.5px;letter-spacing:.12em;text-transform:uppercase;color:rgba(35,38,31,.55);padding:8px 12px 3px}
+.scr nav a{display:flex;justify-content:space-between;gap:6px;padding:5px 12px;color:#23261f;font-size:12.5px;border-left:3px solid transparent}
+.paper .scr nav a{border-bottom:0;text-decoration:none;color:#23261f}
+.scr td{white-space:nowrap}
+.scr td:nth-child(3){white-space:normal}
+.scr nav a.on{background:#e3e7f1;border-left-color:#4a5a8a;font-weight:600}
+.scr .sec{font-family:'IBM Plex Mono',monospace;font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:rgba(35,38,31,.55);background:#faf8f2;padding:7px 12px;border-bottom:1px solid rgba(35,38,31,.1)}
+.scr .rows{overflow-x:auto}
+.scr .cfg{display:grid;grid-template-columns:minmax(150px,1fr) 180px 78px 52px;gap:10px;align-items:center;padding:9px 12px;border-bottom:1px solid rgba(35,38,31,.1);min-width:500px}
+.scr .cfg .k{font-weight:600}
+.scr .cfg .d,.scr .dflt{font-size:11px;color:rgba(35,38,31,.55)}
+.scr .in{display:inline-block;border:1px solid rgba(35,38,31,.25);border-radius:5px;background:#fff;padding:3px 8px;font-size:12px}
+.scr .in.set{border-color:#4a5a8a;background:#f2f4fa}
+.scr .tg{display:inline-block;width:32px;height:18px;border-radius:9px;background:#cfcabd;position:relative;vertical-align:middle}
+.scr .tg::after{content:"";position:absolute;top:3px;left:3px;width:12px;height:12px;border-radius:50%;background:#fff}
+.scr .tg.on{background:#2e6f4e}
+.scr .tg.on::after{left:17px}
+.scr .tree{padding:10px 12px}
+.scr .node{display:flex;flex-wrap:wrap;gap:6px;align-items:center;border:1px solid rgba(35,38,31,.14);border-radius:6px;background:#fff;padding:6px 10px;margin:5px 0}
+.scr .node .h{color:rgba(35,38,31,.4)}
+.scr .node .end{margin-left:auto}
+.scr .node.i1{margin-left:22px}
+.scr .node.i2{margin-left:44px}
+.scr .pill{font-size:10.5px;padding:0 6px;border-radius:4px;background:#ebe8e0;color:rgba(35,38,31,.62)}
+.scr .side{padding:10px 12px}
+.scr .side .dflt{margin-top:8px}
+.scr .side .in{display:block;margin-top:3px}
+.scr .lv{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px;margin-bottom:12px}
+.scr .lv .card{padding:10px 12px}
+.scr .lv .n{font-family:'Jost',sans-serif;font-size:22px;font-weight:500}
+.scr .yes{color:#2e6f4e;font-weight:700}
+.scr .cap{font-family:'IBM Plex Mono',monospace;font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:rgba(35,38,31,.5);padding:0 14px 10px}
+
+/* ---- Template layers ---- */
+.layers{display:grid;grid-template-columns:1fr 28px 1fr 28px 1fr;align-items:stretch;margin:22px 0 8px}
+.layers .b{border:1px solid rgba(35,38,31,.18);border-radius:10px;padding:14px 16px;background:rgba(255,255,255,.4);font-size:.92rem;line-height:1.5}
+.layers .b.mid{border-color:#c96a45;background:rgba(241,195,173,.35)}
+.layers .lbl{display:block;font-family:'IBM Plex Mono',monospace;font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:#8b5f7e;margin-bottom:6px}
+.layers .ar{display:grid;place-items:center;color:#4b4e46;font-size:18px}
+@media (max-width:640px){.layers{grid-template-columns:1fr}.layers .ar{transform:rotate(90deg);height:28px}}
+
+.scr .split.rside{grid-template-columns:minmax(0,1fr) 220px}
+/* ---- Redrawn screens adapt to their OWN width (container queries), not the window's.
+   The page column can be narrow on a wide window (split screen), so a viewport query guesses wrong. ---- */
+.scr{container:scr/inline-size}
+/* Safety net: if a table ever overflows, its white card runs under every column */
+.scr .body>.card{min-width:min-content}
+/* Status chips hug their text instead of stretching across their grid column */
+.scr .cfg>.chip{justify-self:start}
+/* Question rows hold a bare text node; as a flex item it would wrap whole, leaving the handle alone on a line */
+.scr .node.i1,.scr .node.i2{display:block}
+.scr .node.i1 .h,.scr .node.i2 .h{margin-right:6px}
+.scr .node.i1 .pill,.scr .node.i2 .pill{display:inline-block;margin-left:6px;white-space:nowrap}
+/* Under 760px the jobs table no longer fits as drawn (it needs ~732px):
+   let text cells wrap, tighten cells, and stack each config row */
+@container scr (width < 760px){
+  .scr table{min-width:0}
+  .scr td,.scr td:nth-child(3){white-space:normal}
+  .scr td[data-label="Configs approved"]>span{white-space:nowrap}
+  .scr th,.scr td{padding:8px}
+  .scr .prog{width:48px}
+  .scr .cfg{min-width:0;grid-template-columns:minmax(0,1fr) auto auto;row-gap:6px}
+  .scr .cfg>div:first-child{grid-column:1/-1}
+  .scr .in{white-space:normal}
+}
+/* Under 660px the jobs table (needs ~610px) becomes cards, the assessments tree would
+   drop under ~400px so two-column screens stack, and the app menu becomes pills */
+@container scr (width < 660px){
+  .scr .split,.scr .split.rside{grid-template-columns:1fr}
+  .scr nav{display:flex;flex-wrap:wrap;gap:4px;padding:8px}
+  .scr nav .g{flex-basis:100%;padding:4px 2px 0}
+  .scr nav a{border-left:0;border-radius:999px;padding:3px 10px;background:#f5f2e9}
+  .scr nav a.on{background:#e3e7f1}
+  .scr .top+.card :is(table,tbody,tr,td){display:block;width:100%}
+  .scr .top+.card tr:first-child{display:none}
+  .scr .top+.card tr{padding:8px 12px;border-bottom:1px solid rgba(35,38,31,.1)}
+  .scr .top+.card tr:last-child{border-bottom:0}
+  .scr .top+.card td{border:0;padding:3px 0;display:grid;grid-template-columns:96px minmax(0,1fr);gap:8px;align-items:center}
+  .scr .top+.card td>*{justify-self:start}
+  .scr .top+.card td::before{content:attr(data-label);font-family:'IBM Plex Mono',monospace;font-size:9.5px;letter-spacing:.1em;text-transform:uppercase;color:rgba(35,38,31,.5);font-weight:400}
+  .scr .top+.card td:first-child{display:block;padding-bottom:6px}
+  .scr .top+.card td:first-child::before{content:none}
+}
+/* The review table is narrower (~370px minimum, ~560px before phone numbers break), so it stays a table until 560px */
+@container scr (width < 560px){
+  .scr .lv+.card :is(table,tbody,tr,td){display:block;width:100%}
+  .scr .lv+.card tr:first-child{display:none}
+  .scr .lv+.card tr{padding:8px 12px;border-bottom:1px solid rgba(35,38,31,.1)}
+  .scr .lv+.card tr:last-child{border-bottom:0}
+  .scr .lv+.card td{border:0;padding:3px 0;display:grid;grid-template-columns:96px minmax(0,1fr);gap:8px;align-items:center}
+  .scr .lv+.card td>*{justify-self:start}
+  .scr .lv+.card td::before{content:attr(data-label);font-family:'IBM Plex Mono',monospace;font-size:9.5px;letter-spacing:.1em;text-transform:uppercase;color:rgba(35,38,31,.5);font-weight:400}
+  .scr .lv+.card td:first-child{display:block;padding-bottom:6px}
+  .scr .lv+.card td:first-child::before{content:none}
+}
+/* Under 520px: compact counts, no drag handles, shallower tree indents */
+@container scr (width < 520px){
+  .scr .lv{grid-template-columns:repeat(3,minmax(0,1fr));gap:6px}
+  .scr .lv .card{padding:8px}
+  .scr .lv .n{font-size:18px}
+  .scr .node .h{display:none}
+  .scr .node.i1{margin-left:12px}
+  .scr .node.i2{margin-left:24px}
+}
+/* Under 520px a title can't share a row with two buttons, so both buttons drop together under it */
+@container scr (width < 520px){.scr .top:has(>.btn+.btn)>.t{flex-basis:100%}}
+/* Under 420px the breadcrumb has no room, and a progress count may drop under its bar */
+@container scr (width < 420px){
+  .scr .bar .crumb{display:none}
+  .scr td[data-label="Configs approved"]>span{white-space:normal}
+  .scr .body .card td{grid-template-columns:84px minmax(0,1fr)}
+}
+/* Under 300px a config value gets its own row, with the chips on the row below */
+@container scr (width < 300px){
+  .scr .cfg{grid-template-columns:auto auto minmax(0,1fr)}
+  .scr .cfg>div:nth-child(2){grid-column:1/-1}
+}
+/* Under 260px (small phones) each card label sits above its value, and tree indents halve so a nested question keeps a readable line */
+@container scr (width < 260px){
+  .scr .body .card td{grid-template-columns:minmax(0,1fr);gap:0}
+  .scr .tree{padding:8px}
+  .scr .node.i1{margin-left:6px}
+  .scr .node.i2{margin-left:12px}
+}
+/* Fallback for browsers without container queries: the old viewport rules */
+@supports not (container-type:inline-size){
+@media (max-width:600px){.scr .split{grid-template-columns:1fr}}
+@media (max-width:480px){.scr .bar .crumb{display:none}}
+@media (max-width:640px){
+  .scr .split,.scr .split.rside{grid-template-columns:1fr}
+  .scr nav{display:flex;flex-wrap:wrap;gap:4px;padding:8px}
+  .scr nav .g{flex-basis:100%;padding:4px 2px 0}
+  .scr nav a{border-left:0;border-radius:999px;padding:3px 10px;background:#f5f2e9}
+  .scr nav a.on{background:#e3e7f1}
+  .scr table{min-width:0}
+  .scr table,.scr tbody,.scr tr,.scr td{display:block;width:100%}
+  .scr tr:first-child{display:none}
+  .scr tr{padding:8px 12px;border-bottom:1px solid rgba(35,38,31,.1)}
+  .scr tr:last-child{border-bottom:0}
+  .scr td,.scr td:nth-child(3){border:0;padding:3px 0;white-space:normal;display:grid;grid-template-columns:96px minmax(0,1fr);gap:8px;align-items:center}
+  .scr td>*{justify-self:start}
+  .scr .lv{grid-template-columns:repeat(3,minmax(0,1fr));gap:6px}
+  .scr .lv .card{padding:8px}
+  .scr .lv .n{font-size:18px}
+  .scr td::before{content:attr(data-label);font-family:'IBM Plex Mono',monospace;font-size:9.5px;letter-spacing:.1em;text-transform:uppercase;color:rgba(35,38,31,.5);font-weight:400}
+  .scr td:first-child{display:block;padding-bottom:6px}
+  .scr td:first-child::before{content:none}
+  .scr .cfg{min-width:0;grid-template-columns:minmax(0,1fr) auto auto;row-gap:6px}
+  .scr .cfg>div:first-child{grid-column:1/-1}
+  .scr .in{white-space:normal}
+  .scr .node .h{display:none}
+  .scr .node.i1{margin-left:12px}
+  .scr .node.i2{margin-left:24px}
+}
+}
+
+/* ---- Overview row: four items on this page ---- */
+@media (min-width:701px){.spec{grid-template-columns:repeat(4,minmax(0,1fr))}}
 </style>
 </head>
 <body>
+
 
 <div class="wrap">
   <header>
     <nav class="eyebrow breadcrumb" aria-label="Breadcrumb"><a href="/">MYRAKRUSEMARK.COM</a> <span aria-hidden="true">-</span> <a href="/write-ups/">WRITE-UPS</a> <span aria-hidden="true">-</span> <span aria-current="page">GNAT</span></nav>
     <h1>GNAT</h1>
-    <p class="note">An internal tool that let project managers stand up a new
-    insurance plan site themselves, without code, in an afternoon.</p>
+    <p class="note">An internal tool I designed in 2018 and 2019 that lets new
+    plan teams and product owners set up and change a health plan's websites themselves, with
+    approvals, QA and UAT inside the tool, instead of database changes made
+    by hand and tied to the sprint.</p>
   </header>
 
   <div class="spec" aria-label="Project overview">
-    <div><span class="k">Role</span><span class="v">Designer; led the design through implementation</span></div>
-    <div><span class="k">Team</span><span class="v">My team built it in React and Node</span></div>
-    <div><span class="k">Users</span><span class="v">Project managers launching new plan sites</span></div>
-    <div><span class="k">Result</span><span class="v">Setup time down about 60%; in production four years</span></div>
+    <div><span class="k">Role</span><span class="v">Led the design, with developers on the data structures and IA</span></div>
+    <div><span class="k">Team</span><span class="v">Experienced developers; React, with a Spring Boot back end</span></div>
+    <div><span class="k">Users</span><span class="v">New plan teams and product owners; dozens more across the web team</span></div>
+    <div><span class="k">Result</span><span class="v">Time from plan requirements to ready for deployment down about 60%</span></div>
   </div>
 
-  <div class="paper">
+  <!-- ============ THE PROBLEM ============ -->
+  <div class="paper" id="problem">
     <figure>
-      <img src="/assets/work/gnat-thumb.webp?v=2" alt="Macro photo of a gnat on the brass lever of an old on-off toggle switch" loading="lazy">
+      <img src="/assets/work/gnat-hero.webp" alt="A gnat perched on the tip of a chrome toggle switch set to ON, under a steel nameplate that reads Improve Health Outcomes" loading="lazy">
     </figure>
     <h2>The Problem</h2>
-    <p>At Centene, standing up the website for a new insurance plan took weeks
-    of developer time for work that was mostly configuration, and the project
-    managers who needed it had to wait in line.</p>
-    <p>I knew the work firsthand. For years I stood up these sites by hand,
-    knee deep in the Oracle, Mongo and Postgres databases that all had to
-    work together for millions of members. One wrong change could break
-    something people depended on, and there was no good way to see what I'd
-    touched or walk it back.</p>
+    <p>At Centene, each of our web apps, member, provider, broker and the rest,
+    was its own Spring Boot monolith. Each one held countless switches that
+    turned sections, functions and actions on or off, plus countless strings
+    that had to be set. All of that meant many database calls across three or
+    four database sources.</p>
+    <p>When a new plan came online, here is what it took to get its sites
+    set up:</p>
+    <ol class="steps" aria-label="The process before GNAT">
+      <li><span class="k">1 · Request</span><span>The plan has needs, and the regional project manager is told.</span></li>
+      <li><span class="k">2 · Hand-off</span><span>The regional PM tells the new plan's project manager.</span></li>
+      <li><span class="k">3 · Catalogue</span><span>The needs are compared against a catalogue of functions and strings, a menu of sorts.</span></li>
+      <li><span class="k">4 · Approval</span><span>Items are approved with the regional manager.</span></li>
+      <li><span class="k slow">5 · Engineers</span><span>The list goes to database engineers, who painstakingly work from Confluence docs and small pages detailing the quirks and exact database operations for each item.</span></li>
+      <li><span class="k slow">6 · Code</span><span>Issues often turn into code changes, which makes the process longer.</span></li>
+      <li><span class="k slow">7 · Sprint</span><span>All updates are bound to the sprint and deployed alongside other code changes, even though it's mostly database work.</span></li>
+      <li><span class="k">8 · Testing</span><span>Changes are checked on an engineer's local, then dev, then test.</span></li>
+      <li><span class="k slow">9 · CHG</span><span>The database changes are scheduled among other code changes.</span></li>
+      <li><span class="k">10 · Live</span><span>It finally goes live around midnight on a Thursday, during deployment.</span></li>
+    </ol>
+    <p>QA and UAT went back and forth, and changes were sometimes delayed many
+    weeks before going live. They weren't code changes. They could have gone
+    live on their own, but they were stuck going through the change
+    management process even when nothing went wrong in dev or test.</p>
   </div>
 
-  <div class="paper">
-    <h2>The Evidence</h2>
-    <p>I'd set up dozens of sites myself, and conversations with the project
-    managers confirmed the bottleneck. We already had a knowledge base and
-    code snippets. Keeping that approach meant the team would still be making
-    database changes by hand, so I ruled it out.</p>
-    <div class="flow2" aria-label="Before and after">
-      <div class="col">
-        <div class="lbl">Before</div>
-        <ol>
-          <li>Project manager requests a new plan site</li>
-          <li>The request waits in the developer queue</li>
-          <li>A developer edits the databases by hand</li>
-          <li>Weeks later, the site is ready</li>
-        </ol>
+  <!-- ============ MY PART ============ -->
+  <div class="paper" id="role">
+    <h2>My Part</h2>
+    <p>I was one of the people doing this work. For years
+    I stood up these sites by hand, knee deep in the Oracle, Mongo and Postgres
+    databases that all had to work together for millions of members.</p>
+    <p>I constantly wrote and refined the Confluence pages, trying to keep them
+    from being the bottleneck. It was a nice break from actual environment
+    testing and code work.</p>
+    <p>Our team's charter was to handle tried-and-true changes that just needed
+    configuration. That often wasn't the case. It took real development and
+    debugging knowledge to solve the problems, so the solution could be handed
+    off to engineers.</p>
+    <p>I had always worked very closely with product owners when setting up
+    new sites, so what they needed from me was very clear. I basically
+    daydreamed the tool from all the issues I could tell they were running
+    into.</p>
+    <p>This inspired me to make GNAT.</p>
+    <p>The name stands for Generalized NPSC Administration Tool. It was named
+    after the WASP tool, a precursor app from a few years before that was
+    just barely related to configurations.</p>
+    <p>GNAT was my idea. I told my manager on the New Plan Standard Config
+    (NPSC) team at the time. She loved the idea and helped me push it into something real.</p>
+    <p>Getting there took multiple rounds of service design and meetings. We
+    were setting up a new, internally tested tool connected to test and prod
+    data sources that touched public services. It was a big deal.</p>
+    <p>I led the design of GNAT. I worked very closely with experienced
+    developers to determine the data structures and information architecture
+    of the tool, and my UX experience was critical to it.</p>
+    <p>We often talked over sketches. They were in California and I was in
+    Missouri, so we worked over Zoom. I used a lot of Balsamiq and Sketch to
+    show finished designs, but I mainly wanted to make sure the information
+    architecture was there, and they could choose much of the rest. Then I
+    acted as QA for design, putting on my developer hat to add final polish
+    and meet the acceptance criteria.</p>
+    <p>We were able to test with the people who would use it from early on,
+    and had lots of access to them as we built new features and the early
+    configuration pages.</p>
+    <p>I was moved off the team at the very end of the project, when I went
+    to UX. I'm thankful that it did get finished and launched.</p>
+  </div>
+
+  <!-- ============ HOW IT WORKS ============ -->
+  <div class="paper" id="how">
+    <h2>How GNAT Works</h2>
+    <p>Logged in, new plan team members and product owners use GNAT to set
+    up new plans and their sites, in three steps:</p>
+    <ol class="steps" aria-label="The process with GNAT">
+      <li><span class="k">1 · Plan</span><span>Choose a plan, or add a new one with its plan ID, name, logo and the rest.</span></li>
+      <li><span class="k">2 · Configure</span><span>Choose the apps to configure, like member, provider and broker, then work through each app's menu covering every label and configuration.</span></li>
+      <li><span class="k">3 · Approve</span><span>Approvals, QA and UAT happen inside the tool.</span></li>
+    </ol>
+    <p>Signed out, GNAT also shows a page where anyone can look up a plan's
+    existing configurations. That's a big part of why dozens of people around
+    the web team use it today.</p>
+
+    <h3>Every plan is a job</h3>
+    <p>A plan was treated as a job, shown either as a new plan or as a change
+    to an existing plan. The jobs list showed where each one stood.</p>
+    <p>Even with GNAT, we still worked within a strict structure of dev, test
+    and deploy.</p>
+    <figure>
+      <div class="scr" role="img" aria-label="Redrawn GNAT jobs list. Four invented plans, each a row with its plan ID, whether it is a new plan or a change, which apps it touches, how many configurations are approved, where QA and UAT stand, and a status: In review, Ready for deployment, Draft, or Live. Buttons at the top for Change an existing plan and New plan.">
+        <div class="bar"><b>GNAT</b><span class="crumb">Jobs</span><span class="who">Product owner</span></div>
+        <div class="body">
+          <div class="top">
+            <div class="t"><h4>Jobs</h4></div>
+            <span class="btn">Change an existing plan</span><span class="btn p">+ New plan</span>
+          </div>
+          <div class="card">
+            <table>
+              <tr><th>Plan</th><th>Type</th><th>Apps</th><th>Configs approved</th><th>QA / UAT</th><th>Status</th></tr>
+              <tr><td data-label="Plan"><div class="pl"><span class="logo" style="background:#4f7a68">RH</span><span><b>Riverbend Health</b><span class="id">RB-2041</span></span></div></td><td data-label="Type"><span class="chip new">New plan</span></td><td data-label="Apps">Member&nbsp;· Provider&nbsp;· Broker</td><td data-label="Configs approved"><span><span class="prog"><i style="width:72%"></i></span>118 / 164</span></td><td data-label="QA / UAT">QA in progress</td><td data-label="Status"><span class="chip warn">In review</span></td></tr>
+              <tr><td data-label="Plan"><div class="pl"><span class="logo" style="background:#7a5f8b">LC</span><span><b>Lakeshore Care</b><span class="id">LK-1187</span></span></div></td><td data-label="Type"><span class="chip chg">Change</span></td><td data-label="Apps">Member</td><td data-label="Configs approved"><span><span class="prog"><i style="width:100%"></i></span>6 / 6</span></td><td data-label="QA / UAT">UAT confirmed</td><td data-label="Status"><span class="chip ok">Ready for deployment</span></td></tr>
+              <tr><td data-label="Plan"><div class="pl"><span class="logo" style="background:#a2614a">PV</span><span><b>Prairie Valley Plan</b><span class="id">PV-3302</span></span></div></td><td data-label="Type"><span class="chip chg">Change</span></td><td data-label="Apps">Provider&nbsp;· Broker</td><td data-label="Configs approved"><span><span class="prog"><i style="width:35%"></i></span>9 / 26</span></td><td data-label="QA / UAT">Not started</td><td data-label="Status"><span class="chip grey">Draft</span></td></tr>
+              <tr><td data-label="Plan"><div class="pl"><span class="logo" style="background:#4a5a8a">SM</span><span><b>Summit Medicaid</b><span class="id">SM-0915</span></span></div></td><td data-label="Type"><span class="chip new">New plan</span></td><td data-label="Apps">Member&nbsp;· Provider</td><td data-label="Configs approved"><span><span class="prog"><i style="width:100%"></i></span>141 / 141</span></td><td data-label="QA / UAT">UAT confirmed</td><td data-label="Status"><span class="chip ok">Live</span></td></tr>
+            </table>
+          </div>
+        </div>
+        <div class="cap">Redrawn from memory · plans and data invented</div>
       </div>
-      <div class="col after">
-        <div class="lbl">With GNAT</div>
-        <ol>
-          <li>Project manager opens GNAT</li>
-          <li>Configures the plan site without code</li>
-          <li>Reviews and commits each dangerous step</li>
-          <li>The site is ready that afternoon</li>
-        </ol>
+      <figcaption>The jobs list</figcaption>
+    </figure>
+
+    <h3>A menu for every app</h3>
+    <p>Inside a job, each app got a menu covering every label and
+    configuration. This was the old catalogue, made into the place where the
+    work actually happened. Some configurations were just on or off. Others
+    were strings, like a plan's display name or its member services phone
+    number.</p>
+    <figure>
+      <div class="scr" role="img" aria-label="Redrawn GNAT app screen for the Member app of an invented plan. On the left, the apps in this job with counts of approved configurations, and the Member app's sections: Branding and labels, Benefits, Find a Provider, Assessments, Messaging, ID cards. On the right, Branding and labels: text fields for plan display name, member services phone and welcome headline, one of them using the default. Below, Features: on-off switches for pharmacy benefits, rewards program and secure messaging. Each row shows its approval and QA status.">
+        <div class="bar"><b>GNAT</b><span class="crumb">Jobs › Riverbend Health › Member app</span><span class="who">Product owner</span></div>
+        <div class="body">
+          <div class="split">
+            <nav class="card" aria-hidden="true">
+              <div class="g">Apps in this job</div>
+              <a class="on">Member <span class="chip warn">38/52</span></a>
+              <a>Provider <span class="chip warn">61/88</span></a>
+              <a>Broker <span class="chip ok">24/24</span></a>
+              <div class="g">Member sections</div>
+              <a class="on">Branding &amp; labels</a>
+              <a>Benefits</a>
+              <a>Find a Provider</a>
+              <a>Assessments</a>
+              <a>Messaging</a>
+              <a>ID cards</a>
+            </nav>
+            <div class="card rows">
+              <div class="sec">Branding &amp; labels</div>
+              <div class="cfg"><div><div class="k">Plan display name</div><div class="d">Header, emails, page titles</div></div><div><span class="in set">Riverbend Health</span></div><span class="chip ok">Approved</span><span class="chip ok">QA ✓</span></div>
+              <div class="cfg"><div><div class="k">Member services phone</div><div class="d">Footer and help pages</div></div><div><span class="in set">1-800-555-0142</span></div><span class="chip ok">Approved</span><span class="chip grey">QA –</span></div>
+              <div class="cfg"><div><div class="k">Welcome headline</div><div class="d">Dashboard greeting</div></div><div><span class="in">Welcome to your health plan</span><div class="dflt">Using default</div></div><span class="chip warn">Pending</span><span class="chip grey">QA –</span></div>
+              <div class="sec">Features</div>
+              <div class="cfg"><div><div class="k">Pharmacy benefits</div><div class="d">Pharmacy tab and claims</div></div><div><span class="tg on"></span></div><span class="chip ok">Approved</span><span class="chip ok">QA ✓</span></div>
+              <div class="cfg"><div><div class="k">Rewards program</div><div class="d">Healthy-activity rewards card</div></div><div><span class="tg"></span> <span class="dflt">Off by default</span></div><span class="chip ok">Approved</span><span class="chip grey">QA –</span></div>
+              <div class="cfg"><div><div class="k">Secure messaging</div><div class="d">Member and care team inbox</div></div><div><span class="tg on"></span></div><span class="chip warn">Pending</span><span class="chip grey">QA –</span></div>
+            </div>
+          </div>
+        </div>
+        <div class="cap">Redrawn from memory · plans and data invented</div>
       </div>
+      <figcaption>One app inside a job</figcaption>
+    </figure>
+    <p>Each setting showed its default, and a plan's own value overrode
+    it.</p>
+
+    <h3>Complex configurations got their own layout</h3>
+    <p>Some configurations were highly complex, like assessments, and needed
+    their own information architecture.</p>
+    <figure>
+      <div class="scr" role="img" aria-label="Redrawn GNAT assessments screen. A health risk assessment shown as a tree of sections and questions, each section with its question count and an approval status, and one branching rule: if a member picks Getting to appointments, show the transportation questions. Buttons to add a section, add a question, or copy from another plan. On the right, the selected question's text, answer type, options, and which apps show it.">
+        <div class="bar"><b>GNAT</b><span class="crumb">Jobs › Riverbend Health › Member app › Assessments</span><span class="who">Product owner</span></div>
+        <div class="body">
+          <div class="split rside">
+            <div class="card">
+              <div class="sec">Health risk assessment · structure</div>
+              <div class="tree">
+                <div class="node"><span class="h">⋮⋮</span><b>Section 1 · About you</b><span class="pill">4 questions</span><span class="chip ok end">Approved</span></div>
+                <div class="node i1"><span class="h">⋮⋮</span>Date of birth<span class="pill">date</span><span class="pill">required</span></div>
+                <div class="node i1"><span class="h">⋮⋮</span>Preferred language<span class="pill">choice · 6 options</span></div>
+                <div class="node"><span class="h">⋮⋮</span><b>Section 2 · Daily living</b><span class="pill">7 questions</span><span class="chip warn end">Pending</span></div>
+                <div class="node i1"><span class="h">⋮⋮</span>Do you need help with any of these?<span class="pill">multi-select</span></div>
+                <div class="node i2"><span class="h">↳</span>If "Getting to appointments": show transportation questions<span class="pill">branch rule</span></div>
+                <div class="node"><span class="h">⋮⋮</span><b>Section 3 · Care follow-up</b><span class="pill">3 questions</span><span class="chip grey end">Draft</span></div>
+                <div style="margin-top:8px;display:flex;flex-wrap:wrap;gap:6px"><span class="btn">+ Section</span><span class="btn">+ Question</span><span class="btn">Copy from another plan…</span></div>
+              </div>
+            </div>
+            <div class="card">
+              <div class="sec">Selected · Daily living help</div>
+              <div class="side">
+                <div class="dflt">Question text</div><span class="in set">Do you need help with any of these?</span>
+                <div class="dflt">Answer type</div><span class="in">Multi-select</span>
+                <div class="dflt">Options</div>
+                <span class="in">Getting to appointments</span>
+                <span class="in">Preparing meals</span>
+                <span class="in">Taking medications</span>
+                <div class="dflt">Shown on</div><div>Member app · Care coordinator app</div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="cap">Redrawn from memory · questions invented</div>
+      </div>
+      <figcaption>Assessments, one of the complex configurations</figcaption>
+    </figure>
+
+    <h3>Approvals at three levels</h3>
+    <p>Jobs showed status and approvals at three levels: individual
+    configurations, apps and plans. QA and UAT confirmed the status and
+    approval of items inside the tool.</p>
+    <p>The checks were QA. A specialist used tools and manual checking to
+    make sure specific actions could be completed on the site in the test
+    environment. It went back and forth until it was ready for UAT by the
+    product owner, which typically went right through. The approvals really
+    just signaled to the person handling those configurations to update
+    the status of the job, or parts of it.</p>
+    <p>There was a real undo, and an audit trail. Any configuration could be reversed, in test
+    and in prod.</p>
+    <figure>
+      <div class="scr" role="img" aria-label="Redrawn GNAT review screen for a change to an invented plan, signed in as QA. Three counts across the top: configurations approved 6 of 6, apps approved 1 of 1, plan approved yes. Below, a table of the six changes, each with its old value, new value, who approved it, and QA and UAT checks. The job is marked Ready for deployment.">
+        <div class="bar"><b>GNAT</b><span class="crumb">Jobs › Lakeshore Care › Review</span><span class="who">QA</span></div>
+        <div class="body">
+          <div class="top">
+            <div class="t"><h4>Lakeshore Care · change</h4><div class="sub">6 configuration changes to the Member app.</div></div>
+            <span class="chip ok" style="font-size:12px;padding:3px 10px">Ready for deployment</span>
+          </div>
+          <div class="lv">
+            <div class="card"><div class="dflt" style="margin:0">Configs approved</div><div class="n">6 / 6</div></div>
+            <div class="card"><div class="dflt" style="margin:0">Apps approved</div><div class="n">1 / 1</div></div>
+            <div class="card"><div class="dflt" style="margin:0">Plan approved</div><div class="n yes">Yes</div></div>
+          </div>
+          <div class="card">
+            <table>
+              <tr><th>Config</th><th>Was</th><th>Now</th><th>Approved by</th><th>QA</th><th>UAT</th></tr>
+              <tr><td data-label="Config"><b>Member services phone</b></td><td data-label="Was">1-800-555-0100</td><td data-label="Now">1-800-555-0177</td><td data-label="Approved by">Regional PM</td><td data-label="QA" class="yes">✓</td><td data-label="UAT" class="yes">✓</td></tr>
+              <tr><td data-label="Config"><b>Rewards program</b></td><td data-label="Was">Off</td><td data-label="Now">On</td><td data-label="Approved by">Regional PM</td><td data-label="QA" class="yes">✓</td><td data-label="UAT" class="yes">✓</td></tr>
+              <tr><td data-label="Config"><b>Welcome headline</b></td><td data-label="Was">Welcome to your health plan</td><td data-label="Now">Welcome to Lakeshore Care</td><td data-label="Approved by">Plan PM</td><td data-label="QA" class="yes">✓</td><td data-label="UAT" class="yes">✓</td></tr>
+              <tr><td data-label="Config"><b>Pharmacy benefits</b></td><td data-label="Was">On</td><td data-label="Now">On · new vendor link</td><td data-label="Approved by">Regional PM</td><td data-label="QA" class="yes">✓</td><td data-label="UAT" class="yes">✓</td></tr>
+              <tr><td data-label="Config"><b>ID card back text</b></td><td data-label="Was">(default)</td><td data-label="Now">Custom · 3 lines</td><td data-label="Approved by">Plan PM</td><td data-label="QA" class="yes">✓</td><td data-label="UAT" class="yes">✓</td></tr>
+              <tr><td data-label="Config"><b>Secure messaging</b></td><td data-label="Was">Off</td><td data-label="Now">On</td><td data-label="Approved by">Regional PM</td><td data-label="QA" class="yes">✓</td><td data-label="UAT" class="yes">✓</td></tr>
+            </table>
+          </div>
+        </div>
+        <div class="cap">Redrawn from memory · plans and data invented</div>
+      </div>
+      <figcaption>Reviewing a change, with the old and new values side by side</figcaption>
+    </figure>
+    <p>Over time, trust in the tool grew. That let team members start asking
+    whether some steps, like QA, were still needed at their current intense
+    level, when most of the time UAT could simply approve a change manually.
+    I wasn't on the team by then, but I heard through the grapevine that
+    those discussions were being had.</p>
+  </div>
+
+  <!-- ============ CONFIGURING THE CONFIGURATIONS ============ -->
+  <div class="paper" id="templates">
+    <h2>A Configurable Tool for Configurations</h2>
+    <p>Something that kept coming up was that we were creating a
+    "configurable tool for configurations." GNAT is a dynamic interface for
+    creating and implementing database change templates. By editing the
+    tool's own database and templates, we could do configurations for the
+    databases that controlled the site configurations.</p>
+    <p>That was an interesting conundrum. It caused some circular thinking
+    that we had to make our way through.</p>
+    <figure class="layers" aria-label="How the templates fit together">
+      <div class="b"><span class="lbl">Template</span>One type of configuration, like an on/off switch, a string or an assessment, set up in GNAT's own database.</div>
+      <div class="ar" aria-hidden="true">→</div>
+      <div class="b mid"><span class="lbl">GNAT's menu</span>The templates become the menu a product owner works from, for each plan and app.</div>
+      <div class="ar" aria-hidden="true">→</div>
+      <div class="b"><span class="lbl">The plan's sites</span>Each filled-in item becomes a change to the databases that control the plan's sites.</div>
+    </figure>
+    <p>There was some middleware between the React UI and the databases, a Spring
+    Boot application on the back end that automated all of the
+    database work. It was also possible to export the database commands, just
+    in case.</p>
+    <p>In the end, we were able to design templates for different types of
+    configuration. That won us the ability to configure new configurations as
+    they got developed for our tools. The mindset made further design and
+    development much easier.</p>
+    <p>The final design was function over form. Just like with
+    <a href="/write-ups/fap/">Find a Provider</a>, this tool required clarity
+    over aesthetics.</p>
+  </div>
+
+  <!-- ============ WHAT CHANGED ============ -->
+  <div class="paper" id="changed">
+    <h2>What Changed</h2>
+    <p>GNAT was built to deploy directly to production. The change management
+    process still held updates until the scheduled deployment, so the release
+    gate that remained was policy, not technology.</p>
+    <div class="table-wrap">
+      <table class="compare" aria-label="Each step before GNAT, and what happened to it">
+        <thead><tr><th>Before</th><th>With GNAT</th></tr></thead>
+        <tbody>
+          <tr><th>Catalogue of functions and strings</th><td>The menu inside each app in GNAT</td></tr>
+          <tr><th>Approval with the regional manager</th><td>Approvals inside GNAT, for each configuration, app and plan</td></tr>
+          <tr><th>Database admins making changes by hand from Confluence pages</th><td>The same team making the changes in GNAT, with product owners setting up plans themselves</td></tr>
+          <tr><th>Bound to the sprint</th><td>GNAT could deploy on its own, but was still bound by the sprint and deployment structure</td></tr>
+          <tr><th>Local, dev and test checks, with QA and UAT going back and forth</th><td>QA and UAT confirming each item inside GNAT</td></tr>
+          <tr><th>Scheduled through change management, live around midnight Thursday</th><td>Still held for the scheduled deployment</td></tr>
+        </tbody>
+      </table>
     </div>
   </div>
 
-  <div class="paper">
-    <h2>The Design</h2>
-    <p>Nobody asked, but I designed GNAT, a web UI that let a project manager
-    do the whole setup themselves, with the dangerous steps visible,
-    committable and reversible.</p>
-    <p>The hard part with a system like this is never how to automate it. It's
-    that the person accountable for the system has to see what changed and be
-    able to stop it. GNAT was built around that.</p>
-  </div>
-
-  <div class="paper">
-    <h2>Building It</h2>
-    <p>My team built it in React and Node. I stayed on it through
-    implementation, sitting next to the engineers and adjusting the design as
-    real constraints surfaced, until it was running in production.</p>
-  </div>
-
-  <div class="paper">
-    <h2>Impact</h2>
+  <!-- ============ RESULT ============ -->
+  <div class="paper" id="result">
+    <h2>Result</h2>
     <ul>
-      <li>Setup time fell by about 60%</li>
-      <li>Project managers could set up a plan site in an afternoon, without waiting on a developer</li>
-      <li>In production for four years</li>
+      <li>Time from receiving a plan's requirements to ready for deployment fell by about 60%</li>
+      <li>A plan site could be set up in an afternoon</li>
+      <li>New plan teams and product owners make plan changes themselves, without database changes made by hand</li>
+      <li>Approvals, QA and UAT moved into one tool</li>
+      <li>Any configuration could be reversed, in test and in prod</li>
+      <li>Still in use today by dozens of people around the web team</li>
+      <li>A signed-out page where anyone can look up a plan's existing configurations</li>
     </ul>
-    <p>The part I remember is seeing a non-expert's face light up when they
-    make the same connections the developer did. The design made the system
-    legible to them, and that is the work I want to keep doing.</p>
+    <p>We measured the 60% after GNAT had been out and in use for about a
+    year. The savings grew over the next couple of years as GNAT was adopted
+    for more kinds of configuration. Within a couple of years it was used for
+    almost all of them.</p>
+    <p>Adoption was spotty at first. Interestingly, usage really took off,
+    especially on our UX team, because people would use the signed-out part
+    of the tool just to see what was currently configured within specific plans, since it was very
+    convenient for that. Otherwise, new plan team members and product owners
+    used it for jobs.</p>
+    <h3>Looking back</h3>
+    <p>Honestly, I would have chosen to stay on that team to keep working on
+    the tool, and maybe move to UX a bit later. But I'm happy I designed it,
+    and I'm glad I had the chance to help make our processes more efficient.
+    I've learned more about IA since then, and it helps me make better design
+    decisions, but the tool turned out well nonetheless, so I wouldn't change
+    anything.</p>
+    <p>What I remember most is seeing a non-expert's face light
+    up when they make the same connections the developer did. The design made
+    the system legible to them, and that is the work I want to keep doing.</p>
   </div>
+
 </div>
 
 <footer>
