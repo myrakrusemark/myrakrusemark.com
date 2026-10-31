@@ -3,10 +3,10 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Find A Provider — Myra Krusemark</title>
-<meta name="description" content="Ground-up redesign of Centene's decade-old provider search — browse-first, filter-second, for tens of millions of health insurance members.">
-<meta property="og:title" content="Find A Provider — Myra Krusemark">
-<meta property="og:description" content="Ground-up redesign of Centene's decade-old provider search — browse-first, filter-second, for tens of millions of health insurance members.">
+<title>Find a Provider — Myra Krusemark</title>
+<meta name="description" content="A health plan's provider search, rebuilt to show results first and narrow from there, for Medicaid, Medicare and Commercial members.">
+<meta property="og:title" content="Find a Provider — Myra Krusemark">
+<meta property="og:description" content="A health plan's provider search, rebuilt to show results first and narrow from there, for Medicaid, Medicare and Commercial members.">
 <meta property="og:type" content="article">
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='M12 2l2.4 7.6L22 12l-7.6 2.4L12 22l-2.4-7.6L2 12l7.6-2.4z' fill='%23e2725b'/%3E%3C/svg%3E">
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -14,156 +14,831 @@
 <link href="https://fonts.googleapis.com/css2?family=Jost:wght@200;300;400;500&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="/subpage.css?v=20260923-live">
 <link rel="stylesheet" href="/css/breadcrumb.css?v=20260923-live">
+<style>
+/* ---- Before / after (same vocabulary as GNAT) ---- */
+.flow2{display:grid;grid-template-columns:1fr 1fr;gap:18px;margin:22px 0}
+.flow2 .col{border:1px solid rgba(35,38,31,.18);border-radius:10px;padding:16px 18px;background:rgba(255,255,255,.35)}
+.flow2 .lbl{font-family:'IBM Plex Mono',monospace;font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:#8b5f7e;margin-bottom:10px}
+.flow2 ol,.flow2 ul{margin:0;padding-left:20px}
+.flow2 li{margin-bottom:6px;font-size:.95rem;line-height:1.5}
+.flow2 .after{border-color:#c96a45;background:rgba(241,195,173,.35)}
+@media (max-width:640px){.flow2{grid-template-columns:1fr}}
+
+/* ---- Flow diagram ---- */
+.flowmap{margin:22px 0 8px}
+.flowmap svg{display:block;width:100%;height:auto}
+.flowmap .tall{display:none;max-width:380px;margin:0 auto}
+@media (max-width:640px){.flowmap .wide{display:none}.flowmap .tall{display:block}}
+.steps{list-style:none;padding:0;margin:18px 0 0}
+.steps li{display:grid;grid-template-columns:118px 1fr;gap:12px;padding:10px 0;border-top:1px solid rgba(35,38,31,.12);max-width:none}
+.steps li:last-child{border-bottom:1px solid rgba(35,38,31,.12)}
+.steps .k{font-family:'IBM Plex Mono',monospace;font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:#8b5f7e;padding-top:3px}
+.steps .k.zero{color:#b8402a}
+@media (max-width:520px){.steps li{grid-template-columns:1fr;gap:2px}}
+
+/* ---- Search box anatomy (redrawn, neutral) ---- */
+.anatomy{display:grid;grid-template-columns:minmax(0,1.15fr) minmax(0,1fr);gap:24px;align-items:start;margin:24px 0}
+@media (max-width:700px){.anatomy{grid-template-columns:minmax(0,1fr)}}
+.mock{border:1px solid rgba(35,38,31,.16);border-radius:10px;background:#f5f2e9;padding:16px;font-family:'IBM Plex Sans',sans-serif}
+.mock .m-label{font-size:13px;font-weight:600;color:#23261f;margin-bottom:6px}
+.mock .m-input{position:relative;display:flex;align-items:center;gap:8px;background:#fff;border:2px solid #4a5a8a;border-radius:6px;padding:7px 10px;font-size:14px;color:#23261f}
+.mock .m-input .caret{margin-left:auto;width:0;height:0;border-left:6px solid transparent;border-right:6px solid transparent;border-bottom:7px solid #555}
+.mock .m-list{background:#fff;border:1px solid rgba(35,38,31,.18);border-top:0;border-radius:0 0 6px 6px;box-shadow:0 6px 14px rgba(0,0,0,.08);font-size:13px}
+.mock .m-hint{color:rgba(35,38,31,.6);font-size:12px;padding:8px 12px 4px}
+.mock .m-row{position:relative;display:grid;grid-template-columns:96px 1fr;gap:10px;padding:7px 12px}
+.mock .m-row .kind{color:rgba(35,38,31,.62)}
+.mock .m-row .val{color:#1f5f63}
+.mock .m-row.hl{outline:2px solid #6b4fa0;outline-offset:-2px;border-radius:3px}
+.mock .m-div{height:1px;background:rgba(35,38,31,.22);margin:3px 12px}
+.mock .badge,.notes .badge{display:inline-flex;align-items:center;justify-content:center;width:20px;height:20px;border-radius:50%;background:#d4573c;color:#fff;font-family:'IBM Plex Mono',monospace;font-size:11px;font-weight:500;flex:none}
+.mock .badge{position:absolute;left:-10px;top:50%;transform:translateY(-50%);box-shadow:0 0 0 2px #f5f2e9}
+.mock .m-input .badge{left:-12px}
+.mock .m-cap{font-family:'IBM Plex Mono',monospace;font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:rgba(35,38,31,.55);margin-top:10px}
+@media (max-width:420px){.mock .m-row{grid-template-columns:1fr;gap:0}}
+.notes{list-style:none;padding:0;margin:0}
+.notes li{display:flex;gap:10px;margin-bottom:12px;font-size:.95rem;line-height:1.55}
+.notes .badge.none{background:rgba(35,38,31,.35)}
+
+/* ---- Concept half ---- */
+.concept-break{margin:56px 0 22px;padding:0 4px;text-align:center}
+.concept-break .tag{display:inline-block;font-family:'IBM Plex Mono',monospace;font-size:11px;letter-spacing:.16em;text-transform:uppercase;color:#10140f;background:#bfe0cf;border-radius:999px;padding:6px 14px}
+.concept-break p{color:rgba(251,250,246,.86);font-family:'Jost',sans-serif;font-weight:300;font-size:clamp(1.05rem,1.6vw,1.25rem);max-width:56ch;margin:14px auto 0}
+.paper.concept{background:#eef4ef;border:2px dashed #5f8a72}
+.concept-label{display:inline-block;font-family:'IBM Plex Mono',monospace;font-size:10.5px;letter-spacing:.14em;text-transform:uppercase;color:#244a36;background:#cfe6d8;border:1px solid #8fb9a1;border-radius:999px;padding:4px 11px;margin-bottom:10px}
+/* ---- Animated combo box ---- */
+.mock{position:relative;overflow:hidden;display:flex;flex-direction:column}
+.mock .m-bar{display:flex;gap:8px;align-items:flex-start}
+.mock .m-field{flex:1;min-width:0}
+.mock .m-input{border-color:rgba(35,38,31,.38);transition:border-color .2s,box-shadow .2s}
+.mock .m-input.hov{border-color:#23261f}
+.mock .m-input.focus{border-color:#4a5a8a;box-shadow:0 0 0 3px rgba(74,90,138,.28)}
+.mock .m-text{white-space:nowrap;overflow:hidden;text-overflow:ellipsis;min-width:0}
+.mock .m-input svg{flex:none}
+.mock .m-tcaret{display:none;width:1.5px;height:17px;background:#23261f;margin-left:-7px;animation:mblink 1s steps(1) infinite}
+.mock .m-input.focus .m-tcaret{display:inline-block}
+@keyframes mblink{50%{opacity:0}}
+.mock .m-btn{flex:none;background:#4a5a8a;color:#fff;font-size:14px;font-weight:600;border-radius:6px;padding:9px 14px;line-height:1.2}
+.mock .m-row{transition:background .15s}
+.mock .m-row.hov{background:#eef0f6}
+.mock .m-row.press{background:#dce1ee}
+.mock .m-res{margin-top:12px}
+.mock .m-res[hidden]{display:none}
+.mock .m-count{font-size:12.5px;color:#23261f;margin-bottom:6px}
+.mock .m-card{background:#fff;border:1px solid rgba(35,38,31,.16);border-radius:6px;padding:8px 11px;margin-bottom:6px;font-size:12.5px;line-height:1.45;transition:opacity .35s,transform .35s}
+.mock .m-card.pre{opacity:0;transform:translateY(6px)}
+.mock .m-card .nm{color:#1f5f63;font-weight:600;text-decoration:underline}
+.mock .m-card .kd{color:rgba(35,38,31,.62)}
+.mock .m-card .st{color:rgba(35,38,31,.8)}
+.mock .m-card .ok{color:#2e6f4e;font-weight:600}
+.mock .m-list[hidden]{display:none}
+.mock .badge{transition:opacity .3s}
+.mock .badge.off{opacity:0}
+.mock .m-step{min-height:3em;margin-top:auto;padding-top:12px;font-size:13px;color:#23261f}
+.mock .m-step b{color:#6b4fa0}
+.mock .m-cursor{position:absolute;left:0;top:0;pointer-events:none;transition:transform .75s cubic-bezier(.45,.05,.3,1);filter:drop-shadow(0 1px 1px rgba(0,0,0,.25));z-index:3}
+.mock .m-cursor.hide{opacity:0}
+.mock .m-ripple{position:absolute;left:0;top:0;width:26px;height:26px;margin:-13px 0 0 -13px;border-radius:50%;background:rgba(107,79,160,.35);opacity:0;pointer-events:none;z-index:2}
+.mock .m-ripple.go{animation:mrip .45s ease-out}
+@keyframes mrip{from{opacity:1;transform:scale(.3)}to{opacity:0;transform:scale(1.6)}}
+.m-ctrl{display:flex;gap:8px;margin-top:8px}
+.m-ctrl button{font-family:'IBM Plex Mono',monospace;font-size:12px;letter-spacing:.06em;background:#fff;color:#23261f;border:1px solid rgba(35,38,31,.35);border-radius:6px;padding:5px 12px;min-height:30px;cursor:pointer}
+.m-ctrl button:focus-visible{outline:2px solid #6b4fa0;outline-offset:2px}
+.notes li{border-radius:6px;padding:6px 8px;margin-left:-8px;transition:background .3s}
+.notes li.on{background:rgba(212,87,60,.13)}
+/* ---- Project timeline ---- */
+.tl{list-style:none;padding:0;margin:24px 0;display:grid;grid-template-columns:minmax(0,1fr) minmax(0,3fr) repeat(4,minmax(0,1fr));gap:0 12px}
+.tl li{position:relative;padding-top:24px;border-top:2px solid #4b4e46;font-size:.88rem;line-height:1.45;max-width:none}
+.tl li::before{content:"";position:absolute;top:-7px;left:0;width:12px;height:12px;border-radius:50%;background:#fffdf6;border:2px solid #4b4e46}
+.tl li.wait{border-top-style:dashed;border-top-color:rgba(35,38,31,.45)}
+.tl li.wait::before{border-color:rgba(35,38,31,.45)}
+.tl li.key::before{background:#d4573c;border-color:#d4573c}
+.tl li.end::before{background:#c96a45;border-color:#c96a45}
+.tl .k{display:block;font-family:'IBM Plex Mono',monospace;font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:#8b5f7e;margin-bottom:4px}
+@media (max-width:760px){
+  .tl{grid-template-columns:1fr;gap:0;margin-left:6px}
+  .tl li{border-top:0;border-left:2px solid #4b4e46;padding:0 0 18px 20px}
+  .tl li.wait{border-left-style:dashed;border-left-color:rgba(35,38,31,.45)}
+  .tl li::before{top:2px;left:-7px}
+}
+
+/* ---- The two-year wait: a tumbleweed ---- */
+.desert{display:block;margin-top:12px}
+.paper figure .desert img{display:block;width:100%;max-width:450px;height:auto;margin:0;border:0;border-radius:6px}
+
+/* plain numbered lists match the bulleted ones */
+.paper > ol{font-size:1rem;line-height:1.7;color:rgba(35,38,31,.82);margin:0 0 14px;max-width:70ch;padding-left:22px}
+
+/* ---- Line of balance ---- */
+.bal{margin:24px 0}
+.bal .track{position:relative;height:2px;background:#4b4e46;margin:0 8px 18px}
+.bal .track::before,.bal .track::after{content:"";position:absolute;top:-5px;border:6px solid transparent}
+.bal .track::before{left:-8px;border-right-color:#4b4e46}
+.bal .track::after{right:-8px;border-left-color:#4b4e46}
+.bal .ends{display:flex;justify-content:space-between;font-family:'IBM Plex Mono',monospace;font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:rgba(35,38,31,.62);margin-bottom:8px}
+.bal .cols{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px}
+.bal .col{border:1px solid rgba(35,38,31,.18);border-radius:10px;padding:14px 16px;background:rgba(255,255,255,.35);font-size:.92rem;line-height:1.5}
+.bal .col.mid{border-color:#c96a45;background:rgba(241,195,173,.35)}
+.bal .lbl{font-family:'IBM Plex Mono',monospace;font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:#8b5f7e;margin-bottom:6px}
+@media (max-width:640px){.bal .cols{grid-template-columns:1fr}.bal .track,.bal .ends{display:none}}
+/* desktop only: the three versions teeter gently on a fulcrum at the line's middle */
+.bal .fulcrum{display:none}
+@media (min-width:641px) and (prefers-reduced-motion:no-preference){
+  .bal .ends{height:16px;margin-bottom:8px}
+  .bal .track{margin-bottom:26px}
+  .bal .beam{transform-origin:50% 25px;animation:bal-tilt 7s ease-in-out infinite}
+  .bal .fulcrum{display:block;position:absolute;left:50%;top:1px;width:0;height:0;margin-left:-9px;border-left:9px solid transparent;border-right:9px solid transparent;border-bottom:15px solid #4b4e46;transform-origin:50% 0;animation:bal-hold 7s ease-in-out infinite}
+}
+@keyframes bal-tilt{0%,100%{transform:rotate(-.7deg)}50%{transform:rotate(.7deg)}}
+@keyframes bal-hold{0%,100%{transform:rotate(.7deg)}50%{transform:rotate(-.7deg)}}
+
+/* ---- Checker paths (concept) ---- */
+.chk{margin:24px 0}
+.chk .in{width:max-content;max-width:100%;margin:0 auto;font-family:'IBM Plex Mono',monospace;font-size:12px;letter-spacing:.08em;background:#fff;border:1px solid rgba(35,38,31,.3);border-radius:999px;padding:7px 16px}
+.chk .down{width:2px;height:22px;background:#4b4e46;margin:0 auto}
+.chk .paths{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px;border-top:2px solid #4b4e46;padding-top:16px}
+.chk .p{border:1px solid rgba(35,38,31,.18);border-radius:10px;padding:14px 16px;background:rgba(255,255,255,.5);font-size:.92rem;line-height:1.5}
+.chk .p.sure{border-color:#5f8a72}
+.chk .p.ask{border-color:#c96a45;background:rgba(241,195,173,.3)}
+.chk .lbl{display:block;font-family:'IBM Plex Mono',monospace;font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:#8b5f7e;margin-bottom:6px}
+.chk .more{margin-top:12px;padding:10px 12px;border-left:3px solid #c96a45;background:#fff;border-radius:0 8px 8px 0}
+@media (max-width:640px){.chk .paths{grid-template-columns:1fr}}
+
+/* ---- Overview row: five items on this page ---- */
+@media (min-width:701px){.spec{grid-template-columns:repeat(4,minmax(0,1fr))}}
+
+/* ---- Phone shot ---- */
+.phone{display:grid;grid-template-columns:minmax(0,260px) 1fr;gap:24px;align-items:center;margin:22px 0}
+.phone figure{margin:0}
+@media (max-width:560px){.phone{grid-template-columns:1fr}.phone figure{max-width:300px;margin:0 auto}}
+
+/* ---- Result card anatomy (redrawn, neutral) ---- */
+.rcard{background:#fff;border:1px solid rgba(35,38,31,.16);border-radius:8px;padding:14px 16px 14px 20px;font-size:13.5px;color:#23261f}
+.rcard .r{position:relative}
+.rcard .nm{font-weight:600;color:#1f5f63;text-decoration:underline;font-size:15px}
+.rcard .kind{color:rgba(35,38,31,.62)}
+.rcard .sp{font-weight:600;margin:6px 0 10px}
+.rcard .body{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.1fr);gap:14px}
+.rcard ul{list-style:none;padding:0;margin:0}
+.rcard li{margin-bottom:5px;max-width:none;font-size:inherit;line-height:1.4}
+.rcard .yes{color:#2e6f4e;font-weight:600;margin-right:6px}
+.rcard .no{color:#b8402a;font-weight:600;margin-right:6px}
+.rcard .addr{border-left:1px solid rgba(35,38,31,.25);padding-left:14px}
+.rcard .addr a{color:#1f5f63}
+.rcard .badge{left:-20px}
+@media (max-width:480px){.rcard .body{grid-template-columns:1fr}.rcard .addr{border-left:0;padding-left:0}}
+@media (prefers-reduced-motion:reduce){.mock .m-cursor,.mock .m-input,.mock .m-row,.mock .badge,.mock .m-card{transition:none}.mock .m-ripple.go{animation:none}.mock .m-tcaret{animation:none}}
+</style>
 </head>
 <body>
 
 <div class="wrap">
   <header>
-    <nav class="eyebrow breadcrumb" aria-label="Breadcrumb"><a href="/">MYRAKRUSEMARK.COM</a> <span aria-hidden="true">-</span> <a href="/write-ups/">WRITE-UPS</a> <span aria-hidden="true">-</span> <span aria-current="page">Find A Provider</span></nav>
-    <h1>Find A Provider</h1>
-    <p class="note">Rethinking a decade-old provider search from the ground up:
-    browse-first, filter-second, so members reach results instead of dead
-    ends.</p>
-
+    <nav class="eyebrow breadcrumb" aria-label="Breadcrumb"><a href="/">MYRAKRUSEMARK.COM</a> <span aria-hidden="true">-</span> <a href="/write-ups/">WRITE-UPS</a> <span aria-hidden="true">-</span> <span aria-current="page">Find a Provider</span></nav>
+    <h1>Find a Provider</h1>
+    <p class="note">A health plan's provider search, rebuilt from 2023 to 2026
+    to show results first and narrow from there, so a search ends in a list
+    instead of a dead end.</p>
   </header>
 
   <div class="spec" aria-label="Project overview">
-    <div><span class="k">Role</span><span class="v">UX Team Lead</span></div>
-    <div><span class="k">Team</span><span class="v">Content Designers, Researchers, Designers, and Accessibility</span></div>
-    <div><span class="k">Focus</span><span class="v">Complete redesign of provider search for Medicaid, Medicare, and Commercial members</span></div>
-    <div><span class="k">Duration</span><span class="v">Multi-phase project with structured weekly cadence</span></div>
+    <div><span class="k">Role</span><span class="v">UX Team Lead; led the design</span></div>
+    <div><span class="k">Team</span><span class="v">Content designers, researchers, designers, accessibility</span></div>
+    <div><span class="k">Users</span><span class="v">Medicaid, Medicare and Commercial members</span></div>
+    <div><span class="k">Result</span><span class="v">Satisfaction up as much as 40%</span></div>
   </div>
 
-  <div class="paper">
+  <!-- ============ THE PROBLEM ============ -->
+  <div class="paper" id="problem">
     <figure>
-      <img src="/assets/ux/fap/search-results.webp" alt="Find A Provider search results" loading="lazy">
+      <img src="/assets/ux/fap/search-results.webp" alt="Find a Provider search results: a filter rail on the left and a list of provider cards on the right" loading="lazy">
     </figure>
-    <h2>The Challenge</h2>
-    <p>Find a Provider was over a decade old. While the tool had evolved
-    incrementally over time, many design choices and conventions had become
-    outdated. Regulatory and contractual limitations had imposed significant
-    constraints on what could be changed. After years of small improvements,
-    we finally had the opportunity to rethink the Provider Search concept from
-    the ground up.</p>
-    <p>The legacy version suffered from a critical flaw: users were required
-    to create their entire search, including setting all filters, before
-    seeing any results. This often produced zero results, forcing members to
-    abandon their search and start over with limited ability to adjust their
-    parameters on the results page.</p>
+    <h2>The Problem</h2>
+    <p>Find a Provider is where a health plan member looks for a doctor or a
+    pharmacy in their network. When my team took it on, it was more than ten
+    years old. It had grown in small steps for years. Regulatory and contract
+    rules limited so much of what we could change.</p>
+    <p>The old tool forced members to search narrowly before they saw any
+    results. It asked for a specialty right away, at a specific location, and
+    neither could be changed later without going back and starting all over.
+    More often than not, this yielded zero search results. The filters were there, but changing one
+    would often give zero too. They were spread all over the place, and there
+    was no telling which one might break the entire journey by making you start your search over from the start.</p>
+    <p>By then we had hit a point where we could call our new UX design system, Fondue,
+    mature. There was always talk about how the old site was looking dated
+    and really needed a refresh. And accessibility issues plagued previous
+    versions of the app, which Fondue was designed to
+    eliminate.</p>
   </div>
 
-  <div class="paper">
-    <h2>Team Leadership &amp; Process</h2>
-    <p>I headed a cross-functional team of Content Designers, Researchers,
-    and Designers. We established a regular cadence that held through the
-    entire project:</p>
+  <!-- ============ MY PART ============ -->
+  <div class="paper" id="role">
+    <h2>My Part</h2>
+    <p>I was the UX Team Lead. I owned the research, content, design and
+    analytics, and led a team of content designers, researchers and
+    designers. Two other designers and I worked on various parts of the entire tool. I
+    had final approval on the pages and served as the liaison for product
+    owners and deliverables. I also oversaw research and accessibility, planned
+    meetings and directed project decisions.</p>
+    <p>Getting the work started took a lot of help from leadership. It all
+    started with a trip to Florida, where two big teams met to understand
+    the requirements of such a monumental task. It was successful and
+    informative, but as all things in enterprise go, the project lay around for almost two years until we
+    finally got the green light.</p>
+    <p>On my part, it was low-key persistence. I didn't push it, but I
+    never let a conversation about issues with Find a Provider go by without
+    mentioning that the UX team had done work to redesign it. I think I was key
+    in keeping the idea in the back of mind for those adjacent to me: UX
+    leadership and the product owners I worked with.</p>
+    <p>The Florida trip settled on presenting all results first. But the time
+    between that trip and the start of the project let feelings about it go
+    stale, and it took a lot of convincing to keep the idea solid. Leadership
+    didn't want to reopen scope, so I worked it into phase two.</p>
+    <figure>
+      <ol class="tl" aria-label="Project timeline">
+        <li class="key"><span class="k">Florida</span>Two big teams meet on the requirements. Results first is settled.</li>
+        <li class="wait"><span class="k">Almost two years</span>The project waits. I keep the redesign in the conversation.
+          <picture class="desert">
+            <source srcset="/assets/ux/fap/tumbleweed-still.webp" media="(prefers-reduced-motion: reduce)">
+            <img src="/assets/ux/fap/tumbleweed.webp" width="450" height="252" alt="" loading="lazy">
+          </picture>
+        </li>
+        <li><span class="k">Phase 1</span>Move what we can onto the design system, so developers start building.</li>
+        <li class="key"><span class="k">Phase 2</span>Check those screens with research and make quick fixes. Results first goes in.</li>
+        <li><span class="k">Phase 3</span>Pull it together, with reviews by outside stakeholders and leadership.</li>
+        <li class="end"><span class="k">Launch</span>Satisfaction up as much as 40%.</li>
+      </ol>
+    </figure>
+    <p>We kept the same rhythm from start to finish:</p>
     <ul>
-      <li>Internal UX team meetings, 3 times per week</li>
-      <li>External team collaboration, once per week</li>
-      <li>Regular meetings with Accessibility and Design System stakeholders</li>
-      <li>Meticulous tracking of each requirement and its status</li>
+      <li>UX team meetings three times a week</li>
+      <li>A weekly session with the external team</li>
+      <li>Regular meetings with Accessibility and Design System partners</li>
+      <li>Every requirement tracked to its status</li>
     </ul>
-    <p>The regular touchpoints with Accessibility and Design System
-    stakeholders were crucial. They kept us aligned and never working too far
-    ahead without critical stakeholder input, which prevented costly rework
-    and kept accessibility at the forefront of design decisions.</p>
-    <figure>
-      <img src="/assets/ux/fap/weekly-review-cycle.webp" alt="Weekly review cycle" loading="lazy">
-    </figure>
+    <p>The project spanned 2023 to 2026. Every screen on the live tool today
+    is mine except the very first one, the page with three cards.</p>
   </div>
 
-  <div class="paper">
-    <h2>Three-Phase Approach</h2>
-    <figure>
-      <img src="/assets/ux/fap/three-phase-approach.webp" alt="Three-phase approach" loading="lazy">
-    </figure>
-    <h3>Phase 1: Lift and Shift</h3>
-    <p>The first phase identified which parts of the design could be quickly
-    ported to our proprietary design system, letting the developer team start
-    implementation immediately while design and research continued in
-    parallel. Our researchers gathered discovery assets from other Centene
-    products and competitive analyses, building a bank of ideas for the next
-    phase.</p>
-    <h3>Phase 2: Validation and Exploration</h3>
-    <p>We validated the lift-and-shift designs through user research, made
-    quick tweaks in response to findings, and handed implementation to the
-    developers. With the foundation in progress, designers explored new
-    directions for the more complex portions of the application. This is
-    where we made our most significant discovery.</p>
-    <h3>Phase 3: Implementation and Refinement</h3>
-    <p>The final phase brought the learnings and explorations together into a
-    cohesive, user-centered experience, with regular meeting points with
-    external stakeholders and leadership for final touches and launch
-    approvals.</p>
-  </div>
-
-  <div class="paper">
-    <h2>Key Research Insight</h2>
-    <p>Extensive user interviews uncovered the insight that changed our
+  <!-- ============ THE EVIDENCE ============ -->
+  <div class="paper" id="evidence">
+    <h2>The Evidence</h2>
+    <p>We saw it first as designers, simply trying to get example search
+    results up on the screen just to talk about them. If we were having trouble
+    getting results, our members certainly were. Multiple rounds of research
+    from our research team confirmed it: members were filtering themselves down
+    to zero results and giving up.</p>
+    <p>From user testing and member interviews, we learned that members wanted
+    to understand that there were actually a lot of providers in their area.
+    They just had to find the right one for them. One finding changed our
     approach:</p>
-    <blockquote>Members want to get to the "ocean of data" first, and then
-    dig down to the data or providers that are most important to them.</blockquote>
-    <p>This was the opposite of how the legacy system worked. The old tool
-    made users build a complete, fully-filtered search before showing
-    anything, which frequently returned zero results, and the results page
-    offered too few controls to adjust course. Members abandoned everything
-    and started over.</p>
+    <blockquote>Members want to get to the "ocean of data" first, and then dig
+    down to the data or providers that are most important to them.</blockquote>
+    <p>Seeing that ocean relieved a sense of claustrophobia and isolation that
+    people felt at a time when they least needed that feeling. The old tool
+    worked the other way around.</p>
+    <div class="flow2" aria-label="Before and after">
+      <div class="col">
+        <div class="lbl">Before</div>
+        <ol>
+          <li>Pick location, specialty and filters first</li>
+          <li>Run the search</li>
+          <li>Often get zero results, and a filter change often gives zero too</li>
+          <li>Go back and start over to change any setting</li>
+        </ol>
+      </div>
+      <div class="col after">
+        <div class="lbl">After</div>
+        <ol>
+          <li>Type one broad term, like "Urgent Care"</li>
+          <li>See every match near you, often hundreds, but presented sensibly in a paged format</li>
+          <li>Filter on the results page, and reset without losing the search</li>
+          <li>Open a provider's own details page</li>
+        </ol>
+      </div>
+    </div>
+    <p>And when they did get results, the old site's infinite scroll and
+    cramped results caused something closer to agoraphobia. People would give
+    up, having to scroll forever and ever, and they often didn't like having
+    to dig down to the things they found relevant. The map, too, was hidden,
+    and hard to decipher once you got there.</p>
+    <p>The new design made it much more clear exactly what could be done. It
+    clustered the functions in one area of the experience,
+    where the old version had them spread all over the place.</p>
   </div>
 
-  <div class="paper">
-    <h2>Design Solution</h2>
-    <p>We redesigned the search experience around a browse-first,
-    filter-second approach.</p>
-    <h3>Simplified Initial Search</h3>
-    <p>We only ask for the broadest of search terms upfront, such as "Urgent
-    Care" or a specialty. Users immediately reach results, often hundreds of
-    them, and gain confidence that providers exist and are available.</p>
+  <!-- ============ THE FLOW ============ -->
+  <div class="paper" id="flow">
+    <h2>How It Flows</h2>
+    <p>Members set a location and a plan, then search. They filter on the
+    results page. When a search finds nothing, the page shows them a way
+    back.</p>
+
+    <figure class="flowmap">
+      <svg class="wide" viewBox="0 0 900 290" role="img" aria-labelledby="fw-t fw-d" xmlns="http://www.w3.org/2000/svg">
+        <title id="fw-t">Find a Provider flow</title>
+        <desc id="fw-d">Five steps in a row: Location, Plan, Search, Results, Details. A dashed Change Plan arrow goes from Search back to Plan. Results loops onto itself for filtering and resetting. When there are no results, an arrow drops to a Search Tips page, which leads back to Search with a broader word or back to Results with a wider distance or fewer filters.</desc>
+        <defs>
+          <marker id="fw-a" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0L10 5L0 10z" fill="#4b4e46"/></marker>
+          <marker id="fw-c" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0L10 5L0 10z" fill="#b8402a"/></marker>
+        </defs>
+        <g font-family="IBM Plex Sans, sans-serif">
+          <!-- boxes -->
+          <g fill="#fffdf6" stroke="rgba(35,38,31,.4)" stroke-width="1.5">
+            <rect x="20" y="70" width="140" height="64" rx="9"/>
+            <rect x="200" y="70" width="140" height="64" rx="9"/>
+            <rect x="380" y="70" width="140" height="64" rx="9"/>
+            <rect x="560" y="70" width="140" height="64" rx="9" stroke="#c96a45" fill="#fbe8df"/>
+            <rect x="740" y="70" width="140" height="64" rx="9"/>
+          </g>
+          <rect x="560" y="210" width="140" height="64" rx="9" fill="#fbe8df" stroke="#b8402a" stroke-width="1.5" stroke-dasharray="5 4"/>
+          <!-- box text -->
+          <g fill="#23261f" font-size="15" font-weight="500" text-anchor="middle">
+            <text x="90" y="98">1 · Location</text>
+            <text x="270" y="98">2 · Plan</text>
+            <text x="450" y="98">3 · Search</text>
+            <text x="630" y="98">4 · Results</text>
+            <text x="810" y="98">5 · Details</text>
+            <text x="630" y="238">Search Tips</text>
+          </g>
+          <g fill="rgba(35,38,31,.66)" font-size="12" text-anchor="middle">
+            <text x="90" y="119">city, ZIP or address</text>
+            <text x="270" y="119">pick your plan</text>
+            <text x="450" y="119">one box, any term</text>
+            <text x="630" y="119">filters beside the list</text>
+            <text x="810" y="119">one provider, in full</text>
+            <text x="630" y="259">three ways back</text>
+          </g>
+          <!-- main arrows -->
+          <g stroke="#4b4e46" stroke-width="1.6" fill="none" marker-end="url(#fw-a)">
+            <line x1="160" y1="102" x2="196" y2="102"/>
+            <line x1="340" y1="102" x2="376" y2="102"/>
+            <line x1="520" y1="102" x2="556" y2="102"/>
+            <line x1="700" y1="102" x2="736" y2="102"/>
+            <path d="M430 70 C430 26 290 26 290 66" stroke-dasharray="5 4"/>
+            <path d="M606 70 C606 24 654 24 654 66"/>
+          </g>
+          <g fill="rgba(35,38,31,.7)" font-size="12">
+            <text x="360" y="22" text-anchor="middle">Change Plan</text>
+            <text x="666" y="36">filter and reset,</text>
+            <text x="666" y="52">the results stay</text>
+          </g>
+          <!-- zero-results branch -->
+          <g stroke="#b8402a" stroke-width="1.6" fill="none" marker-end="url(#fw-c)">
+            <line x1="606" y1="134" x2="606" y2="206"/>
+            <line x1="672" y1="210" x2="672" y2="138"/>
+            <path d="M560 242 L450 242 L450 138"/>
+          </g>
+          <g fill="#92351f" font-size="12">
+            <text x="598" y="176" text-anchor="end">no results</text>
+            <text x="682" y="170">wider distance or</text>
+            <text x="682" y="186">fewer filters</text>
+            <text x="460" y="232">a broader word</text>
+          </g>
+        </g>
+      </svg>
+
+      <svg class="tall" viewBox="0 0 372 590" role="img" aria-labelledby="ft-t ft-d" xmlns="http://www.w3.org/2000/svg">
+        <title id="ft-t">Find a Provider flow</title>
+        <desc id="ft-d">Five steps top to bottom: Location, Plan, Search, Results, Details. A dashed Change Plan arrow goes from Search back to Plan. Results loops onto itself for filtering. When there are no results, an arrow leads to a Search Tips page, which leads back to Search.</desc>
+        <defs>
+          <marker id="ft-a" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0L10 5L0 10z" fill="#4b4e46"/></marker>
+          <marker id="ft-c" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0L10 5L0 10z" fill="#b8402a"/></marker>
+        </defs>
+        <g font-family="IBM Plex Sans, sans-serif">
+          <g fill="#fffdf6" stroke="rgba(35,38,31,.4)" stroke-width="1.5">
+            <rect x="80" y="16" width="180" height="60" rx="9"/>
+            <rect x="80" y="112" width="180" height="60" rx="9"/>
+            <rect x="80" y="208" width="180" height="60" rx="9"/>
+            <rect x="80" y="304" width="180" height="60" rx="9" stroke="#c96a45" fill="#fbe8df"/>
+            <rect x="80" y="400" width="180" height="60" rx="9"/>
+          </g>
+          <rect x="80" y="510" width="180" height="60" rx="9" fill="#fbe8df" stroke="#b8402a" stroke-width="1.5" stroke-dasharray="5 4"/>
+          <g fill="#23261f" font-size="16" font-weight="500" text-anchor="middle">
+            <text x="170" y="42">1 · Location</text>
+            <text x="170" y="138">2 · Plan</text>
+            <text x="170" y="234">3 · Search</text>
+            <text x="170" y="330">4 · Results</text>
+            <text x="170" y="426">5 · Details</text>
+            <text x="170" y="536">Search Tips</text>
+          </g>
+          <g fill="rgba(35,38,31,.66)" font-size="13" text-anchor="middle">
+            <text x="170" y="62">city, ZIP or address</text>
+            <text x="170" y="158">pick your plan</text>
+            <text x="170" y="254">one box, any term</text>
+            <text x="170" y="350">filters beside the list</text>
+            <text x="170" y="446">one provider, in full</text>
+            <text x="170" y="556">three ways back</text>
+          </g>
+          <g stroke="#4b4e46" stroke-width="1.6" fill="none" marker-end="url(#ft-a)">
+            <line x1="170" y1="76" x2="170" y2="108"/>
+            <line x1="170" y1="172" x2="170" y2="204"/>
+            <line x1="170" y1="268" x2="170" y2="300"/>
+            <line x1="170" y1="364" x2="170" y2="396"/>
+            <path d="M80 238 C44 238 44 142 76 142" stroke-dasharray="5 4"/>
+            <path d="M260 318 C298 318 298 350 264 350"/>
+          </g>
+          <g fill="rgba(35,38,31,.7)" font-size="12.5">
+            <text x="30" y="190" text-anchor="middle" transform="rotate(-90 30 190)">Change Plan</text>
+            <text x="302" y="330">filter,</text>
+            <text x="302" y="344">reset</text>
+          </g>
+          <g stroke="#b8402a" stroke-width="1.6" fill="none" marker-end="url(#ft-c)">
+            <path d="M80 334 L56 334 L56 540 L76 540"/>
+            <path d="M260 540 L352 540 L352 238 L264 238"/>
+          </g>
+          <g fill="#92351f" font-size="12.5">
+            <text x="46" y="440" text-anchor="middle" transform="rotate(-90 46 440)">no results</text>
+            <text x="365" y="400" text-anchor="middle" transform="rotate(-90 365 400)">try again</text>
+          </g>
+        </g>
+      </svg>
+      <figcaption>The flow from the location step on, redrawn</figcaption>
+    </figure>
+
+    <ol class="steps">
+      <li><span class="k">1 · Location and plan</span><span>Set your location and quickly choose your plan from a list, in one step.</span></li>
+      <li><span class="k">2 · Search</span><span>One search box, with Search by Category and Popular Searches beside it. The plan and location stay on the page, with the ability to change them at any time.</span></li>
+      <li><span class="k">3 · Results</span><span>Filters sit beside the results. Members can compare up to three providers or switch to a map.</span></li>
+      <li><span class="k">4 · Details</span><span>Everything about one provider, on its own page.</span></li>
+      <li><span class="k zero">No results</span><span>A Search Tips page with steps back into the search.</span></li>
+    </ol>
+    <p>Location and plan come first partly for UX reasons and partly because of
+    tech limits. Coverage, meaning the member's home location and plan, has to
+    be settled before the actual search can run. We simplified the journey by
+    making the home location the default search location, changeable if
+    needed.</p>
+    <p>The old tool's build-it-all-first problem had a lot to do with not being
+    able to change location and plan later without restarting the whole search.
+    So the new flow was partly results first, then dig, plus easy lateral
+    movement within the data.</p>
+    <p>An even earlier concept literally dropped members onto a page with all
+    40-million-some-odd results, and only then let them set these. We
+    determined that crossed the line of balance for good UX.</p>
+    <figure class="bal" aria-label="Three versions, from narrow first to everything first">
+      <div class="beam">
+      <div class="ends" aria-hidden="true"><span>Narrow first</span><span>Everything first</span></div>
+      <div class="track" aria-hidden="true"><span class="fulcrum"></span></div>
+      <div class="cols">
+        <div class="col"><div class="lbl">The old tool</div>Specialty and location before any result, and no way to change either one later.</div>
+        <div class="col mid"><div class="lbl">What shipped</div>Location and plan first, because coverage decides the search. Then every match, and narrow from there.</div>
+        <div class="col"><div class="lbl">An earlier concept</div>All 40-million-some-odd results first, and set everything after.</div>
+      </div>
+      </div>
+    </figure>
+    <p>The plan list shows each plan's contract code, like H1664, because
+    it was a rule.</p>
+    <p>So to use <em>this</em> tool, you have to know your plan. However,
+    another tool, called "I already have a provider," allowed shoppers to
+    find plans that cover their provider.</p>
+    <p>Medicaid, Medicare and Commercial members all get the same flow. One
+    huge goal for us was to create a tool that worked for all of these lines
+    of business.</p>
+  </div>
+
+  <!-- ============ THE SEARCH BOX ============ -->
+  <div class="paper" id="search-box">
+    <h2>The Search Box</h2>
+    <figure>
+      <img src="/assets/ux/fap/search-bar.webp" alt="The search card: one box labeled 'Enter a provider name, specialty, facility, condition, or NPI', a Search button, the search location, and links for Search by Category and Popular Searches" loading="lazy">
+    </figure>
+    <p>The search page has a single box. It takes a provider's name, a
+    specialty, a facility, a condition, or a provider's ten-digit NPI
+    number.</p>
+    <p>Not every member understands which field to fill in. They aren't using
+    the site with an employee's mindset, knowing all the possibilities the
+    tool could be used for. They have their very narrow needs. One input
+    should be all that's necessary to search, and it should behave
+    accordingly depending on how you use it.</p>
+
+    <h3>What the suggestions do</h3>
+    <p>This is how the box works on the live tool today, redrawn.</p>
+    <div class="anatomy">
+      <div>
+        <div class="cbx">
+        <div class="mock" id="cbx-mock" role="img" aria-label="Animation of the redrawn search box with its Search button to the right. The pointer hovers over the box and clicks it, and a list opens with three popular searches. It types f, then fe, and the list still shows the popular searches. At the third letter the list changes to Search all for fer, Search by location name, a Specialty row for Obstetrics and Gynecology, Reproductive Endocrinology, and two Facility rows, with the typed letters in bold. Typing continues to fertility. The pointer moves down the rows and clicks the Specialty row, which puts the specialty in the box and closes the list. Right away, results appear beneath the box: a count line, Showing 2 results within 50 miles, and two reproductive endocrinologist cards with In-network and Accepting New Patients checks.">
+          <div class="m-label">Enter a provider name, specialty, facility, condition, or NPI.</div>
+          <div class="m-bar">
+            <div class="m-field">
+              <div class="m-input focus">
+                <span class="badge" data-b="1">1</span>
+                <svg width="16" height="16" viewBox="0 0 24 24" aria-hidden="true"><circle cx="10" cy="10" r="6.5" fill="none" stroke="#555" stroke-width="2.2"/><line x1="15" y1="15" x2="21" y2="21" stroke="#555" stroke-width="2.4" stroke-linecap="round"/></svg>
+                <span class="m-text">fertility</span><span class="m-tcaret"></span><span class="caret"></span>
+              </div>
+              <div class="m-list">
+                <div class="m-hint">Type to search or choose from the available options.</div>
+                <div class="m-row"><span class="badge" data-b="2">2</span><span class="kind">Search all for</span><span class="val">"<strong>fertility</strong>"</span></div>
+                <div class="m-row"><span class="kind">Search by location name</span><span class="val">"<strong>fertility</strong>"</span></div>
+                <div class="m-div"></div>
+                <div class="m-row hov"><span class="badge" data-b="3">3</span><span class="kind">Specialty</span><span class="val">Obstetrics &amp; Gynecology, Reproductive Endocrinology</span></div>
+                <div class="m-div"></div>
+                <div class="m-row"><span class="badge" data-b="4">4</span><span class="kind">Facility</span><span class="val">MAPLE ROW <strong>FERTILITY</strong> PHARMACY</span></div>
+                <div class="m-row"><span class="kind">Facility</span><span class="val">TEST STREET <strong>FERTILITY</strong> PHARMACY</span></div>
+              </div>
+            </div>
+            <span class="m-btn">Search</span>
+          </div>
+          <div class="m-res" hidden></div>
+          <div class="m-step"></div>
+          <svg class="m-cursor" width="20" height="24" viewBox="0 0 20 24" aria-hidden="true"><path d="M2 2 L2 19 L6.5 15 L9.5 22 L12.5 20.7 L9.6 13.9 L16 13.9 Z" fill="#fff" stroke="#23261f" stroke-width="1.6" stroke-linejoin="round"/></svg>
+          <span class="m-ripple" aria-hidden="true"></span>
+          <div class="m-cap">Redrawn in neutral colors · names invented</div>
+        </div>
+        <div class="m-ctrl" hidden>
+          <button type="button" class="m-play">Pause</button>
+          <button type="button" class="m-replay">Replay</button>
+        </div>
+        </div>
+      </div>
+      <ol class="notes">
+        <li data-n="1"><span class="badge">1</span><span>With the box empty, the list opens as soon as it gets focus, showing three popular searches: Primary Care, Clinic or Urgent Care, and Routine Dental.</span></li>
+        <li data-n="2"><span class="badge">2</span><span>From the third letter on, the first two rows keep the member's own words: search everything for them, or search them as a location name.</span></li>
+        <li data-n="3"><span class="badge">3</span><span>Below a divider come the matches, each labeled with its kind: Specialty, Facility, Practitioner or Group. Here, a plain word maps to a medical specialty.</span></li>
+        <li data-n="4"><span class="badge">4</span><span>The typed text shows in bold inside any name that contains it.</span></li>
+        <li><span class="badge none">·</span><span>Type exactly ten digits and Search by NPI moves to the top of the list.</span></li>
+      </ol>
+    </div>
+    <p>Which row a member clicks decides what the search means. <em>Search
+    all for "fertility"</em> looks for the word in provider names. The
+    <em>Specialty</em> row looks for reproductive endocrinologists.</p>
+    <p>The groups in the list were different data types. They could not be
+    mixed together or combined, because the metrics used to rate their
+    relevance were each calculated differently.</p>
+    <p>Pressing Enter does a text-based search. To choose a search coupled
+    with an actual type, like a group or a specialty, you select an item in
+    the list.</p>
+    <p>Matching everyday words like "fertility" to specialties was an
+    engineering task, and a monumental one. Many keywords were associated
+    with others using Elasticsearch.</p>
+    <p>The combo search box behavior I established is still in Fondue,
+    Centene's design system.</p>
+
+    <h3>Keyboard and screen readers</h3>
+    <p>On the live tool today, focus stays in the box while the arrow keys move
+    through the suggestions, and the list wraps from the last row to the
+    first. Escape closes the list and keeps what was typed. Tab closes it and
+    moves on to the Search button. Enter runs Search all with the typed words. A screen reader reads each row's kind and
+    value together, for example "Specialty, Obstetrics &amp; Gynecology,
+    Reproductive Endocrinology."</p>
+  </div>
+
+  <!-- ============ RESULTS, FILTERS, DETAILS ============ -->
+  <div class="paper" id="results">
+    <h2>Results, Filters and Details</h2>
+    <p>Filters live on the results page. Members set them when they need them and can reset them without losing their
+    search.</p>
+    <p>The filter rail starts with distance and provider type. Next come
+    features like accepting new patients and virtual visits, then provider
+    tier and board certification. Narrower practitioner and facility filters,
+    such as language, hospital affiliation and accessibility features, open in
+    their own dialogs.</p>
+    <p>Each result card shows the provider's name and specialties, a short
+    checklist, the address with its distance, and a phone number. Members can
+    check up to three cards to compare, or switch to a map.</p>
+    <figure>
+      <img src="/assets/ux/fap/filters-beside-results.webp" alt="Results for Primary Care: the search box and filter rail on the left, with distance, provider type and provider features, and provider cards on the right" loading="lazy">
+      <figcaption>Filters beside the results</figcaption>
+    </figure>
+    <p>Filters sit right next to the results partly to shine light on a
+    previous issue: how do I know what to do after I see results? With so
+    much control, a member needs to understand there are things they can do.
+    Exposing filters right away helps with that.</p>
+    <p>Five results per page by default was a response to the old site's
+    infinite scroll.</p>
+    <h3>A readable map</h3>
+    <p>We spent a lot of time making mapping clearer in the search results.
+    In the old tool, the map was its own page, reached from a small "(view
+    map)" link on one provider's card, and it showed that one office.</p>
+    <p>Map View is a button on the results page. The list stays beside the
+    map, a Map Key explains the pins, and each pin shows how many providers
+    match the search at that location. Re-center map brings the view back to
+    the search location.</p>
     <div class="pair">
       <figure>
-        <img src="/assets/ux/fap/flow-comparison.webp" alt="Flow comparison" loading="lazy">
+        <img src="/assets/ux/fap/old-map.webp" alt="The old tool's Map of Providers page: one provider's office in a panel over a street map, with links for directions, public transportation and returning to the provider list" loading="lazy">
+        <figcaption>Before: one provider, on its own page</figcaption>
       </figure>
       <figure>
-        <img src="/assets/ux/fap/search-bar.webp" alt="Simple search interface" loading="lazy">
-        <figcaption>The search asks only for broad terms: specialty, facility, or condition</figcaption>
+        <img src="/assets/ux/fap/map-view.webp" alt="Map View: the results list on the left, a map of St. Louis on the right with a pin labeled 5, the member's location, and a Map Key explaining both" loading="lazy">
+        <figcaption>After: Map View, with the list beside it</figcaption>
       </figure>
     </div>
-    <h3>Progressive Filtering</h3>
-    <p>On the results page, members set filters as needed and can reset them
-    without losing their search context, which dramatically reduces
-    frustration and improves search success rates.</p>
+    <div class="phone">
+      <figure>
+        <img src="/assets/ux/fap/map-view-phone.webp" alt="Map View on a phone: a row of provider cards at the top with dots and arrows to move between them, the map below with a pin labeled 5, and a View Map Key button" loading="lazy">
+        <figcaption>Map View on a phone</figcaption>
+      </figure>
+      <p>Many responsive map updates made it easier to use on mobile. On a
+      phone, the results become a row of cards above the map, with dots and
+      arrows to move between them, and the Map Key folds into a button.</p>
+    </div>
+
+    <h3>Compare, up to three</h3>
+    <p>Compare Providers was a Fondue component this project pioneered. Members
+    can Compare up to three result cards. A tray along the bottom of the page
+    holds them, with Clear All Providers and a Compare button.</p>
     <figure>
-      <img src="/assets/ux/fap/filters.webp" alt="Search results with filtering" loading="lazy">
+      <img src="/assets/ux/fap/compare-tray.webp" alt="Results with Compare checked on two cards, and a Compare (3/3) tray along the bottom listing three practitioners, with Clear All Providers and Compare buttons" loading="lazy">
+      <figcaption>The Compare tray, three of three</figcaption>
     </figure>
-    <h3>Clear Guidance and Recovery</h3>
-    <p>Members want clear, concise direction. We present step-by-step
-    instructions at the moments that need them, particularly on zero-result
-    pages, helping members start a new search or adjust filters. A dead end
-    becomes a guided path forward.</p>
+    <p>The comparison page lines the three up side by side, row by row: the
+    overview checks, address and phone, then specialties, languages, NPI,
+    hospital affiliations, office hours and more. Each one can be removed
+    without starting over.</p>
     <figure>
-      <img src="/assets/ux/fap/no-results-cropped.webp" alt="Zero results with helpful guidance" loading="lazy">
-      <figcaption>Zero-results page with step-by-step recovery instructions</figcaption>
+      <img src="/assets/ux/fap/compare-page.webp" alt="Compare Your Selections: three practitioners in columns, each with a Remove Provider button, a Practitioner Overview of five checks, and the practice address and phone" loading="lazy">
+      <figcaption>Compare Your Selections</figcaption>
     </figure>
-    <h3>Dedicated Provider Details Page</h3>
-    <p>Earlier versions constrained all provider information to the search
-    result card, forcing decisions on incomplete data. The redesign
-    introduced a Provider Details page with room for credentials,
-    specialties, locations, accepted plans, patient reviews, and more, in a
-    clear, organized format that supports informed decisions.</p>
-    <figure>
-      <img src="/assets/ux/fap/provider-details.webp" alt="Provider details page" loading="lazy">
-    </figure>
+
+    <h3>A page for each provider</h3>
+    <p>Earlier versions fit everything about a provider onto the result card,
+    so members had to decide on incomplete information. The redesign added a
+    Provider Details page with room for credentials, specialties, locations,
+    accepted plans and more.</p>
+    <div class="pair">
+      <figure>
+        <img src="/assets/ux/fap/old-result-card.webp" alt="A result card from the old tool with Show Details open: name, practice, specialty, address, accessibility, distance, phone, six status checks, then a grid of eleven more fields such as languages, county, gender, hospital affiliations and NPI" loading="lazy">
+        <figcaption>Before: everything on the card</figcaption>
+      </figure>
+      <figure>
+        <img src="/assets/ux/fap/provider-details.webp" alt="A Provider Details page with the provider's specialties, locations and other information" loading="lazy">
+        <figcaption>After: a details page for each provider</figcaption>
+      </figure>
+    </div>
+    <p>Card sort testing and member interviews determined what was most
+    important on the details page.</p>
   </div>
 
-  <div class="paper">
-    <h2>Impact</h2>
+  <!-- ============ RECOVERY ============ -->
+  <div class="paper" id="recovery">
+    <h2>When Nothing Matches</h2>
+    <p>Zero results still happen. When they do, the count line reads "No
+    results found," and a Search Tips panel takes the place of the list. Focus
+    moves to its heading, so keyboard and screen reader users land on the
+    help first. It gives three steps:</p>
+    <ol>
+      <li>Expand the distance to get more results.</li>
+      <li>Search again using a different or broader key word.</li>
+      <li>Remove or clear filters to expand your search.</li>
+    </ol>
+    <p>Each step shows a picture of the control it means, and the filters
+    stay on screen beside it, ready to change.</p>
+    <figure>
+      <img src="/assets/ux/fap/no-results-cropped.webp" alt="Zero results: the Search Tips panel with three numbered steps, each next to a picture of the distance menu, the search box or the filter list" loading="lazy">
+      <figcaption>Search Tips, with the filters still in reach</figcaption>
+    </figure>
+    <p>Focus jumps to the heading because we wanted to put these tips in
+    members' faces. Zero results is precisely what we wanted to get members
+    away from, so this state is undesirable. We did what we could to guide
+    people out of it.</p>
+    <p>Settling the words was a challenging and highly collaborative effort.
+    I worked tirelessly in partnership with our content designer
+    to make sure the words and the design flowed well with each other. We had
+    an equal partnership in design.</p>
+  </div>
+
+  <!-- ============ ACCESSIBILITY ============ -->
+  <div class="paper" id="accessibility">
+    <h2>Accessibility</h2>
+    <p>We built to WCAG AA on our design system. Regular meetings with the
+    Accessibility and Design System partners kept us from getting too far
+    ahead of them, which saved us rework.</p>
+    <p>At Centene, our accessibility audits meant reading page source and
+    filling in spreadsheets by hand. Axe kept missing gaps, so I wrote a
+    bookmarklet that draws header structure, tab order and link labels right
+    on the page.</p>
+    <p>We had an accessibility specialist on our team who would pass through
+    each of our updates and alert us to any accessibility issues. It was very
+    helpful.</p>
+    <p>Spanish was designed alongside English, by content design.</p>
+    <p>The design system really kept everything clean. Colors, fonts and
+    basic components were all covered. But we pushed the boundaries a bit
+    with it too. This project pioneered the Compare Providers component. It
+    also premiered the shaded card that says "this is the main thing to
+    focus on before looking at anything else" on the page. And many
+    responsive map updates made the map easier to use on mobile.</p>
+  </div>
+
+  <!-- ============ RESULT ============ -->
+  <div class="paper" id="result">
+    <h2>Result</h2>
     <ul>
-      <li>Reduced zero-result scenarios by letting users start broad and refine incrementally</li>
-      <li>Eliminated the need to abandon and restart searches</li>
-      <li>Provided clear recovery paths when searches need adjustment</li>
-      <li>Expanded provider information through dedicated details pages</li>
-      <li>Modernized a decade-old tool while navigating regulatory and contractual constraints</li>
-      <li>Delivered a fully responsive experience across all devices</li>
+      <li>Satisfaction went up as much as 40%</li>
+      <li>Members start broad and narrow on the results page, instead of rebuilding a search from scratch</li>
+      <li>Zero results come with steps back into the search</li>
+      <li>Every provider has a details page</li>
+      <li>Built to WCAG AA and responsive across devices</li>
+      <li>The combo search box behavior is still in the design system</li>
     </ul>
+    <p>The tool is live and public: <a href="https://my.wellcare.com/x/hub/public/en/landing-page" target="_blank" rel="noopener">Find a Provider</a>.</p>
+    <p>The 40% comes from satisfaction studies after launch, compared with the
+    satisfaction studies we ran before the redesign. They were basic UX-side
+    satisfaction studies, powered by interviews, pop-up surveys and UX
+    testing.</p>
+    <h3>Clarity over polish</h3>
+    <p>The search results themselves were simply ripe for making something
+    look really nice. But in the end we had to show the three basic
+    statuses and the address, and that's pretty much it.</p>
+    <div class="anatomy">
+      <div class="mock" role="img" aria-label="A redrawn result card. Maple Row Pharmacy, Facility, Pharmacy Retail. Three statuses: Open Now with a check, Preferred Cost Sharing Retail with an X, In-network with a check. Beside them, the name again, an address with its distance, and a phone number.">
+        <div class="rcard">
+          <div class="r"><span class="badge">1</span><span class="nm">MAPLE ROW PHARMACY</span> <span class="kind">• Facility</span></div>
+          <div class="sp">Pharmacy, Retail</div>
+          <div class="body">
+            <ul class="r">
+              <span class="badge">2</span>
+              <li><span class="yes">✓</span>Open Now</li>
+              <li><span class="no">✕</span>Preferred Cost Sharing: Retail</li>
+              <li><span class="yes">✓</span>In-network</li>
+            </ul>
+            <div class="addr r">
+              <span class="badge">3</span>
+              <div>MAPLE ROW PHARMACY</div>
+              <a>100 Test St, Saint Louis, Missouri 63139 (0.5 miles away)</a><br>
+              <a>(314) 555-0142</a>
+            </div>
+          </div>
+        </div>
+        <div class="m-cap">Redrawn in neutral colors · pharmacy invented</div>
+      </div>
+      <ol class="notes">
+        <li><span class="badge">1</span><span>The name, whether it's a practitioner or a facility, and the specialty. The name opens the details page.</span></li>
+        <li><span class="badge">2</span><span>The three basic statuses, each a plain check or X, with at least two checks.</span></li>
+        <li><span class="badge">3</span><span>The address with its distance, and a phone number. That's pretty much it.</span></li>
+      </ol>
+    </div>
+    <p>Which statuses show on a card was a combination of business
+    requirements and research. But one thing was certain: we didn't want to
+    display two or three red Xs. There are always at least two green
+    checkmarks, whatever those attributes might be. It shouldn't be a ding on
+    the providers themselves. They may be quality; they just don't fit that
+    particular box.</p>
+    <p>The filters were the same. I wanted to give them more functionality
+    and let members dig down into deeper filters, but research showed that
+    keeping it simple there was best. I always conceded to research in
+    problems like these, because ultimately the tool is for the members, and
+    what they say goes.</p>
+  </div>
+
+  <!-- ============ THE FUTURE ============ -->
+  <div class="paper" id="future">
+    <h2>The Future</h2>
+    <h3>What I'd revisit</h3>
+    <div class="bal">
+      <div class="cols">
+        <div class="col"><div class="lbl">Search and filters</div>I would streamline them. They are a bit noisy. I always pushed back against anyone wanting to put that functionality across the top instead of down the side. I would reconsider the possibility.</div>
+        <div class="col"><div class="lbl">Compare</div>I would spend more time refining how it works: understanding exactly what profile information would be helpful on the compare page, and what could remain hidden.</div>
+        <div class="col"><div class="lbl">The combo box</div>With updated back-end tech, maybe we could improve its UX, remove the groupings, possibly even allow for natural language searches.</div>
+      </div>
+    </div>
+    <p>Putting the filters down the side was on purpose. I wanted to push
+    something new into the real world, to get real feedback from real people,
+    rather than stick with conventions we already had just because that's
+    what we were used to.</p>
+
+    <h3>A checker in front of the search</h3>
+    <p>The app allows digging down, back up and to the side. Making that
+    clearer would be of great help: a way to guide people into digging down
+    further, to more refined results.</p>
+    <p>In <a href="/write-ups/jev-vs-local/">my Jev write-up</a> I tested
+    small models that turn a sentence into a choice from a fixed list, with a
+    score for each option. On six banking intents, Jev and my small local
+    head both got 60 of 60. The head answered in about 130 ms on my laptop,
+    against Jev's 262 ms.</p>
+    <figure class="chk" aria-label="The checker's three paths">
+      <div class="in">What the member typed</div>
+      <div class="down" aria-hidden="true"></div>
+      <div class="paths">
+        <div class="p sure"><div class="lbl">Sure</div>Goes straight to that kind of care and says so, with a "Not what you meant?" link.</div>
+        <div class="p ask"><div class="lbl">Not sure</div>Asks with a few likely choices, plus "None of these / not sure."
+          <div class="more"><span class="lbl">None of these</span>Related types and groups to follow through with.</div>
+        </div>
+        <div class="p none"><div class="lbl">No match</div>A plain page that says nothing matched, with ways back into the search.</div>
+      </div>
+      <figcaption>The checker's three answers, concept only</figcaption>
+    </figure>
+    <p>The same idea fits here. A fast checker reads what the member typed,
+    picks the kind of care it most likely means, and says how sure it is. When
+    it's sure, the search goes straight to that specialty and says so, with a
+    "Not what you meant?" link. When it isn't, it asks with a few likely
+    choices. "None of these / not sure" is always one of them, because a model
+    that chooses from a fixed list always picks one, even when nothing
+    fits. The checker runs on Enter too, so a typed search gets the same help
+    as a picked suggestion.</p>
+    <p>Picking "None of these" doesn't have to end the search. It could
+    present further, but still related, types and groups to follow through
+    with.</p>
+  </div>
+
+  <!-- ============ CONCLUSION ============ -->
+  <div class="paper" id="conclusion">
+    <h2>Conclusion</h2>
+    <p>One huge goal for us was to create a tool that worked for every line
+    of business. Medicaid, Medicare and Commercial members now go through the
+    same flow, and each of them sees every match near them before narrowing
+    anything.</p>
+    <p>Results first came out of the Florida trip. It took a lot of convincing
+    to keep it solid through almost two years of waiting, but research consistently backed it up: members wanted the ocean first, and then to dig down to the
+    providers most important to them.</p>
   </div>
 </div>
 
@@ -171,5 +846,242 @@
   <a href="mailto:myra@myrakrusemark.com">myra@myrakrusemark.com</a> · &copy; 2026
 </footer>
 
+<script>
+// Animated walkthrough of the redrawn combo box: hover, click, type, choose.
+(function () {
+  var mock = document.getElementById('cbx-mock');
+  if (!mock) return;
+  var wrap = mock.parentNode;
+  var input = mock.querySelector('.m-input');
+  var text = mock.querySelector('.m-text');
+  var list = mock.querySelector('.m-list');
+  var step = mock.querySelector('.m-step');
+  var cursor = mock.querySelector('.m-cursor');
+  var ripple = mock.querySelector('.m-ripple');
+  var ctrl = wrap.querySelector('.m-ctrl');
+  var playBtn = ctrl.querySelector('.m-play');
+  var replayBtn = ctrl.querySelector('.m-replay');
+  var notes = wrap.closest('.anatomy').querySelectorAll('.notes li[data-n]');
+  var reduce = window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  var POPULAR = ['Primary Care', 'Clinic or Urgent Care', 'Routine Dental'];
+  var SPECIALTY = 'Obstetrics &amp; Gynecology, Reproductive Endocrinology';
+  var FACILITIES = ['MAPLE ROW FERTILITY PHARMACY', 'TEST STREET FERTILITY PHARMACY'];
+  var RESULTS = [['JORDAN MAPLE, MD', '2.1'], ['CASEY ROW, DO', '4.8']];
+  var res = mock.querySelector('.m-res');
+
+  function results() {
+    return '<div class="m-count"><strong>Showing 2 results</strong> within 50 miles</div>' +
+      RESULTS.map(function (p) {
+        return '<div class="m-card pre"><span class="nm">' + p[0] + '</span> <span class="kd">&bull; Practitioner</span><br>' +
+          'Reproductive Endocrinology &middot; ' + p[1] + ' miles away<br>' +
+          '<span class="st"><span class="ok">&check;</span> In-network &nbsp; <span class="ok">&check;</span> Accepting New Patients</span></div>';
+      }).join('');
+  }
+  function bold(name, q) {
+    var i = name.toLowerCase().indexOf(q.toLowerCase());
+    if (i < 0) return name;
+    return name.slice(0, i) + '<strong>' + name.slice(i, i + q.length) + '</strong>' + name.slice(i + q.length);
+  }
+  function row(kind, val, badge) {
+    return '<div class="m-row">' + (badge ? '<span class="badge" data-b="' + badge + '">' + badge + '</span>' : '') +
+      '<span class="kind">' + kind + '</span><span class="val">' + val + '</span></div>';
+  }
+  var HINT = '<div class="m-hint">Type to search or choose from the available options.</div>';
+  function popularList() {
+    return HINT + POPULAR.map(function (p) { return row('Popular Search', p); }).join('');
+  }
+  function suggestList(q) {
+    return HINT +
+      row('Search all for', '"<strong>' + q + '</strong>"', 2) +
+      row('Search by location name', '"<strong>' + q + '</strong>"') +
+      '<div class="m-div"></div>' +
+      row('Specialty', SPECIALTY, 3) +
+      '<div class="m-div"></div>' +
+      row('Facility', bold(FACILITIES[0], q), 4) +
+      row('Facility', bold(FACILITIES[1], q));
+  }
+
+  // Badges and notes light up as each behavior appears.
+  var shown = {};
+  function badges() {
+    mock.querySelectorAll('.badge[data-b]').forEach(function (b) {
+      b.classList.toggle('off', !shown[b.getAttribute('data-b')]);
+    });
+  }
+  function light(ns) {
+    ns.forEach(function (n) { shown[n] = true; });
+    notes.forEach(function (li) { li.classList.toggle('on', ns.indexOf(li.getAttribute('data-n')) >= 0); });
+    badges();
+  }
+  function say(html) { step.innerHTML = html; }
+
+  // Pointer, positioned against an element's box inside the mock.
+  function moveTo(el, fx, fy) {
+    var m = mock.getBoundingClientRect(), r = el.getBoundingClientRect();
+    var x = r.left - m.left + r.width * fx, y = r.top - m.top + r.height * fy;
+    cursor.style.transform = 'translate(' + x + 'px,' + y + 'px)';
+    ripple.style.left = x + 'px';
+    ripple.style.top = y + 'px';
+  }
+  function park() {
+    cursor.style.transform = 'translate(' + (mock.clientWidth - 30) + 'px,' + (mock.clientHeight - 40) + 'px)';
+  }
+  function click() {
+    ripple.classList.remove('go');
+    void ripple.offsetWidth;
+    ripple.classList.add('go');
+  }
+  function rows() { return list.querySelectorAll('.m-row'); }
+  function hover(r) {
+    rows().forEach(function (x) { x.classList.toggle('hov', x === r); });
+  }
+
+  // Timing that holds while paused or scrolled out of view.
+  var paused = false, visible = false, run = 0;
+  function wait(ms, id) {
+    return new Promise(function (resolve, reject) {
+      var left = ms, last = performance.now();
+      (function tick(now) {
+        if (id !== run) return reject('stop');
+        if (!paused && visible) left -= now - last;
+        last = now;
+        if (left <= 0) resolve(); else requestAnimationFrame(tick);
+      })(last);
+    });
+  }
+
+  function reset() {
+    shown = {};
+    text.textContent = '';
+    input.classList.remove('hov', 'focus');
+    list.hidden = true;
+    list.innerHTML = '';
+    res.hidden = true;
+    res.innerHTML = '';
+    say('&nbsp;');
+    light([]);
+    cursor.classList.remove('hide');
+    park();
+  }
+
+  // The finished state, used without JS motion and before the first play.
+  function finalFrame() {
+    shown = { 1: true, 2: true, 3: true, 4: true };
+    text.textContent = 'fertility';
+    input.classList.add('focus');
+    list.innerHTML = suggestList('fertility');
+    list.hidden = false;
+    hover(rows()[2]);
+    badges();
+    cursor.classList.add('hide');
+    say('Press Play to watch the box respond to a pointer and typing.');
+  }
+
+  async function play() {
+    var id = ++run;
+    var w = function (ms) { return wait(ms, id); };
+    try {
+      for (;;) {
+        reset();
+        await w(700);
+        say('<b>Hover.</b> The box shows it can be clicked.');
+        moveTo(input, 0.45, 0.6);
+        await w(800);
+        input.classList.add('hov');
+        await w(900);
+
+        click();
+        input.classList.remove('hov');
+        input.classList.add('focus');
+        list.innerHTML = popularList();
+        list.hidden = false;
+        light(['1']);
+        say('<b>Click.</b> The list opens before anything is typed, with three popular searches.');
+        await w(2600);
+
+        moveTo(mock.querySelector('.m-btn'), 0.5, 3);
+        say('<b>One or two letters.</b> The list doesn&rsquo;t change yet.');
+        var word = 'fertility';
+        for (var i = 1; i <= 2; i++) { text.textContent = word.slice(0, i); await w(320); }
+        await w(1400);
+
+        for (i = 3; i <= word.length; i++) {
+          var q = word.slice(0, i);
+          text.textContent = q;
+          list.innerHTML = suggestList(q);
+          if (i === 3) {
+            light(['2', '3', '4']);
+            say('<b>Third letter.</b> Suggestions start: the member&rsquo;s own words first, then matches labeled by kind.');
+            await w(1300);
+          } else {
+            badges();
+            await w(170);
+          }
+        }
+        await w(2200);
+
+        var r = rows();
+        say('<b>Hover a row.</b> Each one starts a different kind of search.');
+        moveTo(r[0], 0.55, 0.5);
+        await w(750);
+        hover(r[0]);
+        await w(800);
+        moveTo(r[2], 0.55, 0.5);
+        await w(750);
+        hover(r[2]);
+        await w(1100);
+
+        click();
+        r[2].classList.add('press');
+        await w(350);
+        list.hidden = true;
+        input.classList.remove('focus');
+        text.innerHTML = SPECIALTY;
+        shown = {};
+        light([]);
+        res.innerHTML = results();
+        res.hidden = false;
+        say('<b>Choose.</b> Results come right away. The box holds a specialty, so they&rsquo;re reproductive endocrinologists, not names with &ldquo;fertility&rdquo; in them.');
+        park();
+        var cards = res.querySelectorAll('.m-card');
+        for (i = 0; i < cards.length; i++) { await w(180); cards[i].classList.remove('pre'); }
+        await w(4800);
+      }
+    } catch (e) { /* stopped */ }
+  }
+
+  function setPaused(p) {
+    paused = p;
+    playBtn.textContent = p ? 'Play' : 'Pause';
+  }
+  playBtn.addEventListener('click', function () {
+    if (run === 0 || started === false) { start(); return; }
+    setPaused(!paused);
+  });
+  replayBtn.addEventListener('click', function () { setPaused(false); start(); });
+
+  var started = false;
+  function start() { started = true; setPaused(false); play(); }
+
+  ctrl.hidden = false;
+  new IntersectionObserver(function (es) {
+    visible = es[0].isIntersecting;
+    if (visible && !started && !reduce) start();
+  }, { threshold: 0.4 }).observe(mock);
+
+  // Hold the tallest state's height so the page doesn't jump.
+  // The results state can be taller than the open list, so measure both.
+  list.hidden = true;
+  res.innerHTML = results();
+  res.hidden = false;
+  var tall = mock.offsetHeight;
+  res.hidden = true;
+  res.innerHTML = '';
+  finalFrame();
+  mock.style.minHeight = Math.max(tall, mock.offsetHeight) + 'px';
+  if (reduce) { playBtn.textContent = 'Play'; } else { say('&nbsp;'); }
+})();
+</script>
 </body>
 </html>
